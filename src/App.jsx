@@ -10,7 +10,8 @@ function App() {
     return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
   }
 
-  return <UserManagementPage />;
+  // Pass the logout handler down to your authenticated view
+  return <UserManagementPage onLogout={() => setIsAuthenticated(false)} />;
 }
 
 export default App;
