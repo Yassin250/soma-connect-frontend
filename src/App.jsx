@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
-import { LoginPage } from './features/auth/pages/LoginPage';
-import { UserManagementPage } from './features/admin/pages/UserManagementPage';
+import React from 'react';
+import { AuthProvider } from './context/AuthContext';
+import { AppRouter } from './routes/AppRouter';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Clean state switch: only triggers when LoginForm explicitly says it's ok!
-  if (!isAuthenticated) {
-    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
-  }
-
-  return <UserManagementPage />;
+  return (
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
+  );
 }
 
 export default App;

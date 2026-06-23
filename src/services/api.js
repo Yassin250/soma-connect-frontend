@@ -1,26 +1,50 @@
-const API_BASE_URL = 'http://localhost:8080/api'; // Standard Spring Boot local port
+import { apiClient } from './apiClient';
+
+const unwrapApiResult = (response) => {
+  if (response?.data && typeof response.data === 'object' && 'data' in response.data) {
+    return response.data.data;
+  }
+
+  return response.data;
+};
+
+const getApiErrorMessage = (error, fallbackMessage) => {
+  const backendMessage = error?.response?.data?.message;
+  return backendMessage || error?.message || fallbackMessage;
+};
 
 export const authService = {
   login: async (username, password) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    
-    if (!response.ok) {
-      throw new Error('Invalid credentials');
+    try {
+      const response = await apiClient.post('/admin/auth/login', {
+        username,
+        password,
+      });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Invalid credentials'));
     }
-    
-    return response.json(); 
+  },
+  verifyOtp: async (username, otp) => {
+    try {
+      const response = await apiClient.post('/admin/auth/verify-otp', {
+        username,
+        otp,
+      });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'OTP verification failed'));
+    }
   }
 };
 
 export const adminService = {
-  getUsers: async (token) => {
-    const response = await fetch(`${API_BASE_URL}/admin/users`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return response.json();
+  getUsers: async () => {
+    try {
+      const response = await apiClient.get('/api/admin/users');
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load users'));
+    }
   }
 };

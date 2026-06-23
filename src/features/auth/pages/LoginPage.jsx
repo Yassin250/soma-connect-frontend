@@ -1,8 +1,7 @@
 import React from 'react';
 import { LoginForm } from '../components/LoginForm';
 
-// 1. Added onLoginSuccess destructured prop here
-export const LoginPage = ({ onLoginSuccess }) => {
+export const LoginPage = () => {
   return (
     // Strict full-viewport wrapper that completely forbids scrolling
     <div className="h-screen w-full bg-[#eaf2fc] flex items-center justify-center p-4 md:p-6 lg:p-8 overflow-hidden font-sans antialiased">
@@ -75,8 +74,7 @@ export const LoginPage = ({ onLoginSuccess }) => {
 
         {/* Right Side Form Canvas (7/12 Cols) */}
         <div className="col-span-1 md:col-span-7 p-6 sm:p-10 lg:p-12 flex flex-col justify-center bg-white h-full overflow-y-auto no-scrollbar">
-          {/* 2. Safely forwarding the callback handler down into the login form */}
-          <LoginForm onLoginSuccess={onLoginSuccess} />
+          <LoginForm />
         </div>
 
       </div>

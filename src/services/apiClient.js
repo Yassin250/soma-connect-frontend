@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const FALLBACK_API_BASE_URL = 'http://localhost:5050';
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || FALLBACK_API_BASE_URL;
+const normalizedBaseUrl = configuredBaseUrl.replace(/\/+$/, '');
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: normalizedBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
