@@ -6,6 +6,7 @@ const normalizedBaseUrl = configuredBaseUrl.replace(/\/+$/, '');
 
 export const apiClient = axios.create({
   baseURL: normalizedBaseUrl,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -25,10 +26,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('soma_token');
-      localStorage.removeItem('soma_user');
-    }
+    console.error("API response error intercept details:", error.response?.status, error.response?.data);
     return Promise.reject(error);
   }
 );
