@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AddUserModal } from '../components/AddUserModal';
 import { AddRoleModal } from '../components/AddRoleModal';
+import { useAuth } from '../../../context/AuthContext';
 
 const FloatingMenu = ({ coords, onClose, children }) => {
   const menuRef = useRef(null);
@@ -29,7 +31,9 @@ const FloatingMenu = ({ coords, onClose, children }) => {
   );
 };
 
-export const UserManagementPage = ({ onLogout }) => {
+export const UserManagementPage = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState('users');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState('10');
@@ -113,8 +117,13 @@ export const UserManagementPage = ({ onLogout }) => {
     setEditingEntity(null);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
   return (
-    <AdminLayout currentSubPage={currentView} onSubPageChange={setCurrentView} onLogout={onLogout}>
+    <AdminLayout currentSubPage={currentView} onSubPageChange={setCurrentView} onLogout={handleLogout}>
       
       {/* -------------------- USERS SUB-VIEW -------------------- */}
       {currentView === 'users' && (
