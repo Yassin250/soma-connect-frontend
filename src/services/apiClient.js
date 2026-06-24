@@ -6,7 +6,6 @@ const normalizedBaseUrl = configuredBaseUrl.replace(/\/+$/, '');
 
 export const apiClient = axios.create({
   baseURL: normalizedBaseUrl,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

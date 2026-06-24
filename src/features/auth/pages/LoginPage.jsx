@@ -2,8 +2,16 @@ import React from 'react';
 import logo from '../../../assets/2.png';
 import { motion } from 'framer-motion';
 import { LoginForm } from "../components/LoginForm";
+import { useAuth } from '../../../context/AuthContext';
 
 export const LoginPage = ({ onToggleMode }) => {
+  const { logout } = useAuth();
+
+  React.useEffect(() => {
+    // Keep login entry behavior aligned with e-proc flow.
+    logout();
+  }, [logout]);
+
   return (
     <div className="min-h-screen w-full flex bg-white font-sans antialiased select-none">
       <div className="hidden md:flex relative flex-col justify-center items-center w-3/5 bg-[#1660FF] text-white p-20 [clip-path:polygon(0_0,100%_0,88%_100%,0_100%)] z-10 overflow-hidden">

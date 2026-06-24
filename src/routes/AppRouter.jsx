@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { AuthPage } from '../features/auth/AuthPage'; // 1. Import AuthPage
+import { LoginPage } from '../features/auth/pages/LoginPage';
 import { UserManagementPage } from '../features/admin/pages/UserManagementPage';
 
 const ProtectedRoute = ({ children }) => {
   const { user, token } = useAuth();
+
   if (!token || !user) return <Navigate to="/login" replace />;
+
   return children;
 };
 
@@ -14,8 +16,7 @@ export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 2. Point to AuthPage, not LoginPage */}
-        <Route path="/login" element={<AuthPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         <Route
           path="/admin/users"
@@ -26,8 +27,8 @@ export const AppRouter = () => {
           }
         />
 
-        <Route path="/" element={<Navigate to="/admin/users" replace />} />
-        <Route path="*" element={<Navigate to="/admin/users" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

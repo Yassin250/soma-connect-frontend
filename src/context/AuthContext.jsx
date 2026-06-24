@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('soma_token');
     localStorage.removeItem('soma_user');
+    localStorage.removeItem('soma_refresh_token');
     setToken(null);
     setUser(null);
   };
