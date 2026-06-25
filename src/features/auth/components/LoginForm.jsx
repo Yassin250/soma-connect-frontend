@@ -1,13 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
+import { mockDb } from '../../../services/mockDb';
 
-export const LoginForm = ({ onLoginSuccess }) => {
+export const LoginForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [authError, setAuthError] = useState('');
 
   const onSubmit = (data) => {
-    console.log("Credentials validated safely:", data);
-    if (onLoginSuccess) {
-      onLoginSuccess(data);
+    setAuthError('');
+    const emailInput = data.username.trim().toLowerCase();
+    
+    // Query users database
+    const users = mockDb.getUsers();
+    const matchedUser = users.find(u => u.email.toLowerCase() === emailInput || u.username?.toLowerCase() === emailInput);
+    
+    if (!matchedUser) {
+      setAuthError("Email address not found. Try 'admin@somaconnect.rw' for Super-Admin or register a school.");
+      return;
+    }
+
+    // Check school status if school admin/lecturer/student
+    if (matchedUser.role !== 'ADMIN') {
+      const school = mockDb.getSchool(matchedUser.schoolId);
+      if (school) {
+        if (school.status === 'PENDING') {
+          setAuthError(`Access denied: "${school.name}" is pending manual KYC verification.`);
+          return;
+        }
+        if (school.status === 'REJECTED') {
+          setAuthError(`Access denied: "${school.name}" registry has been rejected. Contact registrar.`);
+          return;
+        }
+      }
+    }
+
+    // Success login
+    login('mock-jwt-token-xyz', matchedUser);
+
+    // Route based on role & school status
+    if (matchedUser.role === 'ADMIN') {
+      navigate('/super-admin/approvals');
+    } else if (matchedUser.role === 'SCHOOL_ADMIN') {
+      const school = mockDb.getSchool(matchedUser.schoolId);
+      if (school.status === 'APPROVED') {
+        navigate('/school/setup');
+      } else {
+        navigate('/school/dashboard');
+      }
+    } else if (matchedUser.role === 'STUDENT') {
+      navigate('/student/dashboard');
+    } else {
+      navigate('/school/dashboard');
     }
   };
 
@@ -18,10 +65,16 @@ export const LoginForm = ({ onLoginSuccess }) => {
       <div className="space-y-1 mb-8">
         <h1 className="text-3xl font-normal text-[#1064ff] mb-2">Log In</h1>
         <p className="text-xs text-gray-500">
-          Don't have an account? <a href="#" className="text-[#1064ff] hover:underline font-medium">Create an account</a>
+          Don't have an account? <a href="/register-school" className="text-[#1064ff] hover:underline font-medium">Register your school</a>
         </p>
         <p className="text-[11px] text-gray-400">It will take less than a minute.</p>
       </div>
+
+      {authError && (
+        <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-xs rounded-lg font-medium leading-normal">
+          {authError}
+        </div>
+      )}
 
       {/* Input Fields */}
       <div className="space-y-6">

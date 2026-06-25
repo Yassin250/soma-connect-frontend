@@ -11,9 +11,9 @@ export const DashboardLayout = ({ children }) => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
               <span className="text-xl font-black text-blue-500 tracking-wider">SomaConnect</span>
-              {user && (
+              {user && user.schoolId && (
                 <span className="px-2 py-0.5 text-xs font-semibold bg-zinc-800 text-zinc-300 rounded border border-zinc-700 uppercase">
-                  {user.tenantId}
+                  {user.schoolId}
                 </span>
               )}
             </div>
