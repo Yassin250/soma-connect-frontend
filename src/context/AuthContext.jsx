@@ -2,6 +2,8 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 
 const AuthContext = createContext(undefined);
 
+let logoutHandler = null;
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -40,12 +42,16 @@ export const AuthProvider = ({ children }) => {
 
   const value = useMemo(() => ({ user, token, login, logout, loading }), [user, token, login, logout, loading]);
 
+  logoutHandler = logout;
+
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
   );
 };
+
+export const getLogoutHandler = () => logoutHandler;
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

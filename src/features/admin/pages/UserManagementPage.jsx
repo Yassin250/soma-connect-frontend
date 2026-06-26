@@ -6,87 +6,10 @@ import { AddRoleModal } from '../components/AddRoleModal';
 import { AddUserModal } from '../components/AddUserModal';
 import { Badge } from '../../../components/shared/Badge';
 import { useAuth } from '../../../context/AuthContext';
-import { adminService } from '../../../services/api';
-import { mockDb } from '../../../services/mockDb';
-
-// =============================================================================
-// CONSTANTS
-// =============================================================================
-
-const ROLE_VARIANT = {
-  ADMIN: 'purple',
-  SCHOOL_ADMIN: 'info',
-  LECTURER: 'warning',
-  STUDENT: 'success',
-};
-
-const ROLE_LABEL = {
-  ADMIN: 'Super Admin',
-  SCHOOL_ADMIN: 'School Admin',
-  LECTURER: 'Lecturer',
-  STUDENT: 'Student',
-};
-
-const DEFAULT_ROLES = [
-  {
-    id: 'role-admin',
-    name: 'Super Admin',
-    code: 'ADMIN',
-    description: 'Full system access for school approvals, users, roles, and platform configuration.',
-    permissions: 'ALL_PRIVILEGES',
-    type: 'System Defined',
-    status: 'Active',
-    createdAt: '2026-01-10',
-  },
-  {
-    id: 'role-school-admin',
-    name: 'School Admin',
-    code: 'SCHOOL_ADMIN',
-    description: 'Manages school setup, lecturers, students, courses, and school reporting.',
-    permissions: 'MANAGE_SCHOOL',
-    type: 'System Defined',
-    status: 'Active',
-    createdAt: '2026-01-10',
-  },
-  {
-    id: 'role-lecturer',
-    name: 'Lecturer',
-    code: 'LECTURER',
-    description: 'Creates learning content, quizzes, assignments, and grades submissions.',
-    permissions: 'MANAGE_COURSES',
-    type: 'System Defined',
-    status: 'Active',
-    createdAt: '2026-01-10',
-  },
-  {
-    id: 'role-student',
-    name: 'Student',
-    code: 'STUDENT',
-    description: 'Accesses modules, attempts quizzes, submits assignments, and tracks progress.',
-    permissions: 'LEARNER_ACCESS',
-    type: 'System Defined',
-    status: 'Active',
-    createdAt: '2026-01-10',
-  },
-];
-
-const PERMISSIONS = [
-  { id: 1, name: 'ALL_PRIVILEGES', description: 'Full read and write access across the platform.', category: 'System Control', roles: ['ADMIN'] },
-  { id: 2, name: 'APPROVE_SCHOOLS', description: 'Review, approve, and reject school onboarding requests.', category: 'School Registry', roles: ['ADMIN'] },
-  { id: 3, name: 'MANAGE_SCHOOL', description: 'Configure departments, academic year, staff, students, and courses.', category: 'School Operations', roles: ['ADMIN', 'SCHOOL_ADMIN'] },
-  { id: 4, name: 'MANAGE_COURSES', description: 'Create modules, quizzes, assignments, and grade student submissions.', category: 'Learning', roles: ['SCHOOL_ADMIN', 'LECTURER'] },
-  { id: 5, name: 'LEARNER_ACCESS', description: 'View modules, take quizzes, submit assignments, and track performance.', category: 'Learning', roles: ['STUDENT'] },
-];
-
-const ITEMS_PER_PAGE_OPTIONS = ['5', '10', '20', '50'];
-
-// =============================================================================
-// FLOATING CONTEXT MENU (Portal-based)
-// =============================================================================
 
 /**
- * FloatingMenu — Renders a portal-based dropdown at the given coordinates.
- * Closes when the user clicks outside the menu.
+ * FloatingMenu Component
+ * Handles the contextual dropdown menu for table actions.
  */
 const FloatingMenu = ({ coords, onClose, children }) => {
   const menuRef = useRef(null);
@@ -169,8 +92,8 @@ const PaginationBar = ({ currentPage, totalPages, onPageChange, from, to, total 
             key={page}
             onClick={() => onPageChange(page)}
             className={`w-8 h-8 rounded-lg font-semibold transition-colors ${page === currentPage
-                ? 'bg-[#1064ff] text-white shadow-sm'
-                : 'border border-gray-200 hover:bg-gray-50 text-gray-600'
+              ? 'bg-[#1064ff] text-white shadow-sm'
+              : 'border border-gray-200 hover:bg-gray-50 text-gray-600'
               }`}
           >
             {page}
@@ -193,12 +116,10 @@ const PaginationBar = ({ currentPage, totalPages, onPageChange, from, to, total 
 // =============================================================================
 
 export const UserManagementPage = () => {
-  const { logout, token } = useAuth();
+  const { logout, token } = useAuth(); // Assuming your AuthContext provides the JWT token
   const navigate = useNavigate();
 
-  // ---------------------------------------------------------------------------
-  // UI States
-  // ---------------------------------------------------------------------------
+  // --- UI STATES ---
   const [currentView, setCurrentView] = useState('users');
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
@@ -220,43 +141,51 @@ export const UserManagementPage = () => {
     coords: { top: 0, left: 0 },
   });
 
-  // ---------------------------------------------------------------------------
-  // Data States
-  // ---------------------------------------------------------------------------
+  // --- DATA STATES (Initialized empty for backend fetching) ---
   const [users, setUsers] = useState([]);
   const [schools, setSchools] = useState([]);
   const [roles, setRoles] = useState(DEFAULT_ROLES);
   const [permissions, setPermissions] = useState([]);
 
-  // ---------------------------------------------------------------------------
-  // Loading & Error States
-  // ---------------------------------------------------------------------------
+  // --- LOADING & ERROR STATES ---
   const [isLoading, setIsLoading] = useState({ users: false, roles: false, permissions: false });
   const [error, setError] = useState({ users: null, roles: null, permissions: null });
 
+  // --- API BASE URL ---
+  // Adjust this to match your Spring Boot backend port and context path
+  const API_BASE_URL = 'http://localhost:5050/api/admin';
 
-  // =============================================================================
-  // DATA FETCHING
-  // =============================================================================
+  /**
+   * Helper function to generate auth headers
+   */
+  const getHeaders = useCallback(() => {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Ensure your Spring Security config expects this
+    };
+  }, [token]);
 
-  /** Load users and schools from the local mockDb (offline / no-token fallback) */
-  const loadLocalDirectory = useCallback(() => {
-    setUsers(mockDb.getUsers());
-    setSchools(mockDb.getSchools());
-  }, []);
+  // ==========================================
+  // FETCH OPERATIONS
+  // ==========================================
 
   const fetchUsers = useCallback(async () => {
     setIsLoading((prev) => ({ ...prev, users: true }));
     setError((prev) => ({ ...prev, users: null }));
     try {
-      const data = await adminService.getUsers();
+      const response = await fetch(`${API_BASE_URL}/users`, { headers: getHeaders() });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Users fetch failed:", response.status, errorText);
+        throw new Error(`Failed to fetch users: ${response.status} ${errorText}`);
+      }
+      const data = await response.json();
+      // Handle both raw array and wrapped response {data: [...]}
       setUsers(Array.isArray(data) ? data : (data?.data || []));
-      setSchools(mockDb.getSchools());
     } catch (err) {
-      setError((prev) => ({ ...prev, users: err.message }));
-      // Graceful fallback to mockDb
-      setUsers(mockDb.getUsers());
-      setSchools(mockDb.getSchools());
+      setError(prev => ({ ...prev, users: err.message }));
+      setUsers([]); // Ensure users stays an array
+      console.error("Error fetching users:", err);
     } finally {
       setIsLoading((prev) => ({ ...prev, users: false }));
     }
@@ -266,11 +195,19 @@ export const UserManagementPage = () => {
     setIsLoading((prev) => ({ ...prev, roles: true }));
     setError((prev) => ({ ...prev, roles: null }));
     try {
-      const data = await adminService.getRoles();
+      const response = await fetch(`${API_BASE_URL}/roles`, { headers: getHeaders() });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Roles fetch failed:", response.status, errorText);
+        throw new Error(`Failed to fetch roles: ${response.status} ${errorText}`);
+      }
+      const data = await response.json();
+      // Handle both raw array and wrapped response {data: [...]}
       setRoles(Array.isArray(data) ? data : (data?.data || []));
     } catch (err) {
-      setError((prev) => ({ ...prev, roles: err.message }));
-      setRoles(DEFAULT_ROLES);
+      setError(prev => ({ ...prev, roles: err.message }));
+      setRoles([]); // Ensure roles stays an array
+      console.error("Error fetching roles:", err);
     } finally {
       setIsLoading((prev) => ({ ...prev, roles: false }));
     }
@@ -280,231 +217,152 @@ export const UserManagementPage = () => {
     setIsLoading((prev) => ({ ...prev, permissions: true }));
     setError((prev) => ({ ...prev, permissions: null }));
     try {
-      const data = await adminService.getPermissions();
+      const response = await fetch(`${API_BASE_URL}/permissions`, { headers: getHeaders() });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Permissions fetch failed:", response.status, errorText);
+        throw new Error(`Failed to fetch permissions: ${response.status} ${errorText}`);
+      }
+      const data = await response.json();
+      // Handle both raw array and wrapped response {data: [...]}
       setPermissions(Array.isArray(data) ? data : (data?.data || []));
     } catch (err) {
-      setError((prev) => ({ ...prev, permissions: err.message }));
-      setPermissions([]);
+      setError(prev => ({ ...prev, permissions: err.message }));
+      setPermissions([]); // Ensure permissions stays an array
+      console.error("Error fetching permissions:", err);
     } finally {
       setIsLoading((prev) => ({ ...prev, permissions: false }));
     }
   }, []);
 
-  /** On mount: fetch from API if token exists, otherwise load from mockDb */
+  // Initial Data Load
   useEffect(() => {
-    if (token) {
-      fetchUsers();
-      fetchRoles();
-      fetchPermissions();
-    } else {
-      loadLocalDirectory();
-    }
-  }, [token, fetchUsers, fetchRoles, fetchPermissions, loadLocalDirectory]);
+    fetchUsers();
+    fetchRoles();
+    fetchPermissions();
+  }, [fetchUsers, fetchRoles, fetchPermissions]);
 
-  /** Reset to page 1 whenever search, filters, or items-per-page changes */
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, roleFilter, schoolFilter, itemsPerPage]);
-
-  // =============================================================================
-  // DERIVED / COMPUTED DATA
-  // =============================================================================
-
-  /** Filtered list of users based on search, role, and school filters */
-  const filteredUsers = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    return users.filter((user) => {
-      const matchesSearch =
-        !query ||
-        user.name?.toLowerCase().includes(query) ||
-        user.email?.toLowerCase().includes(query) ||
-        user.username?.toLowerCase().includes(query);
-      const matchesRole = roleFilter === 'ALL' || user.role === roleFilter;
-      const matchesSchool = schoolFilter === 'ALL' || user.schoolId === schoolFilter;
-      return matchesSearch && matchesRole && matchesSchool;
-    });
-  }, [roleFilter, schoolFilter, searchQuery, users]);
-
-  /** Paginated slice of filtered users */
-  const paginatedUsers = useMemo(() => {
-    const limit = parseInt(itemsPerPage, 10);
-    const start = (currentPage - 1) * limit;
-    return filteredUsers.slice(start, start + limit);
-  }, [filteredUsers, currentPage, itemsPerPage]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / parseInt(itemsPerPage, 10)));
-
-  /** Fallback to static PERMISSIONS when API returns nothing */
-  const displayPermissions = permissions.length > 0 ? permissions : PERMISSIONS;
-
-  // =============================================================================
-  // HELPER FUNCTIONS
-  // =============================================================================
-
-  /** Resolve the display name of a school from its ID */
-  const getSchoolName = (schoolId) => {
-    const school = schools.find((item) => item.id === schoolId);
-    return school?.name || 'Platform';
-  };
-
-  /** Render a role badge (Badge component for mockDb codes, plain text for API arrays) */
-  const getRoleDisplay = (user) => {
-    if (user.role) {
-      return (
-        <Badge variant={ROLE_VARIANT[user.role] || 'default'}>
-          {ROLE_LABEL[user.role] || user.role}
-        </Badge>
-      );
-    }
-    if (Array.isArray(user.roles) && user.roles.length > 0) {
-      return <span className="text-blue-600">{user.roles.map((r) => r?.name || r).join(', ')}</span>;
-    }
-    return <span className="text-gray-400">None</span>;
-  };
-
-  /** Derive a normalised role code from a role object */
-  const resolveRoleCode = (role) => role.code || role.name?.replace(/\s+/g, '_').toUpperCase();
-
-  /** Count how many users belong to a given role code */
-  const countUsersForRole = (role) => {
-    const code = resolveRoleCode(role);
-    return code ? users.filter((u) => u.role === code).length : 0;
-  };
-
-  /** Format ISO date strings for table display */
-  const formatDate = (dateStr) => {
-    if (!dateStr) return 'N/A';
-    return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-
-  // =============================================================================
-  // UI EVENT HANDLERS
-  // =============================================================================
-
-  const closeDropdown = () => {
-    setDropdownConfig({ visible: false, type: null, id: null, coords: { top: 0, left: 0 } });
-  };
-
-  const handleActionClick = (event, type, id) => {
-    event.stopPropagation();
-    const rect = event.currentTarget.getBoundingClientRect();
-    setDropdownConfig({
-      visible: true,
-      type,
-      id,
-      coords: {
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
-      },
-    });
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
-
-  // =============================================================================
-  // CRUD OPERATIONS — USERS
-  // =============================================================================
+  // ==========================================
+  // CREATE / UPDATE OPERATIONS
+  // ==========================================
 
   const handleAddOrUpdateUser = async (userData) => {
-    if (token) {
-      try {
-        if (editingUser) {
-          await adminService.updateUser(editingUser.id, userData);
-          await fetchUsers();
-        } else {
-          const payload = {
-            ...userData,
-            username: userData.name.toLowerCase().replace(/\s+/g, ''),
-            userType: 'Internal',
-            status: userData.status || 'Active',
-            lockStatus: 'Unlocked',
-          };
-          await adminService.createUser(payload);
-          await fetchUsers();
-        }
-      } catch (err) {
-        console.error('Error saving user via API:', err);
-        // Fallback: apply change locally via mockDb
-        if (editingUser) {
-          mockDb.updateUser(editingUser.id, userData);
-        } else {
-          mockDb.addUser(userData);
-        }
-        loadLocalDirectory();
+    try {
+      if (editingEntity) {
+        // UPDATE Existing User
+        const response = await fetch(`${API_BASE_URL}/users/${editingEntity.id}`, {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify(userData)
+        });
+        if (!response.ok) throw new Error('Failed to update user');
+        // Refresh the list from the server to ensure consistency
+        await fetchUsers();
+      } else {
+        // CREATE New User
+        const payload = {
+          ...userData,
+          username: userData.name.toLowerCase().replace(/\s+/g, ''),
+          userType: "Internal",
+          status: userData.status || "Active",
+          lockStatus: "Unlocked"
+        };
+        const response = await fetch(`${API_BASE_URL}/users`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error('Failed to create user');
+        await fetchUsers();
       }
-    } else {
-      try {
-        if (editingUser) {
-          mockDb.updateUser(editingUser.id, userData);
-        } else {
-          mockDb.addUser(userData);
-        }
-        loadLocalDirectory();
-      } catch (err) {
-        window.alert(err.message);
-      }
+      setIsModalOpen(false);
+      setEditingEntity(null);
+    } catch (err) {
+      console.error("Error saving user:", err);
+      alert("Failed to save user. Check console for details.");
     }
-    setEditingUser(null);
-    setIsUserModalOpen(false);
   };
 
-  const handleDeleteUser = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
-      closeDropdown();
-      return;
-    }
-    if (token) {
-      try {
-        await adminService.deleteUser(id);
-        await fetchUsers();
-      } catch (err) {
-        console.error('Error deleting user via API:', err);
-        const user = users.find((u) => u.id === id);
-        if (user?.role === 'ADMIN') { closeDropdown(); return; }
-        mockDb.removeUser(id);
-        loadLocalDirectory();
+  const handleAddOrUpdateRole = async (roleData) => {
+    try {
+      if (editingEntity) {
+        // UPDATE Existing Role
+        const response = await fetch(`${API_BASE_URL}/roles/${editingEntity.id}`, {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify(roleData)
+        });
+        if (!response.ok) throw new Error('Failed to update role');
+        await fetchRoles();
+      } else {
+        // CREATE New Role
+        const payload = {
+          ...roleData,
+          permissions: "CUSTOM_" + roleData.name.replace(/\s+/g, '_').toUpperCase(),
+          status: "Active"
+        };
+        const response = await fetch(`${API_BASE_URL}/roles`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error('Failed to create role');
+        await fetchRoles();
       }
-    } else {
-      const user = users.find((u) => u.id === id);
-      if (user?.role === 'ADMIN') { closeDropdown(); return; }
-      mockDb.removeUser(id);
-      loadLocalDirectory();
+      setIsRoleModalOpen(false);
+      setEditingEntity(null);
+    } catch (err) {
+      console.error("Error saving role:", err);
+      alert("Failed to save role. Check console for details.");
+    }
+  };
+
+  // ==========================================
+  // QUICK ACTIONS (STATUS, UNLOCK, DELETE)
+  // ==========================================
+
+  const toggleUserStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${id}/status`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!response.ok) throw new Error('Failed to update user status');
+      await fetchUsers();
+    } catch (err) {
+      console.error("Error toggling user status:", err);
     }
     closeDropdown();
   };
 
-  const handleToggleUserStatus = async (id) => {
-    const user = users.find((u) => u.id === id);
-    if (!user) return;
-    const newStatus = user.status === 'Active' ? 'Inactive' : 'Active';
-
-    if (token) {
-      try {
-        await adminService.toggleUserStatus(id, newStatus);
-        await fetchUsers();
-      } catch (err) {
-        console.error('Error toggling user status via API:', err);
-        mockDb.updateUser(id, { status: newStatus });
-        loadLocalDirectory();
-      }
-    } else {
-      mockDb.updateUser(id, { status: newStatus });
-      loadLocalDirectory();
+  const toggleRoleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    try {
+      const response = await fetch(`${API_BASE_URL}/roles/${id}/status`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!response.ok) throw new Error('Failed to update role status');
+      await fetchRoles();
+    } catch (err) {
+      console.error("Error toggling role status:", err);
     }
     closeDropdown();
   };
 
-  const handleUnlockUser = async (id) => {
-    if (token) {
-      try {
-        await adminService.unlockUser(id);
-        await fetchUsers();
-      } catch (err) {
-        console.error('Error unlocking user via API:', err);
-      }
+  const unlockUser = async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${id}/unlock`, {
+        method: 'PATCH',
+        headers: getHeaders()
+      });
+      if (!response.ok) throw new Error('Failed to unlock user');
+      await fetchUsers();
+    } catch (err) {
+      console.error("Error unlocking user:", err);
     }
     closeDropdown();
   };
@@ -581,49 +439,60 @@ export const UserManagementPage = () => {
       closeDropdown();
       return;
     }
-    if (token) {
-      try {
-        await adminService.deleteRole(id);
-        await fetchRoles();
-      } catch (err) {
-        console.error('Error deleting role via API:', err);
-        setRoles((current) =>
-          current.filter((role) => role.id !== id || role.type === 'System Defined')
-        );
+    try {
+      const endpoint = type === 'user' ? `/users/${id}` : `/roles/${id}`;
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'DELETE',
+        headers: getHeaders()
+      });
+      if (!response.ok) throw new Error(`Failed to delete ${type}`);
+
+      if (type === 'user') await fetchUsers();
+      if (type === 'role') await fetchRoles();
+    } catch (err) {
+      console.error(`Error deleting ${type}:`, err);
+      alert(`Failed to delete ${type}. It might be tied to existing records.`);
+    }
+    closeDropdown();
+  };
+
+  // ==========================================
+  // UI HANDLERS
+  // ==========================================
+
+  const handleActionClick = (e, type, id) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDropdownConfig({
+      visible: true,
+      type,
+      id,
+      coords: {
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX
       }
-    } else {
-      setRoles((current) =>
-        current.filter((role) => role.id !== id || role.type === 'System Defined')
+    });
+  };
+
+  const closeDropdown = () => setDropdownConfig({ visible: false, type: null, id: null, coords: { top: 0, left: 0 } });
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
+  // ==========================================
+  // RENDER HELPERS
+  // ==========================================
+
+  const renderLoadingOrError = (type) => {
+    if (isLoading[type]) {
+      return (
+        <div className="p-8 text-center text-sm text-gray-500">
+          Loading {type} data from server...
+        </div>
       );
     }
-    closeDropdown();
-  };
-
-  const handleToggleRoleStatus = async (id) => {
-    const role = roles.find((r) => r.id === id);
-    if (!role) return;
-    const newStatus = role.status === 'Active' ? 'Inactive' : 'Active';
-
-    if (token) {
-      try {
-        await adminService.toggleRoleStatus(id, newStatus);
-        await fetchRoles();
-      } catch (err) {
-        console.error('Error toggling role status via API:', err);
-        setRoles((current) => current.map((r) => (r.id === id ? { ...r, status: newStatus } : r)));
-      }
-    } else {
-      setRoles((current) => current.map((r) => (r.id === id ? { ...r, status: newStatus } : r)));
-    }
-    closeDropdown();
-  };
-
-  // =============================================================================
-  // RENDER HELPERS
-  // =============================================================================
-
-  const renderTableState = (type) => {
-    if (isLoading[type]) return <TableSpinner label={type} />;
     if (error[type]) {
       return (
         <div className="p-8 text-center text-xs text-red-500 bg-red-50">
@@ -647,9 +516,7 @@ export const UserManagementPage = () => {
   return (
     <AdminLayout currentSubPage={currentView} onSubPageChange={setCurrentView} onLogout={handleLogout}>
 
-      {/* ======================================================================
-          USERS SUB-VIEW
-      ====================================================================== */}
+      {/* -------------------- USERS SUB-VIEW -------------------- */}
       {currentView === 'users' && (
         <div className="space-y-6">
 
@@ -665,9 +532,8 @@ export const UserManagementPage = () => {
               </p>
             </div>
             <button
-              id="btn-new-user"
-              onClick={() => { setEditingUser(null); setIsUserModalOpen(true); }}
-              className="bg-[#1064ff] text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:bg-blue-600 flex items-center justify-center space-x-1.5 transition-colors shadow-sm"
+              onClick={() => { setEditingEntity(null); setIsModalOpen(true); }}
+              className="bg-[#1064ff] text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:bg-blue-600 flex items-center space-x-1.5"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -772,25 +638,19 @@ export const UserManagementPage = () => {
                       <td className="p-3.5 font-semibold text-gray-900">{user.name}</td>
                       <td className="p-3.5 text-gray-500">{user.username || user.email?.split('@')[0]}</td>
                       <td className="p-3.5 text-gray-500">{user.email}</td>
-                      <td className="p-3.5">{getRoleDisplay(user)}</td>
-                      <td className="p-3.5 text-gray-500 max-w-[180px] truncate">{getSchoolName(user.schoolId)}</td>
-                      <td className="p-3.5"><StatusBadge status={user.status} /></td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">{formatDate(user.createdAt)}</td>
-                    </tr>
-                  ))}
-                  {!isLoading.users && paginatedUsers.length === 0 && (
-                    <tr>
-                      <td colSpan={8} className="px-4 py-10 text-center">
-                        <div className="flex flex-col items-center gap-2 text-gray-400">
-                          <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20H7a5 5 0 110-10h.5M15 4.5A3.5 3.5 0 1118.5 8H15V4.5z" />
-                          </svg>
-                          <span className="text-xs font-semibold">
-                            {filteredUsers.length === 0 && users.length > 0
-                              ? 'No users match your current filters.'
-                              : 'No users found.'}
-                          </span>
-                        </div>
+                      <td className="p-3.5 text-blue-600">
+                        {Array.isArray(user.roles) && user.roles.length > 0
+                          ? user.roles.map(r => r?.name || r).join(', ')
+                          : user.roles || "None"}
+                      </td>
+                      <td className="p-3.5">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${user.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-rose-50 text-rose-700'}`}>
+                          <span className={`w-1 h-1 rounded-full mr-1.5 ${user.status === 'Active' ? 'bg-green-500' : 'bg-rose-500'}`} />
+                          {user.status}
+                        </span>
+                      </td>
+                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                       </td>
                     </tr>
                   )}
@@ -814,9 +674,7 @@ export const UserManagementPage = () => {
         </div>
       )}
 
-      {/* ======================================================================
-          ROLES SUB-VIEW
-      ====================================================================== */}
+      {/* -------------------- ROLES SUB-VIEW -------------------- */}
       {currentView === 'roles' && (
         <div className="space-y-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -825,9 +683,8 @@ export const UserManagementPage = () => {
               <p className="text-xs text-gray-500 mt-0.5">Manage system roles and custom access groups.</p>
             </div>
             <button
-              id="btn-new-role"
-              onClick={() => { setEditingRole(null); setIsRoleModalOpen(true); }}
-              className="bg-[#1064ff] text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:bg-blue-600 flex items-center justify-center space-x-1.5 transition-colors shadow-sm"
+              onClick={() => { setEditingEntity(null); setIsRoleModalOpen(true); }}
+              className="bg-[#1064ff] text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:bg-blue-600"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -868,8 +725,8 @@ export const UserManagementPage = () => {
                       <td className="p-3.5 text-gray-500 max-w-xs truncate">{role.description}</td>
                       <td className="p-3.5">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${role.type === 'System Defined'
-                            ? 'bg-slate-100 text-slate-600'
-                            : 'bg-indigo-50 text-indigo-600'
+                          ? 'bg-slate-100 text-slate-600'
+                          : 'bg-indigo-50 text-indigo-600'
                           }`}>
                           {role.type || 'Custom'}
                         </span>
@@ -899,9 +756,7 @@ export const UserManagementPage = () => {
         </div>
       )}
 
-      {/* ======================================================================
-          PERMISSIONS SUB-VIEW
-      ====================================================================== */}
+      {/* -------------------- PERMISSIONS SUB-VIEW -------------------- */}
       {currentView === 'permissions' && (
         <div className="space-y-6">
           <div className="text-left">
@@ -952,13 +807,10 @@ export const UserManagementPage = () => {
         </div>
       )}
 
-      {/* ======================================================================
-          FLOATING CONTEXT MENU (Portal)
-      ====================================================================== */}
-      {dropdownConfig.visible && menuEntity && (
+      {/* --- FLOATING ACTIONS PORTAL CONTEXT MENU --- */}
+      {dropdownConfig.visible && (
         <FloatingMenu coords={dropdownConfig.coords} onClose={closeDropdown}>
-
-          {/* Edit */}
+          {/* EDIT ACTION */}
           <button
             onClick={() => {
               if (dropdownConfig.type === 'user') {
@@ -978,7 +830,7 @@ export const UserManagementPage = () => {
             <span>Edit</span>
           </button>
 
-          {/* Toggle Status — shows current state label */}
+          {/* TOGGLE STATUS ACTION */}
           <button
             onClick={() => {
               if (dropdownConfig.type === 'user') {
@@ -989,11 +841,15 @@ export const UserManagementPage = () => {
             }}
             className="w-full px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-slate-50 transition-colors flex items-center space-x-2.5"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${menuEntity.status === 'Active' ? 'bg-rose-500' : 'bg-green-500'}`} />
-            <span>{menuEntity.status === 'Active' ? 'Make Inactive' : 'Make Active'}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+            <span>
+              {dropdownConfig.type === 'user'
+                ? (users.find(u => u.id === dropdownConfig.id)?.status === 'Active' ? 'Make Inactive' : 'Make Active')
+                : (roles.find(r => r.id === dropdownConfig.id)?.status === 'Active' ? 'Make Inactive' : 'Make Active')}
+            </span>
           </button>
 
-          {/* Unlock (users only) */}
+          {/* UNLOCK ACTION (USERS ONLY) */}
           {dropdownConfig.type === 'user' && (
             <button
               onClick={() => handleUnlockUser(dropdownConfig.id)}
@@ -1010,7 +866,7 @@ export const UserManagementPage = () => {
 
           <div className="border-t border-gray-100 my-1" />
 
-          {/* Delete */}
+          {/* DELETE ACTION */}
           <button
             onClick={() => {
               if (dropdownConfig.type === 'user') {
@@ -1029,22 +885,9 @@ export const UserManagementPage = () => {
         </FloatingMenu>
       )}
 
-      {/* ======================================================================
-          MODALS
-      ====================================================================== */}
-      <AddUserModal
-        isOpen={isUserModalOpen}
-        onClose={() => { setIsUserModalOpen(false); setEditingUser(null); }}
-        onAddUser={handleAddOrUpdateUser}
-        editData={editingUser}
-        schools={schools}
-      />
-      <AddRoleModal
-        isOpen={isRoleModalOpen}
-        onClose={() => { setIsRoleModalOpen(false); setEditingRole(null); }}
-        onAddRole={handleAddOrUpdateRole}
-        editData={editingRole}
-      />
+      {/* --- MODALS --- */}
+      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddUser={handleAddOrUpdateUser} editData={editingEntity} />
+      <AddRoleModal isOpen={isRoleModalOpen} onClose={() => setIsRoleModalOpen(false)} onAddRole={handleAddOrUpdateRole} editData={editingEntity} />
     </AdminLayout>
   );
 };

@@ -78,6 +78,7 @@ export const LoginForm = ({ onToggleMode }) => {
     if (response.refreshToken) {
       localStorage.setItem('soma_refresh_token', response.refreshToken);
     }
+<<<<<<< Updated upstream
     navigate(getRoleRedirect(authUser), { replace: true });
   };
 
@@ -91,6 +92,13 @@ export const LoginForm = ({ onToggleMode }) => {
 
     login('mock-jwt-token-xyz', matchedUser);
     navigate(getRoleRedirect(matchedUser), { replace: true });
+=======
+    const redirectPath = authUser.roles?.some(r => (r?.name || r) === 'SUPER_ADMIN' || (r?.name || r) === 'ADMIN')
+      ? '/admin/users'
+      : '/admin/users';
+
+    navigate(redirectPath, { replace: true });
+>>>>>>> Stashed changes
   };
 
   const onSubmitCredentials = async (data) => {
