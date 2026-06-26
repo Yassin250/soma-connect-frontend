@@ -1,144 +1,258 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import { authService } from '../../../services/api';
 import { mockDb } from '../../../services/mockDb';
 
-export const LoginForm = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [authError, setAuthError] = useState('');
+const getRoleRedirect = (user) => {
+  const role = user?.role || user?.roles?.[0];
 
-  const onSubmit = (data) => {
-    setAuthError('');
-    const emailInput = data.username.trim().toLowerCase();
-    
-    // Query users database
-    const users = mockDb.getUsers();
-    const matchedUser = users.find(u => u.email.toLowerCase() === emailInput || u.username?.toLowerCase() === emailInput);
-    
-    if (!matchedUser) {
-      setAuthError("Email address not found. Try 'admin@somaconnect.rw' for Super-Admin or register a school.");
+  if (role === 'ADMIN' || role === 'System Admin') return '/super-admin/approvals';
+  if (role === 'SCHOOL_ADMIN') {
+    const school = mockDb.getSchool(user.schoolId);
+    return school?.status === 'ACTIVE' ? '/school/dashboard' : '/school/setup';
+  }
+  if (role === 'STUDENT') return '/student/dashboard';
+  if (role === 'LECTURER') return '/school/dashboard';
+
+  return '/admin/users';
+};
+
+const findMockUser = (username) => {
+  const emailInput = username.trim().toLowerCase();
+  return mockDb
+    .getUsers()
+    .find((user) => user.email?.toLowerCase() === emailInput || user.username?.toLowerCase() === emailInput);
+};
+
+const validateMockUserAccess = (user) => {
+  if (!user) {
+    return "Email address not found. Try 'admin@somaconnect.rw' for Super-Admin or register a school.";
+  }
+
+  if (user.role !== 'ADMIN' && user.schoolId) {
+    const school = mockDb.getSchool(user.schoolId);
+    if (school?.status === 'PENDING') {
+      return `Access denied: "${school.name}" is pending manual KYC verification.`;
+    }
+    if (school?.status === 'REJECTED') {
+      return `Access denied: "${school.name}" registry has been rejected. Contact registrar.`;
+    }
+  }
+
+  return '';
+};
+
+export const LoginForm = ({ onToggleMode }) => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [pendingUsername, setPendingUsername] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+
+  const saveAuthAndRedirect = (response) => {
+    if (!response?.token) {
+      throw new Error('Token missing from authentication response');
+    }
+
+    const authUser = {
+      id: response.id,
+      name: response.name,
+      username: response.username,
+      email: response.email,
+      role: response.role,
+      roles: response.roles || [],
+      permissions: response.permissions || [],
+    };
+
+    login(response.token, authUser);
+    if (response.refreshToken) {
+      localStorage.setItem('soma_refresh_token', response.refreshToken);
+    }
+    navigate(getRoleRedirect(authUser), { replace: true });
+  };
+
+  const loginWithMockUser = (username) => {
+    const matchedUser = findMockUser(username);
+    const validationError = validateMockUserAccess(matchedUser);
+
+    if (validationError) {
+      throw new Error(validationError);
+    }
+
+    login('mock-jwt-token-xyz', matchedUser);
+    navigate(getRoleRedirect(matchedUser), { replace: true });
+  };
+
+  const onSubmitCredentials = async (data) => {
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      if (!data.password?.trim()) {
+        loginWithMockUser(data.username);
+        return;
+      }
+
+      const response = await authService.login(data.username, data.password);
+      if (response?.otpRequired) {
+        setOtpRequired(true);
+        setPendingUsername(response.username || data.username);
+        return;
+      }
+      saveAuthAndRedirect(response);
+    } catch (error) {
+      const mockUser = findMockUser(data.username);
+      if (mockUser) {
+        try {
+          loginWithMockUser(data.username);
+          return;
+        } catch (mockError) {
+          setErrorMessage(mockError?.message || 'Unable to sign in');
+          return;
+        }
+      }
+      setErrorMessage(error?.message || 'Unable to sign in');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!pendingUsername || !otpCode.trim()) {
+      setErrorMessage('OTP is required');
       return;
     }
 
-    // Check school status if school admin/lecturer/student
-    if (matchedUser.role !== 'ADMIN') {
-      const school = mockDb.getSchool(matchedUser.schoolId);
-      if (school) {
-        if (school.status === 'PENDING') {
-          setAuthError(`Access denied: "${school.name}" is pending manual KYC verification.`);
-          return;
-        }
-        if (school.status === 'REJECTED') {
-          setAuthError(`Access denied: "${school.name}" registry has been rejected. Contact registrar.`);
-          return;
-        }
-      }
-    }
-
-    // Success login
-    login('mock-jwt-token-xyz', matchedUser);
-
-    // Route based on role & school status
-    if (matchedUser.role === 'ADMIN') {
-      navigate('/super-admin/approvals');
-    } else if (matchedUser.role === 'SCHOOL_ADMIN') {
-      const school = mockDb.getSchool(matchedUser.schoolId);
-      if (school.status === 'APPROVED') {
-        navigate('/school/setup');
-      } else {
-        navigate('/school/dashboard');
-      }
-    } else if (matchedUser.role === 'STUDENT') {
-      navigate('/student/dashboard');
-    } else {
-      navigate('/school/dashboard');
+    setIsSubmitting(true);
+    setErrorMessage('');
+    try {
+      const response = await authService.verifyOtp(pendingUsername, otpCode.trim());
+      saveAuthAndRedirect(response);
+    } catch (error) {
+      setErrorMessage(error?.message || 'OTP verification failed');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm mx-auto space-y-6">
-      
-      {/* Header Area */}
+    <form onSubmit={handleSubmit(onSubmitCredentials)} className="w-full max-w-sm mx-auto space-y-6">
       <div className="space-y-1 mb-8">
         <h1 className="text-3xl font-normal text-[#1064ff] mb-2">Log In</h1>
         <p className="text-xs text-gray-500">
-          Don't have an account? <a href="/register-school" className="text-[#1064ff] hover:underline font-medium">Register your school</a>
+          Don't have an account?{' '}
+          {onToggleMode ? (
+            <button type="button" onClick={onToggleMode} className="text-[#1064ff] hover:underline font-medium">
+              Create an account
+            </button>
+          ) : (
+            <Link to="/register-school" className="text-[#1064ff] hover:underline font-medium">
+              Register your school
+            </Link>
+          )}
         </p>
-        <p className="text-[11px] text-gray-400">It will take less than a minute.</p>
+        <p className="text-[11px] text-gray-400">Use a password for API login, or leave it empty for local demo users.</p>
       </div>
 
-      {authError && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-xs rounded-lg font-medium leading-normal">
-          {authError}
+      {!otpRequired && (
+        <div className="space-y-6">
+          <div className="relative border-b border-gray-300 py-2">
+            <input
+              {...register('username', { required: 'Username is required' })}
+              type="text"
+              placeholder="Username or email"
+              className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8"
+            />
+            {errors.username && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.username.message}</p>}
+          </div>
+
+          <div className="relative border-b border-gray-300 py-2">
+            <input
+              {...register('password')}
+              type="password"
+              placeholder="Password"
+              className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8"
+            />
+          </div>
         </div>
       )}
 
-      {/* Input Fields */}
-      <div className="space-y-6">
-        
-        {/* Username */}
-        <div className="relative border-b border-gray-300 py-2">
-          <input 
-            {...register('username', { required: 'Username is required' })} 
-            type="text"
-            placeholder="Username" 
-            className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8"
-          />
-          <span className="absolute right-0 top-2 text-gray-400">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </span>
-          {errors.username && (
-            <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.username.message}</p>
-          )}
+      {otpRequired && (
+        <div className="space-y-2">
+          <p className="text-xs text-gray-500">
+            OTP sent for <span className="font-semibold">{pendingUsername}</span>.
+          </p>
+          <div className="relative border-b border-gray-300 py-2">
+            <input
+              value={otpCode}
+              onChange={(event) => setOtpCode(event.target.value)}
+              type="text"
+              maxLength={6}
+              placeholder="Enter OTP code"
+              className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8 tracking-widest"
+            />
+          </div>
         </div>
+      )}
 
-        {/* Password */}
-        <div className="relative border-b border-gray-300 py-2">
-          <input 
-            {...register('password', { required: 'Password is required' })} 
-            type="password"
-            placeholder="Password" 
-            className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8"
-          />
-          <span className="absolute right-0 top-2 text-gray-400">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </span>
-          {errors.password && (
-            <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.password.message}</p>
-          )}
-        </div>
+      {errorMessage && (
+        <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-2">
+          {errorMessage}
+        </p>
+      )}
 
-      </div>
-
-      {/* Button & Checkbox inline */}
       <div className="flex items-center pt-4 space-x-6">
-        <button 
-          type="submit" 
-          className="px-8 py-2 bg-[#1064ff] hover:bg-blue-700 text-white text-sm font-medium rounded shadow-sm transition-colors"
-        >
-          Sign in
-        </button>
-        <label className="flex items-center space-x-2 cursor-pointer text-gray-500 text-xs">
-          <input 
-            type="checkbox" 
-            className="w-3.5 h-3.5 rounded border-gray-300 text-[#1064ff] focus:ring-[#1064ff]" 
-          />
-          <span>Remember password</span>
-        </label>
+        {!otpRequired ? (
+          <>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-8 py-2 bg-[#1064ff] hover:bg-blue-700 text-white text-sm font-medium rounded shadow-sm transition-colors disabled:opacity-70"
+            >
+              {isSubmitting ? 'Signing in...' : 'Sign in'}
+            </button>
+            <label className="flex items-center space-x-2 cursor-pointer text-gray-500 text-xs">
+              <input type="checkbox" className="w-3.5 h-3.5 rounded border-gray-300 text-[#1064ff]" />
+              <span>Remember</span>
+            </label>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={handleVerifyOtp}
+              disabled={isSubmitting}
+              className="px-8 py-2 bg-[#1064ff] text-white text-sm font-medium rounded shadow-sm disabled:opacity-70"
+            >
+              {isSubmitting ? 'Verifying...' : 'Verify OTP'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setOtpRequired(false);
+                setOtpCode('');
+              }}
+              className="text-xs text-gray-500 hover:text-gray-700 underline"
+            >
+              Back to login
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Forget Password link */}
       <div className="text-center pt-8">
         <a href="#" className="text-xs text-[#1064ff] hover:underline">Forgot your password?</a>
       </div>
-
     </form>
   );
 };

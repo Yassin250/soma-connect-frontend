@@ -511,6 +511,28 @@ export const mockDb = {
     return newUser;
   },
 
+  updateUser: (userId, updates) => {
+    const users = mockDb.getUsers();
+    const index = users.findIndex((u) => u.id === userId);
+    if (index === -1) {
+      throw new Error("User not found");
+    }
+
+    const duplicate = users.find(
+      (u) => u.id !== userId && u.email?.toLowerCase() === updates.email?.toLowerCase()
+    );
+    if (duplicate) {
+      throw new Error(`User with email ${updates.email} already exists.`);
+    }
+
+    users[index] = {
+      ...users[index],
+      ...updates,
+    };
+    localStorage.setItem("soma_users", JSON.stringify(users));
+    return users[index];
+  },
+
   removeUser: (userId) => {
     const users = mockDb.getUsers();
     const filtered = users.filter((u) => u.id !== userId);

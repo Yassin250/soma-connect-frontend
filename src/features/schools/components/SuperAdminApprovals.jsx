@@ -21,13 +21,14 @@ export const SuperAdminApprovals = () => {
   const handleApprove = (id) => {
     try {
       const updated = mockDb.updateSchoolStatus(id, 'APPROVED');
+      const portalLoginUrl = `${window.location.origin}/login`;
       loadSchools();
       
       // Simulate sending approval onboarding email
       setSimulatedEmail({
         to: `admin@${updated.domain}`,
         subject: `SomaConnect Instance Approved - ${updated.name}`,
-        body: `Hello ${updated.contactName},\n\nWe are pleased to inform you that your request for a SomaConnect instance for "${updated.name}" has been approved.\n\nYour school admin portal is ready for setup. Please sign in with the following credentials to initialize your platform:\n\nEmail: admin@${updated.domain}\nTemporary Password: AdminPassword123\n\nClick the link below to configure your school profile, invite lecturers, and sync student CSV spreadsheets:\nhttp://localhost:5173/login\n\nWelcome to the SomaConnect community.\n\nWarm regards,\nSomaConnect Pilot Operations Team`
+        body: `Hello ${updated.contactName},\n\nWe are pleased to inform you that your request for a SomaConnect instance for "${updated.name}" has been approved.\n\nYour school admin portal is ready for setup. Please sign in with the following credentials to initialize your platform:\n\nEmail: admin@${updated.domain}\nTemporary Password: AdminPassword123\n\nClick the link below to configure your school profile, invite lecturers, and sync student CSV spreadsheets:\n${portalLoginUrl}\n\nWelcome to the SomaConnect community.\n\nWarm regards,\nSomaConnect Pilot Operations Team`
       });
     } catch (err) {
       alert(err.message);

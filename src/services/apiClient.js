@@ -1,7 +1,19 @@
 import axios from 'axios';
 
+const resolveApiBaseUrl = () => {
+  const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+  if (!configuredBaseUrl) {
+    throw new Error('Missing VITE_API_BASE_URL. Define it in the active Vite environment file.');
+  }
+
+  return configuredBaseUrl.replace(/\/+$/, '');
+};
+
+export const API_BASE_URL = resolveApiBaseUrl();
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -20,11 +32,5 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('soma_token');
-      localStorage.removeItem('soma_user');
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 const AuthContext = createContext(undefined);
 
@@ -11,28 +11,37 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem('soma_token');
     const storedUser = localStorage.getItem('soma_user');
     if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      try {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem('soma_token');
+        localStorage.removeItem('soma_user');
+        localStorage.removeItem('soma_refresh_token');
+      }
     }
     setLoading(false);
   }, []);
 
-  const login = (newToken, newUser) => {
+  const login = useCallback((newToken, newUser) => {
     localStorage.setItem('soma_token', newToken);
     localStorage.setItem('soma_user', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('soma_token');
     localStorage.removeItem('soma_user');
+    localStorage.removeItem('soma_refresh_token');
     setToken(null);
     setUser(null);
-  };
+  }, []);
+
+  const value = useMemo(() => ({ user, token, login, logout, loading }), [user, token, login, logout, loading]);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
   );
