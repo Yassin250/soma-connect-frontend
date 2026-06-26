@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../../services/api';
 import { useAuth } from '../../../context/AuthContext';
+import { authService } from '../../../services/api';
 
 export const LoginForm = ({ onToggleMode }) => {
   const navigate = useNavigate();
@@ -13,11 +13,11 @@ export const LoginForm = ({ onToggleMode }) => {
     formState: { errors },
   } = useForm();
 
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [otpRequired, setOtpRequired] = React.useState(false);
-  const [pendingUsername, setPendingUsername] = React.useState('');
-  const [otpCode, setOtpCode] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [pendingUsername, setPendingUsername] = useState('');
+  const [otpCode, setOtpCode] = useState('');
 
   const saveAuthAndRedirect = (response) => {
     if (!response?.token) {
@@ -29,6 +29,7 @@ export const LoginForm = ({ onToggleMode }) => {
       name: response.name,
       username: response.username,
       email: response.email,
+      role: response.role,
       roles: response.roles || [],
       permissions: response.permissions || [],
     };
@@ -37,12 +38,27 @@ export const LoginForm = ({ onToggleMode }) => {
     if (response.refreshToken) {
       localStorage.setItem('soma_refresh_token', response.refreshToken);
     }
-    navigate('/admin/users', { replace: true });
+
+    const role = authUser.role || (Array.isArray(authUser.roles) ? authUser.roles[0] : null);
+    const roleName = typeof role === 'string' ? role : role?.name;
+
+    if (roleName === 'ADMIN' || roleName === 'SUPER_ADMIN' || roleName === 'System Admin') {
+      navigate('/admin/users', { replace: true });
+    } else if (roleName === 'SCHOOL_ADMIN') {
+      navigate('/admin/users', { replace: true });
+    } else if (roleName === 'STUDENT') {
+      navigate('/admin/users', { replace: true });
+    } else if (roleName === 'LECTURER') {
+      navigate('/admin/users', { replace: true });
+    } else {
+      navigate('/admin/users', { replace: true });
+    }
   };
 
   const onSubmitCredentials = async (data) => {
     setIsSubmitting(true);
     setErrorMessage('');
+
     try {
       const response = await authService.login(data.username, data.password);
       if (response?.otpRequired) {
@@ -78,19 +94,19 @@ export const LoginForm = ({ onToggleMode }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmitCredentials)} className="w-full max-w-sm mx-auto space-y-6">
-      
-      {/* Header Area */}
       <div className="space-y-1 mb-8">
         <h1 className="text-3xl font-normal text-[#1064ff] mb-2">Log In</h1>
         <p className="text-xs text-gray-500">
           Don't have an account?{' '}
-          <button 
-            type="button" 
-            onClick={onToggleMode} 
-            className="text-[#1064ff] hover:underline font-medium"
-          >
-            Create an account
-          </button>
+          {onToggleMode ? (
+            <button type="button" onClick={onToggleMode} className="text-[#1064ff] hover:underline font-medium">
+              Create an account
+            </button>
+          ) : (
+            <a href="/login" className="text-[#1064ff] hover:underline font-medium">
+              Register
+            </a>
+          )}
         </p>
         <p className="text-[11px] text-gray-400">It will take less than a minute.</p>
       </div>
@@ -162,13 +178,13 @@ export const LoginForm = ({ onToggleMode }) => {
               type="button"
               onClick={handleVerifyOtp}
               disabled={isSubmitting}
-              className="px-8 py-2 bg-[#1064ff] text-white text-sm font-medium rounded shadow-sm"
+              className="px-8 py-2 bg-[#1064ff] text-white text-sm font-medium rounded shadow-sm disabled:opacity-70"
             >
               {isSubmitting ? 'Verifying...' : 'Verify OTP'}
             </button>
             <button
               type="button"
-              onClick={() => setOtpRequired(false)}
+              onClick={() => { setOtpRequired(false); setOtpCode(''); }}
               className="text-xs text-gray-500 hover:text-gray-700 underline"
             >
               Back to login
