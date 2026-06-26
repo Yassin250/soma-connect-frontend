@@ -1,48 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { authService } from '../../../services/api';
-import { mockDb } from '../../../services/mockDb';
-
-const getRoleRedirect = (user) => {
-  const role = user?.role || user?.roles?.[0];
-
-  if (role === 'ADMIN' || role === 'System Admin') return '/super-admin/approvals';
-  if (role === 'SCHOOL_ADMIN') {
-    const school = mockDb.getSchool(user.schoolId);
-    return school?.status === 'ACTIVE' ? '/school/dashboard' : '/school/setup';
-  }
-  if (role === 'STUDENT') return '/student/dashboard';
-  if (role === 'LECTURER') return '/school/dashboard';
-
-  return '/admin/users';
-};
-
-const findMockUser = (username) => {
-  const emailInput = username.trim().toLowerCase();
-  return mockDb
-    .getUsers()
-    .find((user) => user.email?.toLowerCase() === emailInput || user.username?.toLowerCase() === emailInput);
-};
-
-const validateMockUserAccess = (user) => {
-  if (!user) {
-    return "Email address not found. Try 'admin@somaconnect.rw' for Super-Admin or register a school.";
-  }
-
-  if (user.role !== 'ADMIN' && user.schoolId) {
-    const school = mockDb.getSchool(user.schoolId);
-    if (school?.status === 'PENDING') {
-      return `Access denied: "${school.name}" is pending manual KYC verification.`;
-    }
-    if (school?.status === 'REJECTED') {
-      return `Access denied: "${school.name}" registry has been rejected. Contact registrar.`;
-    }
-  }
-
-  return '';
-};
 
 export const LoginForm = ({ onToggleMode }) => {
   const navigate = useNavigate();
@@ -78,27 +38,21 @@ export const LoginForm = ({ onToggleMode }) => {
     if (response.refreshToken) {
       localStorage.setItem('soma_refresh_token', response.refreshToken);
     }
-<<<<<<< Updated upstream
-    navigate(getRoleRedirect(authUser), { replace: true });
-  };
 
-  const loginWithMockUser = (username) => {
-    const matchedUser = findMockUser(username);
-    const validationError = validateMockUserAccess(matchedUser);
+    const role = authUser.role || (Array.isArray(authUser.roles) ? authUser.roles[0] : null);
+    const roleName = typeof role === 'string' ? role : role?.name;
 
-    if (validationError) {
-      throw new Error(validationError);
+    if (roleName === 'ADMIN' || roleName === 'SUPER_ADMIN' || roleName === 'System Admin') {
+      navigate('/admin/users', { replace: true });
+    } else if (roleName === 'SCHOOL_ADMIN') {
+      navigate('/admin/users', { replace: true });
+    } else if (roleName === 'STUDENT') {
+      navigate('/admin/users', { replace: true });
+    } else if (roleName === 'LECTURER') {
+      navigate('/admin/users', { replace: true });
+    } else {
+      navigate('/admin/users', { replace: true });
     }
-
-    login('mock-jwt-token-xyz', matchedUser);
-    navigate(getRoleRedirect(matchedUser), { replace: true });
-=======
-    const redirectPath = authUser.roles?.some(r => (r?.name || r) === 'SUPER_ADMIN' || (r?.name || r) === 'ADMIN')
-      ? '/admin/users'
-      : '/admin/users';
-
-    navigate(redirectPath, { replace: true });
->>>>>>> Stashed changes
   };
 
   const onSubmitCredentials = async (data) => {
@@ -106,11 +60,6 @@ export const LoginForm = ({ onToggleMode }) => {
     setErrorMessage('');
 
     try {
-      if (!data.password?.trim()) {
-        loginWithMockUser(data.username);
-        return;
-      }
-
       const response = await authService.login(data.username, data.password);
       if (response?.otpRequired) {
         setOtpRequired(true);
@@ -119,16 +68,6 @@ export const LoginForm = ({ onToggleMode }) => {
       }
       saveAuthAndRedirect(response);
     } catch (error) {
-      const mockUser = findMockUser(data.username);
-      if (mockUser) {
-        try {
-          loginWithMockUser(data.username);
-          return;
-        } catch (mockError) {
-          setErrorMessage(mockError?.message || 'Unable to sign in');
-          return;
-        }
-      }
       setErrorMessage(error?.message || 'Unable to sign in');
     } finally {
       setIsSubmitting(false);
@@ -164,12 +103,12 @@ export const LoginForm = ({ onToggleMode }) => {
               Create an account
             </button>
           ) : (
-            <Link to="/register-school" className="text-[#1064ff] hover:underline font-medium">
-              Register your school
-            </Link>
+            <a href="/login" className="text-[#1064ff] hover:underline font-medium">
+              Register
+            </a>
           )}
         </p>
-        <p className="text-[11px] text-gray-400">Use a password for API login, or leave it empty for local demo users.</p>
+        <p className="text-[11px] text-gray-400">It will take less than a minute.</p>
       </div>
 
       {!otpRequired && (
@@ -178,7 +117,7 @@ export const LoginForm = ({ onToggleMode }) => {
             <input
               {...register('username', { required: 'Username is required' })}
               type="text"
-              placeholder="Username or email"
+              placeholder="Username"
               className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8"
             />
             {errors.username && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.username.message}</p>}
@@ -186,24 +125,23 @@ export const LoginForm = ({ onToggleMode }) => {
 
           <div className="relative border-b border-gray-300 py-2">
             <input
-              {...register('password')}
+              {...register('password', { required: 'Password is required' })}
               type="password"
               placeholder="Password"
               className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none pr-8"
             />
+            {errors.password && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.password.message}</p>}
           </div>
         </div>
       )}
 
       {otpRequired && (
         <div className="space-y-2">
-          <p className="text-xs text-gray-500">
-            OTP sent for <span className="font-semibold">{pendingUsername}</span>.
-          </p>
+          <p className="text-xs text-gray-500">OTP sent for <span className="font-semibold">{pendingUsername}</span>.</p>
           <div className="relative border-b border-gray-300 py-2">
             <input
               value={otpCode}
-              onChange={(event) => setOtpCode(event.target.value)}
+              onChange={(e) => setOtpCode(e.target.value)}
               type="text"
               maxLength={6}
               placeholder="Enter OTP code"
@@ -246,10 +184,7 @@ export const LoginForm = ({ onToggleMode }) => {
             </button>
             <button
               type="button"
-              onClick={() => {
-                setOtpRequired(false);
-                setOtpCode('');
-              }}
+              onClick={() => { setOtpRequired(false); setOtpCode(''); }}
               className="text-xs text-gray-500 hover:text-gray-700 underline"
             >
               Back to login
