@@ -1,144 +1,154 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 
-const ROLES = [
-  { value: 'ADMIN', label: 'Super Admin' },
-  { value: 'SCHOOL_ADMIN', label: 'School Admin' },
-  { value: 'LECTURER', label: 'Lecturer' },
-  { value: 'STUDENT', label: 'Student' },
-];
+export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [status, setStatus] = useState('Active');
+  const [roleId, setRoleId] = useState('');
+  const [roles, setRoles] = useState([]);
+  const { token } = useAuth();
 
-export const AddUserModal = ({ isOpen, onClose, onAddUser, editData, schools = [] }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'STUDENT',
-    schoolId: '',
-    status: 'Active',
-  });
+  // Determine mode
+  const isEditMode = !!editData;
 
-  const isEditMode = Boolean(editData);
-  const requiresSchool = formData.role !== 'ADMIN';
-
+  // Fetch roles when modal opens
   useEffect(() => {
-    if (!isOpen) return;
+    if (isOpen) {
+      const fetchRoles = async () => {
+        try {
+          const response = await fetch('http://localhost:5050/api/admin/roles', {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) throw new Error('Failed to fetch roles');
+          const data = await response.json();
+          const roleList = Array.isArray(data) ? data : (data?.data || []);
+          setRoles(roleList);
+          // If editing, preselect the role
+          if (editData && editData.roleId) {
+            setRoleId(editData.roleId.toString());
+          }
+        } catch (err) {
+          console.error('Error fetching roles:', err);
+        }
+      };
+      fetchRoles();
+    }
+  }, [isOpen, editData, token]);
 
-    setFormData({
-      name: editData?.name || '',
-      email: editData?.email || '',
-      role: editData?.role || editData?.roles?.[0] || 'STUDENT',
-      schoolId: editData?.schoolId || '',
-      status: editData?.status || 'Active',
-    });
+  // Populate fields when opening or editData changes
+  useEffect(() => {
+    if (isOpen) {
+      if (editData) {
+        setName(editData.name || '');
+        setEmail(editData.email || '');
+        setStatus(editData.status || 'Active');
+        // password not filled for security
+        setPassword('');
+        setRoleId(editData.roleId ? editData.roleId.toString() : '');
+      } else {
+        // Reset for add
+        setName('');
+        setEmail('');
+        setPassword('');
+        setStatus('Active');
+        setRoleId('');
+      }
+    }
   }, [editData, isOpen]);
 
   if (!isOpen) return null;
 
-  const updateField = (field, value) => {
-    setFormData((current) => ({
-      ...current,
-      [field]: value,
-      ...(field === 'role' && value === 'ADMIN' ? { schoolId: '' } : {}),
-    }));
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    onAddUser({
-      ...formData,
-      schoolId: requiresSchool ? formData.schoolId : undefined,
-    });
-    onClose();
-  };
-
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[10000] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-left border border-gray-100">
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <div>
-            <h3 className="text-base font-bold text-gray-900">
-              {isEditMode ? 'Update User Profile' : 'Add New User'}
-            </h3>
-            <p className="text-[11px] text-gray-500 mt-0.5">
-              {isEditMode ? 'Modify an existing account.' : 'Create a new account in the user directory.'}
-            </p>
-          </div>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[1000]">
+      <div className="bg-white rounded-[24px] shadow-xl w-full max-w-[480px] overflow-hidden border border-gray-200 p-6 relative">
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors text-lg"
+        >
+          &times;
+        </button>
+
+        {/* Header */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-gray-900 tracking-tight">
+            {isEditMode ? 'Update User Profile' : 'Add New User'}
+          </h3>
+          <p className="text-[11px] text-gray-400 mt-0.5">
+            {isEditMode
+              ? 'Modify existing system account properties and profile data.'
+              : 'Create a system directory identity profile container.'}
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onAddUser({ name, email, password, status, roleId });
+          }}
+          className="space-y-5"
+        >
+          {/* Full Name */}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               Full Name
             </label>
             <input
               type="text"
               required
-              value={formData.name}
-              onChange={(event) => updateField('name', event.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Ganza Kenny"
               className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+          {/* Email */}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               Email Address
             </label>
             <input
               type="email"
               required
-              value={formData.email}
-              onChange={(event) => updateField('email', event.target.value)}
-              placeholder="e.g. g.kenny@ur.ac.rw"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="e.g. g.kenny@somaconnect.rw"
               className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-              Role
-            </label>
-            <select
-              required
-              value={formData.role}
-              onChange={(event) => updateField('role', event.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs bg-white focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
-            >
-              {ROLES.map((role) => (
-                <option key={role.value} value={role.value}>{role.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {requiresSchool && (
-            <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                School
+          {/* Password (only for add, not shown in edit for security) */}
+          {!isEditMode && (
+            <div className="space-y-1.5">
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                Password
               </label>
-              <select
+              <input
+                type="password"
                 required
-                value={formData.schoolId}
-                onChange={(event) => updateField('schoolId', event.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs bg-white focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
-              >
-                <option value="">Select school...</option>
-                {schools
-                  .filter((school) => school.status === 'ACTIVE' || school.status === 'APPROVED')
-                  .map((school) => (
-                    <option key={school.id} value={school.id}>{school.name}</option>
-                  ))}
-              </select>
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
+              />
             </div>
           )}
 
-          <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+          {/* Status */}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               Account Status
             </label>
             <select
-              value={formData.status}
-              onChange={(event) => updateField('status', event.target.value)}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs bg-white focus:outline-none text-gray-800 font-medium"
             >
               <option value="Active">Active</option>
@@ -146,6 +156,26 @@ export const AddUserModal = ({ isOpen, onClose, onAddUser, editData, schools = [
             </select>
           </div>
 
+          {/* Role dropdown */}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+              Role
+            </label>
+            <select
+              value={roleId}
+              onChange={(e) => setRoleId(e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs bg-white focus:outline-none text-gray-800 font-medium"
+            >
+              <option value="">Select a role</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Actions */}
           <div className="pt-4 flex justify-end space-x-2.5">
             <button
               type="button"
