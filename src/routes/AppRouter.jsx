@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { UserManagementPage } from '../features/admin/pages/UserManagementPage';
+import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
+import { RegisterPage } from '../features/auth/pages/RegisterPage';
+
 
 const ProtectedRoute = ({ children }) => {
   const { user, token } = useAuth();
@@ -29,6 +32,8 @@ export const AppRouter = () => {
 
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </BrowserRouter>
   );

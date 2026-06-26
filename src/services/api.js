@@ -35,7 +35,36 @@ export const authService = {
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'OTP verification failed'));
     }
+  },
+
+  requestPasswordReset: async (email) => {
+  try {
+    const response = await apiClient.post('/admin/auth/forgot-password', { email });
+    return unwrapApiResult(response);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not send reset code'));
   }
+},
+
+verifyPasswordResetOtp: async (email, otp) => {
+  try {
+    const response = await apiClient.post('/admin/auth/forgot-password/verify-otp', { email, otp });
+    return unwrapApiResult(response);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Invalid or expired code'));
+  }
+},
+
+resetPassword: async (email, newPassword) => {
+  try {
+    const response = await apiClient.post('/admin/auth/reset-password', { email, newPassword });
+    return unwrapApiResult(response);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not reset password'));
+  }
+},
+
+
 };
 
 export const adminService = {

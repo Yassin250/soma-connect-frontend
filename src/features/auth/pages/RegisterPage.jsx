@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import logo from '../../../assets/2.png';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate, Link } from 'react-router-dom';
+
 
 export const RegisterPage = ({ onToggleMode }) => {
+  const navigate = useNavigate();
   const [activePath, setActivePath] = useState(null);
 
   const inputStyle = "w-full bg-transparent border-b-2 border-gray-300 py-3 px-1 text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#1660FF] transition-all duration-300 mb-6";
@@ -12,10 +15,10 @@ export const RegisterPage = ({ onToggleMode }) => {
     
     // Forms specific to your logic requirements
     const forms = {
-      Individual: ["Full Name", "National ID / Passport", "Phone Number (Momo)", "Highest Education"],
-      Intern: ["Current School Name", "Student ID Number", "Major / Department"],
-      University: ["University Name", "Accreditation ID", "VAT/TIN Number", "Number of Students"],
-      Secondary: ["School Name", "School Code (MINEDUC)", "Principal's Name", "Number of Teachers"]
+      Individual: ["Full Name", "Your Email","Phone Number(+...)", "Highest Education"],
+      Intern: ["Full Name", "Your Email","Phone Number(+...)", "School Name/School Code","Level Of Education", "Major / Department"],
+      University: ["University Name","Your Contacts", "Website Link"],
+      Secondary: ["School Name", "School Code (MINEDUC)","Your Contacts"]
     };
 
     return (
@@ -63,7 +66,7 @@ export const RegisterPage = ({ onToggleMode }) => {
           )}
         </AnimatePresence>
 
-        <p className="mt-24 text-sm text-gray-500">Already have an account? <button onClick={onToggleMode} className="text-[#1660FF] font-semibold hover:underline">Log in</button></p>
+        <p className="mt-16 text-m text-gray-500">Already have an account? <Link to="/login" className="text-[#1660FF] font-semibold hover:underline">Log in</Link></p>
         <div className="mt-10" />
       </div>
     </div>
