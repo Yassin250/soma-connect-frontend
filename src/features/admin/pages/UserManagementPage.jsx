@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../layouts/AdminLayout';
@@ -6,6 +6,10 @@ import { AddUserModal } from '../components/AddUserModal';
 import { AddRoleModal } from '../components/AddRoleModal';
 import { useAuth } from '../../../context/AuthContext';
 
+/**
+ * FloatingMenu Component
+ * Handles the contextual dropdown menu for table actions.
+ */
 const FloatingMenu = ({ coords, onClose, children }) => {
   const menuRef = useRef(null);
 
@@ -32,36 +36,268 @@ const FloatingMenu = ({ coords, onClose, children }) => {
 };
 
 export const UserManagementPage = () => {
-  const { logout } = useAuth();
+  const { logout, token } = useAuth(); // Assuming your AuthContext provides the JWT token
   const navigate = useNavigate();
+  
+  // --- UI STATES ---
   const [currentView, setCurrentView] = useState('users');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState('10');
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [editingEntity, setEditingEntity] = useState(null); 
-
+  const [editingEntity, setEditingEntity] = useState(null);
   const [dropdownConfig, setDropdownConfig] = useState({ visible: false, type: null, id: null, coords: { top: 0, left: 0 } });
 
-  // --- DATA STATES ---
-  const [users, setUsers] = useState([
-    { id: 1, name: "Confiance Ufitamahoro", username: "brazo", email: "c.ufitamahoro@soma.ac.rw", userType: "Internal", roles: "System Admin", status: "Active", lockStatus: "Unlocked", createdAt: "2026-04-12" },
-    { id: 2, name: "Ganza Kenny", username: "kennyg", email: "g.kenny@soma.ac.rw", userType: "Internal", roles: "Mentor", status: "Active", lockStatus: "Unlocked", createdAt: "2026-04-15" },
-    { id: 3, name: "Nziza Keneth", username: "keneth_n", email: "k.nziza@soma.ac.rw", userType: "Internal", roles: "Mentee", status: "Inactive", lockStatus: "Locked", createdAt: "2026-05-02" }
-  ]);
+  // --- DATA STATES (Initialized empty for backend fetching) ---
+  const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [permissions, setPermissions] = useState([]);
 
-  const [roles, setRoles] = useState([
-    { id: 1, name: "System Admin", description: "Full operational override access across all platform configurations.", permissions: "ALL_PRIVILEGES", type: "System Defined", status: "Active", createdAt: "2026-01-10" },
-    { id: 2, name: "Mentor", description: "Manage localized training groups.", permissions: "READ_WRITE_SESSIONS", type: "Custom", status: "Active", createdAt: "2026-04-01" },
-    { id: 3, name: "Mentee", description: "Enroll in designated workspace tracks.", permissions: "READ_TRACKS", type: "Custom", status: "Active", createdAt: "2026-04-01" }
-  ]);
+  // --- LOADING & ERROR STATES ---
+  const [isLoading, setIsLoading] = useState({ users: false, roles: false, permissions: false });
+  const [error, setError] = useState({ users: null, roles: null, permissions: null });
 
-  const [permissions] = useState([
-    { id: 1, name: "ALL_PRIVILEGES", description: "Grants absolute write, edit, delete capabilities over entire directories.", category: "System Control", createdAt: "2026-01-01" },
-    { id: 2, name: "READ_WRITE_SESSIONS", description: "Allows editing of program scheduling calendars and assigning benchmarks.", category: "Mentorship", createdAt: "2026-04-01" },
-    { id: 3, name: "READ_TRACKS", description: "Enables viewing system dashboard feeds and public directory structures.", category: "General Access", createdAt: "2026-04-01" }
-  ]);
+  // --- API BASE URL ---
+  // Adjust this to match your Spring Boot backend port and context path
+  const API_BASE_URL = 'http://localhost:5050/api/admin';
+
+  /**
+   * Helper function to generate auth headers
+   */
+  const getHeaders = useCallback(() => {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Ensure your Spring Security config expects this
+    };
+  }, [token]);
+
+  // ==========================================
+  // FETCH OPERATIONS
+  // ==========================================
+
+  const fetchUsers = useCallback(async () => {
+    setIsLoading(prev => ({ ...prev, users: true }));
+    setError(prev => ({ ...prev, users: null }));
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`, { headers: getHeaders() });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Users fetch failed:", response.status, errorText);
+        throw new Error(`Failed to fetch users: ${response.status} ${errorText}`);
+      }
+      const data = await response.json();
+      // Handle both raw array and wrapped response {data: [...]}
+      setUsers(Array.isArray(data) ? data : (data?.data || []));
+    } catch (err) {
+      setError(prev => ({ ...prev, users: err.message }));
+      setUsers([]); // Ensure users stays an array
+      console.error("Error fetching users:", err);
+    } finally {
+      setIsLoading(prev => ({ ...prev, users: false }));
+    }
+  }, [getHeaders]);
+
+  const fetchRoles = useCallback(async () => {
+    setIsLoading(prev => ({ ...prev, roles: true }));
+    setError(prev => ({ ...prev, roles: null }));
+    try {
+      const response = await fetch(`${API_BASE_URL}/roles`, { headers: getHeaders() });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Roles fetch failed:", response.status, errorText);
+        throw new Error(`Failed to fetch roles: ${response.status} ${errorText}`);
+      }
+      const data = await response.json();
+      // Handle both raw array and wrapped response {data: [...]}
+      setRoles(Array.isArray(data) ? data : (data?.data || []));
+    } catch (err) {
+      setError(prev => ({ ...prev, roles: err.message }));
+      setRoles([]); // Ensure roles stays an array
+      console.error("Error fetching roles:", err);
+    } finally {
+      setIsLoading(prev => ({ ...prev, roles: false }));
+    }
+  }, [getHeaders]);
+
+  const fetchPermissions = useCallback(async () => {
+    setIsLoading(prev => ({ ...prev, permissions: true }));
+    setError(prev => ({ ...prev, permissions: null }));
+    try {
+      const response = await fetch(`${API_BASE_URL}/permissions`, { headers: getHeaders() });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Permissions fetch failed:", response.status, errorText);
+        throw new Error(`Failed to fetch permissions: ${response.status} ${errorText}`);
+      }
+      const data = await response.json();
+      // Handle both raw array and wrapped response {data: [...]}
+      setPermissions(Array.isArray(data) ? data : (data?.data || []));
+    } catch (err) {
+      setError(prev => ({ ...prev, permissions: err.message }));
+      setPermissions([]); // Ensure permissions stays an array
+      console.error("Error fetching permissions:", err);
+    } finally {
+      setIsLoading(prev => ({ ...prev, permissions: false }));
+    }
+  }, [getHeaders]);
+
+  // Initial Data Load
+  useEffect(() => {
+    fetchUsers();
+    fetchRoles();
+    fetchPermissions();
+  }, [fetchUsers, fetchRoles, fetchPermissions]);
+
+  // ==========================================
+  // CREATE / UPDATE OPERATIONS
+  // ==========================================
+
+  const handleAddOrUpdateUser = async (userData) => {
+    try {
+      if (editingEntity) {
+        // UPDATE Existing User
+        const response = await fetch(`${API_BASE_URL}/users/${editingEntity.id}`, {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify(userData)
+        });
+        if (!response.ok) throw new Error('Failed to update user');
+        // Refresh the list from the server to ensure consistency
+        await fetchUsers();
+      } else {
+        // CREATE New User
+        const payload = {
+          ...userData,
+          username: userData.name.toLowerCase().replace(/\s+/g, ''),
+          userType: "Internal",
+          status: userData.status || "Active",
+          lockStatus: "Unlocked"
+        };
+        const response = await fetch(`${API_BASE_URL}/users`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error('Failed to create user');
+        await fetchUsers();
+      }
+      setIsModalOpen(false);
+      setEditingEntity(null);
+    } catch (err) {
+      console.error("Error saving user:", err);
+      alert("Failed to save user. Check console for details.");
+    }
+  };
+
+  const handleAddOrUpdateRole = async (roleData) => {
+    try {
+      if (editingEntity) {
+        // UPDATE Existing Role
+        const response = await fetch(`${API_BASE_URL}/roles/${editingEntity.id}`, {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify(roleData)
+        });
+        if (!response.ok) throw new Error('Failed to update role');
+        await fetchRoles();
+      } else {
+        // CREATE New Role
+        const payload = {
+          ...roleData,
+          permissions: "CUSTOM_" + roleData.name.replace(/\s+/g, '_').toUpperCase(),
+          status: "Active"
+        };
+        const response = await fetch(`${API_BASE_URL}/roles`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error('Failed to create role');
+        await fetchRoles();
+      }
+      setIsRoleModalOpen(false);
+      setEditingEntity(null);
+    } catch (err) {
+      console.error("Error saving role:", err);
+      alert("Failed to save role. Check console for details.");
+    }
+  };
+
+  // ==========================================
+  // QUICK ACTIONS (STATUS, UNLOCK, DELETE)
+  // ==========================================
+
+  const toggleUserStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${id}/status`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!response.ok) throw new Error('Failed to update user status');
+      await fetchUsers();
+    } catch (err) {
+      console.error("Error toggling user status:", err);
+    }
+    closeDropdown();
+  };
+
+  const toggleRoleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    try {
+      const response = await fetch(`${API_BASE_URL}/roles/${id}/status`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!response.ok) throw new Error('Failed to update role status');
+      await fetchRoles();
+    } catch (err) {
+      console.error("Error toggling role status:", err);
+    }
+    closeDropdown();
+  };
+
+  const unlockUser = async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${id}/unlock`, {
+        method: 'PATCH',
+        headers: getHeaders()
+      });
+      if (!response.ok) throw new Error('Failed to unlock user');
+      await fetchUsers();
+    } catch (err) {
+      console.error("Error unlocking user:", err);
+    }
+    closeDropdown();
+  };
+
+  const deleteEntity = async (type, id) => {
+    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) {
+      closeDropdown();
+      return;
+    }
+    try {
+      const endpoint = type === 'user' ? `/users/${id}` : `/roles/${id}`;
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'DELETE',
+        headers: getHeaders()
+      });
+      if (!response.ok) throw new Error(`Failed to delete ${type}`);
+      
+      if (type === 'user') await fetchUsers();
+      if (type === 'role') await fetchRoles();
+    } catch (err) {
+      console.error(`Error deleting ${type}:`, err);
+      alert(`Failed to delete ${type}. It might be tied to existing records.`);
+    }
+    closeDropdown();
+  };
+
+  // ==========================================
+  // UI HANDLERS
+  // ==========================================
 
   const handleActionClick = (e, type, id) => {
     e.stopPropagation();
@@ -79,47 +315,31 @@ export const UserManagementPage = () => {
 
   const closeDropdown = () => setDropdownConfig({ visible: false, type: null, id: null, coords: { top: 0, left: 0 } });
 
-  const handleAddOrUpdateUser = (userData) => {
-    if (editingEntity) {
-      setUsers(users.map(u => u.id === editingEntity.id ? { ...u, ...userData } : u));
-    } else {
-      setUsers([...users, {
-        id: users.length + 1,
-        name: userData.name,
-        username: userData.name.toLowerCase().replace(/\s+/g, ''),
-        email: userData.email,
-        userType: "Internal",
-        roles: "Mentee",
-        status: userData.status,
-        lockStatus: "Unlocked",
-        createdAt: new Date().toISOString().split('T')[0]
-      }]);
-    }
-    setIsModalOpen(false);
-    setEditingEntity(null);
-  };
-
-  const handleAddOrUpdateRole = (roleData) => {
-    if (editingEntity) {
-      setRoles(roles.map(r => r.id === editingEntity.id ? { ...r, ...roleData } : r));
-    } else {
-      setRoles([...roles, {
-        id: roles.length + 1,
-        name: roleData.name,
-        description: roleData.description,
-        permissions: "CUSTOM_" + roleData.name.replace(/\s+/g, '_').toUpperCase(),
-        type: roleData.type,
-        status: "Active",
-        createdAt: new Date().toISOString().split('T')[0]
-      }]);
-    }
-    setIsRoleModalOpen(false);
-    setEditingEntity(null);
-  };
-
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
+  };
+
+  // ==========================================
+  // RENDER HELPERS
+  // ==========================================
+  
+  const renderLoadingOrError = (type) => {
+    if (isLoading[type]) {
+      return (
+        <div className="p-8 text-center text-sm text-gray-500">
+          Loading {type} data from server...
+        </div>
+      );
+    }
+    if (error[type]) {
+      return (
+        <div className="p-8 text-center text-sm text-red-500 bg-red-50 rounded-b-xl">
+          Error loading data: {error[type]}
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -168,18 +388,28 @@ export const UserManagementPage = () => {
                       <td className="p-3.5 font-semibold text-gray-900">{user.name}</td>
                       <td className="p-3.5 text-gray-500">{user.username}</td>
                       <td className="p-3.5 text-gray-500">{user.email}</td>
-                      <td className="p-3.5 text-blue-600">{user.roles}</td>
+                      <td className="p-3.5 text-blue-600">
+                        {Array.isArray(user.roles) && user.roles.length > 0
+                          ? user.roles.map(r => r?.name || r).join(', ')
+                          : user.roles || "None"}
+                      </td>
                       <td className="p-3.5">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${user.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-rose-50 text-rose-700'}`}>
                           <span className={`w-1 h-1 rounded-full mr-1.5 ${user.status === 'Active' ? 'bg-green-500' : 'bg-rose-500'}`} />
                           {user.status}
                         </span>
                       </td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">{user.createdAt}</td>
+                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {renderLoadingOrError('users')}
+              {!isLoading.users && !error.users && users.length === 0 && (
+                <div className="p-8 text-center text-sm text-gray-500">No users found.</div>
+              )}
             </div>
           </div>
         </div>
@@ -233,11 +463,17 @@ export const UserManagementPage = () => {
                           {role.status}
                         </span>
                       </td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">{role.createdAt}</td>
+                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
+                        {role.createdAt ? new Date(role.createdAt).toLocaleDateString() : 'N/A'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {renderLoadingOrError('roles')}
+              {!isLoading.roles && !error.roles && roles.length === 0 && (
+                <div className="p-8 text-center text-sm text-gray-500">No roles found.</div>
+              )}
             </div>
           </div>
         </div>
@@ -268,11 +504,17 @@ export const UserManagementPage = () => {
                       <td className="p-3.5 pl-5 font-mono text-[11px] text-blue-600 font-bold">{perm.name}</td>
                       <td className="p-3.5 text-gray-500 max-w-sm">{perm.description}</td>
                       <td className="p-3.5"><span className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[11px] font-semibold">{perm.category}</span></td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">{perm.createdAt}</td>
+                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
+                        {perm.createdAt ? new Date(perm.createdAt).toLocaleDateString() : 'N/A'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {renderLoadingOrError('permissions')}
+              {!isLoading.permissions && !error.permissions && permissions.length === 0 && (
+                <div className="p-8 text-center text-sm text-gray-500">No permissions found.</div>
+              )}
             </div>
           </div>
         </div>
@@ -281,6 +523,7 @@ export const UserManagementPage = () => {
       {/* --- FLOATING ACTIONS PORTAL CONTEXT MENU --- */}
       {dropdownConfig.visible && (
         <FloatingMenu coords={dropdownConfig.coords} onClose={closeDropdown}>
+          {/* EDIT ACTION */}
           <button
             onClick={() => {
               if (dropdownConfig.type === 'user') {
@@ -302,14 +545,16 @@ export const UserManagementPage = () => {
             <span>Edit</span>
           </button>
 
+          {/* TOGGLE STATUS ACTION */}
           <button
             onClick={() => {
               if (dropdownConfig.type === 'user') {
-                setUsers(users.map(u => u.id === dropdownConfig.id ? { ...u, status: u.status === 'Active' ? 'Inactive' : 'Active' } : u));
+                const user = users.find(u => u.id === dropdownConfig.id);
+                toggleUserStatus(user.id, user.status);
               } else {
-                setRoles(roles.map(r => r.id === dropdownConfig.id ? { ...r, status: r.status === 'Active' ? 'Inactive' : 'Active' } : r));
+                const role = roles.find(r => r.id === dropdownConfig.id);
+                toggleRoleStatus(role.id, role.status);
               }
-              closeDropdown();
             }}
             className="w-full px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-slate-50 transition-colors flex items-center space-x-2"
           >
@@ -321,12 +566,10 @@ export const UserManagementPage = () => {
             </span>
           </button>
 
+          {/* UNLOCK ACTION (USERS ONLY) */}
           {dropdownConfig.type === 'user' && (
             <button
-              onClick={() => {
-                setUsers(users.map(u => u.id === dropdownConfig.id ? { ...u, lockStatus: 'Unlocked' } : u));
-                closeDropdown();
-              }}
+              onClick={() => unlockUser(dropdownConfig.id)}
               disabled={users.find(u => u.id === dropdownConfig.id)?.lockStatus === 'Unlocked'}
               className="w-full px-4 py-2 text-left text-xs font-semibold flex items-center space-x-2 disabled:text-gray-300 disabled:cursor-not-allowed hover:bg-slate-50 text-gray-700"
             >
@@ -337,15 +580,9 @@ export const UserManagementPage = () => {
 
           <div className="border-t border-gray-100 my-1"></div>
 
+          {/* DELETE ACTION */}
           <button
-            onClick={() => {
-              if (dropdownConfig.type === 'user') {
-                setUsers(users.filter(u => u.id !== dropdownConfig.id));
-              } else {
-                setRoles(roles.filter(r => r.id !== dropdownConfig.id));
-              }
-              closeDropdown();
-            }}
+            onClick={() => deleteEntity(dropdownConfig.type, dropdownConfig.id)}
             className="w-full px-4 py-2 text-left text-xs font-bold text-red-600 hover:bg-red-50 flex items-center space-x-2"
           >
             <svg className="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
