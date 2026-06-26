@@ -70,5 +70,69 @@ export const adminService = {
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to delete user'));
     }
+  },
+  toggleUserStatus: async (userId, status) => {
+    try {
+      const response = await apiClient.patch(`/api/admin/users/${userId}/status`, { status });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update user status'));
+    }
+  },
+  unlockUser: async (userId) => {
+    try {
+      const response = await apiClient.patch(`/api/admin/users/${userId}/unlock`);
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to unlock user'));
+    }
+  },
+  getRoles: async () => {
+    try {
+      const response = await apiClient.get('/api/admin/roles');
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load roles'));
+    }
+  },
+  createRole: async (roleData) => {
+    try {
+      const response = await apiClient.post('/api/admin/roles', roleData);
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to create role'));
+    }
+  },
+  updateRole: async (roleId, roleData) => {
+    try {
+      const response = await apiClient.put(`/api/admin/roles/${roleId}`, roleData);
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update role'));
+    }
+  },
+  deleteRole: async (roleId) => {
+    try {
+      const response = await apiClient.delete(`/api/admin/roles/${roleId}`);
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to delete role'));
+    }
+  },
+  toggleRoleStatus: async (roleId, status) => {
+    try {
+      const response = await apiClient.patch(`/api/admin/roles/${roleId}/status`, { status });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update role status'));
+    }
+  },
+  getPermissions: async () => {
+    try {
+      const response = await apiClient.get('/api/admin/permissions');
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load permissions'));
+    }
   }
 };
