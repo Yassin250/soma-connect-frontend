@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
-export const AddRoleModal = ({ isOpen, onClose, onAddRole, editData }) => {
+export const AddRoleModal = ({ isOpen, onClose, onSubmit, editingRole }) => {
   const [newRoleName, setNewRoleName] = useState('');
   const [newRoleDesc, setNewRoleDesc] = useState('');
   const [newRoleType, setNewRoleType] = useState('Active');
 
-  // Determine mode based on presence of editData
-  const isEditMode = !!editData;
+  // Determine mode based on presence of editingRole
+  const isEditMode = !!editingRole;
 
   useEffect(() => {
     if (isOpen) {
-      if (editData) {
+      if (editingRole) {
         // Pre-populate fields with existing data when editing
-        setNewRoleName(editData.name || '');
-        setNewRoleDesc(editData.description || '');
-        setNewRoleType(editData.status || 'Active');
+        setNewRoleName(editingRole.name || '');
+        setNewRoleDesc(editingRole.description || '');
+        setNewRoleType(editingRole.status || 'Active');
       } else {
         // Reset fields completely when adding a new role
         setNewRoleName('');
@@ -22,7 +22,7 @@ export const AddRoleModal = ({ isOpen, onClose, onAddRole, editData }) => {
         setNewRoleType('Active');
       }
     }
-  }, [editData, isOpen]);
+  }, [editingRole, isOpen]);
 
   if (!isOpen) return null;
 
@@ -30,7 +30,7 @@ export const AddRoleModal = ({ isOpen, onClose, onAddRole, editData }) => {
     e.preventDefault();
     if (!newRoleName.trim() || !newRoleDesc.trim()) return;
 
-    onAddRole({
+    onSubmit({
       name: newRoleName,
       description: newRoleDesc,
       status: newRoleType,

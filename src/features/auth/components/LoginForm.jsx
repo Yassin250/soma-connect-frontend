@@ -41,6 +41,23 @@ export const LoginForm = ({ onToggleMode }) => {
     return () => clearInterval(timer);
   }, [otpRequired, timeLeft]);
 
+  const getRedirectPath = (roles) => {
+    const primaryRole = roles?.[0]?.toUpperCase();
+    switch (primaryRole) {
+      case 'SUPER_ADMIN':
+      case 'ADMIN':
+        return '/admin/dashboard';
+      case 'SCHOOL_ADMIN':
+        return '/school/dashboard';
+      case 'STUDENT':
+        return '/student/dashboard';
+      case 'LECTURER':
+        return '/lecturer/dashboard';
+      default:
+        return '/admin/dashboard';
+    }
+  };
+
   const saveAuthAndRedirect = (response) => {
     if (!response?.token) {
       throw new Error('Token missing from authentication response');
@@ -59,7 +76,8 @@ export const LoginForm = ({ onToggleMode }) => {
     if (response.refreshToken) {
       localStorage.setItem('soma_refresh_token', response.refreshToken);
     }
-    navigate('/admin/users', { replace: true });
+    const redirectPath = getRedirectPath(authUser.roles);
+    navigate(redirectPath, { replace: true });
   };
 
   const onSubmitCredentials = async (data) => {

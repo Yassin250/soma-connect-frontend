@@ -17,8 +17,8 @@ export const RegisterPage = ({ onToggleMode }) => {
     const forms = {
       Individual: ["Full Name", "Your Email","Phone Number(+...)", "Highest Education"],
       Intern: ["Full Name", "Your Email","Phone Number(+...)", "School Name/School Code","Level Of Education", "Major / Department"],
-      University: ["University Name","Your Contacts", "Website Link"],
-      Secondary: ["School Name", "School Code (MINEDUC)","Your Contacts"]
+      University: ["University Name","Your Contacts","Email Domain(name.universitydomain@gmail.com)", "Website Link"],
+      Secondary: ["School Name", "School Code (MINEDUC)","Your Contacts","Email Domain(name.secondarydomain@gmail.com)"]
     };
 
     return (

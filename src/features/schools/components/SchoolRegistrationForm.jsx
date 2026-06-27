@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { mockDb } from '../../../services/mockDb';
+
+const API_BASE_URL = 'http://localhost:5050/api/admin';
 
 export const SchoolRegistrationForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -10,11 +11,18 @@ export const SchoolRegistrationForm = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setErrorMsg('');
     try {
-      const newSchool = mockDb.registerSchool(data);
-      setRegisteredDomain(newSchool.domain);
+      const response = await fetch(`${API_BASE_URL}/schools`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Registration failed');
+      const newSchool = await response.json();
+      const schoolData = newSchool.data || newSchool;
+      setRegisteredDomain(schoolData.domain);
       setIsSubmitted(true);
     } catch (err) {
       setErrorMsg(err.message || 'Registration failed.');

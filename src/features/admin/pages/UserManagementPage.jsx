@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { AdminLayout } from '../layouts/AdminLayout';
 import { AddUserModal } from '../components/AddUserModal';
 import { AddRoleModal } from '../components/AddRoleModal';
 import { useAuth } from '../../../context/AuthContext';
@@ -100,19 +99,43 @@ export const UserManagementPage = () => {
   // MEMOIZED FILTERING
   // ==========================================
 
+  /**
+   * Resolves a human-readable role name for a user, regardless of which
+   * shape the backend happens to return it in: an array of role objects/
+   * strings, a single `role` object or primitive id, a flat `roleName`
+   * string, or just a bare `roleId` that needs to be looked up against the
+   * fetched roles list.
+   */
+  const getUserRoleName = useCallback(
+    (u) => {
+      if (Array.isArray(u.roles) && u.roles.length > 0) {
+        return u.roles.map((r) => r?.name || r).join(', ');
+      }
+      if (typeof u.roles === 'string' && u.roles) return u.roles;
+      if (u.roleName) return u.roleName;
+      if (u.role && typeof u.role === 'object') return u.role.name || 'None';
+      if (u.role != null) {
+        const matched = roles.find((r) => String(r.id) === String(u.role));
+        return matched ? matched.name : String(u.role);
+      }
+      if (u.roleId != null) {
+        const matched = roles.find((r) => String(r.id) === String(u.roleId));
+        return matched ? matched.name : 'None';
+      }
+      return 'None';
+    },
+    [roles]
+  );
+
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      const matchRole =
-        filterRole === 'All' ||
-        (Array.isArray(u.roles)
-          ? u.roles.some((r) => (r?.name || r) === filterRole)
-          : u.roles === filterRole);
+      const matchRole = filterRole === 'All' || getUserRoleName(u) === filterRole;
       const matchStatus = filterStatus === 'All' || u.status === filterStatus;
       const matchLock = filterLock === 'All' || u.lockStatus === filterLock;
       const matchDate = !filterDate || u.createdAt?.startsWith(filterDate);
       return matchRole && matchStatus && matchLock && matchDate;
     });
-  }, [users, filterRole, filterStatus, filterLock, filterDate]);
+  }, [users, filterRole, filterStatus, filterLock, filterDate, getUserRoleName]);
 
   const filteredRoles = useMemo(() => {
     return roles.filter((r) => {
@@ -213,9 +236,20 @@ export const UserManagementPage = () => {
 
   const handleAddOrUpdateUser = async (userData) => {
     try {
+      // Normalize roleId to a number (selects always yield strings) so the
+      // backend doesn't silently fail to associate the role.
+      const normalizedRoleId =
+        userData.roleId !== '' && userData.roleId != null
+          ? Number(userData.roleId)
+          : null;
+
       if (editingEntity) {
         const updateData = {
-          ...userData,
+          name: userData.name,
+          username: userData.username, // trust what the user actually typed/edited
+          email: userData.email,
+          status: userData.status || 'Active',
+          roleId: normalizedRoleId,
           ...(userData.password ? { password: userData.password } : {}),
         };
         const response = await fetch(`${API_BASE_URL}/users/${editingEntity.id}`, {
@@ -223,29 +257,43 @@ export const UserManagementPage = () => {
           headers: getHeaders(),
           body: JSON.stringify(updateData),
         });
-        if (!response.ok) throw new Error('Failed to update user');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to update user: ${response.status} ${errorText}`);
+        }
         await fetchUsers();
       } else {
         const payload = {
-          ...userData,
-          username: userData.name.toLowerCase().replace(/\s+/g, ''),
+          name: userData.name,
+          // IMPORTANT: use the username the user actually entered in the form.
+          // Previously this was silently overwritten with an auto-generated
+          // slug of `name`, so the account was created under a different
+          // username than the one shown/communicated to the user, which is
+          // why newly created users could not log in.
+          username: userData.username,
+          email: userData.email,
+          password: userData.password,
           userType: 'Internal',
           status: userData.status || 'Active',
           lockStatus: 'Unlocked',
+          roleId: normalizedRoleId,
         };
         const response = await fetch(`${API_BASE_URL}/users`, {
           method: 'POST',
           headers: getHeaders(),
           body: JSON.stringify(payload),
         });
-        if (!response.ok) throw new Error('Failed to create user');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to create user: ${response.status} ${errorText}`);
+        }
         await fetchUsers();
       }
       setIsModalOpen(false);
       setEditingEntity(null);
     } catch (err) {
       console.error('Error saving user:', err);
-      alert('Failed to save user. Check console for details.');
+      alert(`Error: ${err.message}`);
     }
   };
 
@@ -257,7 +305,10 @@ export const UserManagementPage = () => {
           headers: getHeaders(),
           body: JSON.stringify(roleData),
         });
-        if (!response.ok) throw new Error('Failed to update role');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to update role: ${response.status} ${errorText}`);
+        }
         await fetchRoles();
       } else {
         const payload = {
@@ -270,14 +321,17 @@ export const UserManagementPage = () => {
           headers: getHeaders(),
           body: JSON.stringify(payload),
         });
-        if (!response.ok) throw new Error('Failed to create role');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to create role: ${response.status} ${errorText}`);
+        }
         await fetchRoles();
       }
       setIsRoleModalOpen(false);
       setEditingEntity(null);
     } catch (err) {
       console.error('Error saving role:', err);
-      alert('Failed to save role. Check console for details.');
+      alert(`Error: ${err.message}`);
     }
   };
 
@@ -293,10 +347,14 @@ export const UserManagementPage = () => {
         headers: getHeaders(),
         body: JSON.stringify({ status: newStatus }),
       });
-      if (!response.ok) throw new Error('Failed to update user status');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update user status: ${response.status} ${errorText}`);
+      }
       await fetchUsers();
     } catch (err) {
       console.error('Error toggling user status:', err);
+      alert(err.message);
     }
     closeDropdown();
   };
@@ -309,10 +367,14 @@ export const UserManagementPage = () => {
         headers: getHeaders(),
         body: JSON.stringify({ status: newStatus }),
       });
-      if (!response.ok) throw new Error('Failed to update role status');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update role status: ${response.status} ${errorText}`);
+      }
       await fetchRoles();
     } catch (err) {
       console.error('Error toggling role status:', err);
+      alert(err.message);
     }
     closeDropdown();
   };
@@ -323,10 +385,14 @@ export const UserManagementPage = () => {
         method: 'PATCH',
         headers: getHeaders(),
       });
-      if (!response.ok) throw new Error('Failed to unlock user');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to unlock user: ${response.status} ${errorText}`);
+      }
       await fetchUsers();
     } catch (err) {
       console.error('Error unlocking user:', err);
+      alert(err.message);
     }
     closeDropdown();
   };
@@ -342,12 +408,15 @@ export const UserManagementPage = () => {
         method: 'DELETE',
         headers: getHeaders(),
       });
-      if (!response.ok) throw new Error(`Failed to delete ${type}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to delete ${type}: ${response.status} ${errorText}`);
+      }
       if (type === 'user') await fetchUsers();
       if (type === 'role') await fetchRoles();
     } catch (err) {
       console.error(`Error deleting ${type}:`, err);
-      alert(`Failed to delete ${type}. It might be tied to existing records.`);
+      alert(err.message);
     }
     closeDropdown();
   };
@@ -416,11 +485,7 @@ export const UserManagementPage = () => {
   // ==========================================
 
   return (
-    <AdminLayout
-      currentSubPage={currentView}
-      onSubPageChange={setCurrentView}
-      onLogout={handleLogout}
-    >
+    <>
       {/* -------------------- USERS VIEW -------------------- */}
       {currentView === 'users' && (
         <div className="space-y-6">
@@ -555,9 +620,7 @@ export const UserManagementPage = () => {
                       <td className="p-3.5 text-gray-500">{user.username}</td>
                       <td className="p-3.5 text-gray-500">{user.email}</td>
                       <td className="p-3.5 text-blue-600">
-                        {Array.isArray(user.roles) && user.roles.length > 0
-                          ? user.roles.map((r) => r?.name || r).join(', ')
-                          : user.roles || 'None'}
+                        {getUserRoleName(user)}
                       </td>
                       <td className="p-3.5">
                         <span
@@ -878,6 +941,6 @@ export const UserManagementPage = () => {
           editingRole={editingEntity}
         />
       )}
-    </AdminLayout>
+    </>
   );
 };

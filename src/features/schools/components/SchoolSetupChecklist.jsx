@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockDb } from '../../../services/mockDb';
 import { useAuth } from '../../../context/AuthContext';
 
+const API_BASE_URL = 'http://localhost:5050/api/school';
+
 export const SchoolSetupChecklist = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const [school, setSchool] = useState(null);
   
@@ -36,19 +37,31 @@ export const SchoolSetupChecklist = () => {
   const [selectedLecturerId, setSelectedLecturerId] = useState('');
   const [courseAdded, setCourseAdded] = useState(false);
 
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
+
   // Load school info
   useEffect(() => {
     if (user && user.schoolId) {
-      const data = mockDb.getSchool(user.schoolId);
-      if (data) {
-        setSchool(data);
-        // Load any already registered users
-        const existingUsers = mockDb.getUsersBySchool(user.schoolId);
-        setLecturers(existingUsers.filter(u => u.role === 'LECTURER'));
-        setStudents(existingUsers.filter(u => u.role === 'STUDENT'));
-      }
+      fetch(`${API_BASE_URL}/${user.schoolId}`, { headers: getHeaders() })
+        .then(res => res.json())
+        .then(data => {
+          const schoolData = data.data || data;
+          setSchool(schoolData);
+          // Load any already registered users
+          return fetch(`${API_BASE_URL}/${user.schoolId}/users`, { headers: getHeaders() });
+        })
+        .then(res => res.json())
+        .then(usersData => {
+          const users = Array.isArray(usersData) ? usersData : usersData.data || [];
+          setLecturers(users.filter(u => u.role === 'LECTURER' || u.roles?.includes('LECTURER')));
+          setStudents(users.filter(u => u.role === 'STUDENT' || u.roles?.includes('STUDENT')));
+        })
+        .catch(err => console.error('Error loading school setup data:', err));
     }
-  }, [user]);
+  }, [user, getHeaders]);
 
   if (!school) {
     return (
@@ -110,34 +123,45 @@ export const SchoolSetupChecklist = () => {
     }
   };
 
-  const importLecsConfirm = () => {
-    importedLecs.forEach(item => {
+  const importLecsConfirm = async () => {
+    for (const item of importedLecs) {
       try {
-        const added = mockDb.addUser({
-          name: item.name,
-          email: item.email,
-          role: 'LECTURER',
-          schoolId: school.id
+        const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify({
+            name: item.name,
+            email: item.email,
+            role: 'LECTURER',
+          }),
         });
-        setLecturers(prev => [...prev, added]);
+        if (response.ok) {
+          const added = await response.json();
+          setLecturers(prev => [...prev, added.data || added]);
+        }
       } catch (err) {
         console.error(err.message);
       }
-    });
+    }
     setImportedLecs([]);
   };
 
-  const handleManualAddLec = (e) => {
+  const handleManualAddLec = async (e) => {
     e.preventDefault();
     if (!lecName || !lecEmail) return;
     try {
-      const added = mockDb.addUser({
-        name: lecName,
-        email: lecEmail,
-        role: 'LECTURER',
-        schoolId: school.id
+      const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          name: lecName,
+          email: lecEmail,
+          role: 'LECTURER',
+        }),
       });
-      setLecturers([...lecturers, added]);
+      if (!response.ok) throw new Error('Failed to add lecturer');
+      const added = await response.json();
+      setLecturers(prev => [...prev, added.data || added]);
       setLecName('');
       setLecEmail('');
     } catch (err) {
@@ -168,34 +192,45 @@ export const SchoolSetupChecklist = () => {
     }
   };
 
-  const importStudsConfirm = () => {
-    importedStuds.forEach(item => {
+  const importStudsConfirm = async () => {
+    for (const item of importedStuds) {
       try {
-        const added = mockDb.addUser({
-          name: item.name,
-          email: item.email,
-          role: 'STUDENT',
-          schoolId: school.id
+        const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify({
+            name: item.name,
+            email: item.email,
+            role: 'STUDENT',
+          }),
         });
-        setStudents(prev => [...prev, added]);
+        if (response.ok) {
+          const added = await response.json();
+          setStudents(prev => [...prev, added.data || added]);
+        }
       } catch (err) {
         console.error(err.message);
       }
-    });
+    }
     setImportedStuds([]);
   };
 
-  const handleManualAddStud = (e) => {
+  const handleManualAddStud = async (e) => {
     e.preventDefault();
     if (!studName || !studEmail) return;
     try {
-      const added = mockDb.addUser({
-        name: studName,
-        email: studEmail,
-        role: 'STUDENT',
-        schoolId: school.id
+      const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          name: studName,
+          email: studEmail,
+          role: 'STUDENT',
+        }),
       });
-      setStudents([...students, added]);
+      if (!response.ok) throw new Error('Failed to add student');
+      const added = await response.json();
+      setStudents(prev => [...prev, added.data || added]);
       setStudName('');
       setStudEmail('');
     } catch (err) {
@@ -224,27 +259,35 @@ export const SchoolSetupChecklist = () => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleAddCourse = (e) => {
+  const handleAddCourse = async (e) => {
     e.preventDefault();
     if (!courseCode || !courseTitle || !selectedLecturerId) {
       alert('Please fill in all course fields.');
       return;
     }
     
-    mockDb.addCourse({
-      code: courseCode,
-      title: courseTitle,
-      schoolId: school.id,
-      lecturerId: selectedLecturerId,
-      skills: ['CS', 'Engineering']
-    });
-
-    setCourseAdded(true);
-    setCourseCode('');
-    setCourseTitle('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/${school.id}/courses`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          code: courseCode,
+          title: courseTitle,
+          lecturerId: selectedLecturerId,
+          skills: ['CS', 'Engineering']
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to add course');
+      
+      setCourseAdded(true);
+      setCourseCode('');
+      setCourseTitle('');
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  const handleActivateSchool = () => {
+  const handleActivateSchool = async () => {
     // Check validation constraints: minimum 1 lecturer and 1 student
     if (lecturers.length < 1 || students.length < 1) {
       alert('Cannot Activate: You must enroll at least 1 Lecturer and 1 Student before setting your school active.');
@@ -252,13 +295,18 @@ export const SchoolSetupChecklist = () => {
     }
 
     try {
-      mockDb.completeSchoolSetup(school.id, {
-        logo: logoPreview,
-        departments,
-        academicYear
+      const response = await fetch(`${API_BASE_URL}/${school.id}/complete-setup`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          logo: logoPreview,
+          departments,
+          academicYear
+        }),
       });
-      alert('Success! Your school instance is now Active.');
-      navigate('/school/dashboard');
+      if (!response.ok) throw new Error('Failed to activate school');
+      
+      navigate('/school/dashboard', { replace: true });
     } catch (err) {
       alert(err.message);
     }

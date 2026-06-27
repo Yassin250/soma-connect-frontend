@@ -1,34 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockDb } from '../../../services/mockDb';
+import { useAuth } from '../../../context/AuthContext';
+
+const API_BASE_URL = 'http://localhost:5050/api/admin';
 
 export const SuperAdminApprovals = () => {
+  const { token } = useAuth();
   const [schools, setSchools] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [simulatedEmail, setSimulatedEmail] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const loadSchools = () => {
-    setSchools(mockDb.getSchools());
-  };
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
+
+  const loadSchools = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/schools`, {
+        headers: getHeaders(),
+      });
+      if (!response.ok) throw new Error(`Failed to fetch schools: ${response.status}`);
+      const data = await response.json();
+      setSchools(Array.isArray(data) ? data : data.data || []);
+    } catch (err) {
+      setError(err.message);
+      setSchools([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getHeaders]);
 
   useEffect(() => {
     loadSchools();
-  }, []);
+  }, [loadSchools]);
 
-  const handleApprove = (id) => {
+  const handleApprove = async (id) => {
     try {
-      const updated = mockDb.updateSchoolStatus(id, 'APPROVED');
+      const response = await fetch(`${API_BASE_URL}/schools/${id}/status`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ status: 'APPROVED' }),
+      });
+      if (!response.ok) throw new Error('Failed to approve school');
+      
+      const updated = await response.json();
+      const schoolData = updated.data || updated;
       const portalLoginUrl = `${window.location.origin}/login`;
-      loadSchools();
+      await loadSchools();
       
       // Simulate sending approval onboarding email
       setSimulatedEmail({
-        to: `admin@${updated.domain}`,
-        subject: `SomaConnect Instance Approved - ${updated.name}`,
-        body: `Hello ${updated.contactName},\n\nWe are pleased to inform you that your request for a SomaConnect instance for "${updated.name}" has been approved.\n\nYour school admin portal is ready for setup. Please sign in with the following credentials to initialize your platform:\n\nEmail: admin@${updated.domain}\nTemporary Password: AdminPassword123\n\nClick the link below to configure your school profile, invite lecturers, and sync student CSV spreadsheets:\n${portalLoginUrl}\n\nWelcome to the SomaConnect community.\n\nWarm regards,\nSomaConnect Pilot Operations Team`
+        to: `admin@${schoolData.domain}`,
+        subject: `SomaConnect Instance Approved - ${schoolData.name}`,
+        body: `Hello ${schoolData.contactName},\n\nWe are pleased to inform you that your request for a SomaConnect instance for "${schoolData.name}" has been approved.\n\nYour school admin portal is ready for setup. Please sign in with the following credentials to initialize your platform:\n\nEmail: admin@${schoolData.domain}\nTemporary Password: AdminPassword123\n\nClick the link below to configure your school profile, invite lecturers, and sync student CSV spreadsheets:\n${portalLoginUrl}\n\nWelcome to the SomaConnect community.\n\nWarm regards,\nSomaConnect Pilot Operations Team`
       });
     } catch (err) {
       alert(err.message);
@@ -41,13 +73,21 @@ export const SuperAdminApprovals = () => {
     setRejectReason('');
   };
 
-  const handleRejectConfirm = () => {
+  const handleRejectConfirm = async () => {
     if (!rejectReason.trim()) return;
     
     try {
-      // For mock purposes, update school status to REJECTED
-      mockDb.updateSchoolStatus(selectedSchool.id, 'REJECTED');
-      loadSchools();
+      const response = await fetch(`${API_BASE_URL}/schools/${selectedSchool.id}/status`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ 
+          status: 'REJECTED',
+          reason: rejectReason 
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to reject school');
+      
+      await loadSchools();
       setIsRejectModalOpen(false);
 
       // Simulate sending rejection email
