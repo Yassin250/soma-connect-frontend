@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockDb } from '../../../services/mockDb';
 import { useAuth } from '../../../context/AuthContext';
 import { LecturerPortal } from './LecturerPortal';
 
+const API_BASE_URL = 'http://localhost:5050/api/school';
+
 export const SchoolAdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
   const navigate = useNavigate();
 
   const [school, setSchool] = useState(null);
   const [metrics, setMetrics] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const isLecturer = user && user.role === 'LECTURER';
+  const isLecturer = user && user.roles?.[0]?.toUpperCase() === 'LECTURER';
   
   // Roster lists
   const [lecturers, setLecturers] = useState([]);
@@ -27,22 +28,60 @@ export const SchoolAdminDashboard = () => {
   const [newStudName, setNewStudName] = useState('');
   const [newStudEmail, setNewStudEmail] = useState('');
 
-  const reloadData = () => {
-    if (user && user.schoolId) {
-      const sch = mockDb.getSchool(user.schoolId);
-      if (sch) {
-        setSchool(sch);
-        setMetrics(mockDb.getSchoolMetrics(user.schoolId));
-        setLecturers(mockDb.getUsersBySchool(user.schoolId).filter(u => u.role === 'LECTURER'));
-        setStudents(mockDb.getUsersBySchool(user.schoolId).filter(u => u.role === 'STUDENT'));
-        setCourses(mockDb.getCoursesBySchool(user.schoolId));
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
+
+  const reloadData = useCallback(async () => {
+    if (!user || !user.schoolId) return;
+    
+    try {
+      // Fetch school info
+      const schoolResponse = await fetch(`${API_BASE_URL}/${user.schoolId}`, {
+        headers: getHeaders(),
+      });
+      if (schoolResponse.ok) {
+        const schoolData = await schoolResponse.json();
+        setSchool(schoolData.data || schoolData);
       }
+
+      // Fetch metrics
+      const metricsResponse = await fetch(`${API_BASE_URL}/${user.schoolId}/metrics`, {
+        headers: getHeaders(),
+      });
+      if (metricsResponse.ok) {
+        const metricsData = await metricsResponse.json();
+        setMetrics(metricsData.data || metricsData);
+      }
+
+      // Fetch users (lecturers and students)
+      const usersResponse = await fetch(`${API_BASE_URL}/${user.schoolId}/users`, {
+        headers: getHeaders(),
+      });
+      if (usersResponse.ok) {
+        const usersData = await usersResponse.json();
+        const users = Array.isArray(usersData) ? usersData : usersData.data || [];
+        setLecturers(users.filter(u => u.role === 'LECTURER' || u.roles?.includes('LECTURER')));
+        setStudents(users.filter(u => u.role === 'STUDENT' || u.roles?.includes('STUDENT')));
+      }
+
+      // Fetch courses
+      const coursesResponse = await fetch(`${API_BASE_URL}/${user.schoolId}/courses`, {
+        headers: getHeaders(),
+      });
+      if (coursesResponse.ok) {
+        const coursesData = await coursesResponse.json();
+        setCourses(Array.isArray(coursesData) ? coursesData : coursesData.data || []);
+      }
+    } catch (err) {
+      console.error('Error loading school dashboard data:', err);
     }
-  };
+  }, [user, getHeaders]);
 
   useEffect(() => {
     reloadData();
-  }, [user]);
+  }, [reloadData]);
 
   if (!school || !metrics) {
     if (isLecturer) {
@@ -96,48 +135,63 @@ export const SchoolAdminDashboard = () => {
     );
   }
 
-  const handleAddLecturer = (e) => {
+  const handleAddLecturer = async (e) => {
     e.preventDefault();
-    if (!newLecName || !newLecEmail) return;
+    if (!newLecName || !newLecEmail || !school) return;
     try {
-      mockDb.addUser({
-        name: newLecName,
-        email: newLecEmail,
-        role: 'LECTURER',
-        schoolId: school.id
+      const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          name: newLecName,
+          email: newLecEmail,
+          role: 'LECTURER',
+        }),
       });
+      if (!response.ok) throw new Error('Failed to add lecturer');
       setNewLecName('');
       setNewLecEmail('');
       setShowAddLec(false);
-      reloadData();
+      await reloadData();
     } catch (err) {
       alert(err.message);
     }
   };
 
-  const handleAddStudent = (e) => {
+  const handleAddStudent = async (e) => {
     e.preventDefault();
-    if (!newStudName || !newStudEmail) return;
+    if (!newStudName || !newStudEmail || !school) return;
     try {
-      mockDb.addUser({
-        name: newStudName,
-        email: newStudEmail,
-        role: 'STUDENT',
-        schoolId: school.id
+      const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          name: newStudName,
+          email: newStudEmail,
+          role: 'STUDENT',
+        }),
       });
+      if (!response.ok) throw new Error('Failed to add student');
       setNewStudName('');
       setNewStudEmail('');
       setShowAddStud(false);
-      reloadData();
+      await reloadData();
     } catch (err) {
       alert(err.message);
     }
   };
 
-  const handleRemoveUser = (userId) => {
-    if (confirm('Are you sure you want to remove this user from the directory?')) {
-      mockDb.removeUser(userId);
-      reloadData();
+  const handleRemoveUser = async (userId) => {
+    if (!confirm('Are you sure you want to remove this user from the directory?') || !school) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/${school.id}/users/${userId}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+      });
+      if (!response.ok) throw new Error('Failed to remove user');
+      await reloadData();
+    } catch (err) {
+      alert(err.message);
     }
   };
 

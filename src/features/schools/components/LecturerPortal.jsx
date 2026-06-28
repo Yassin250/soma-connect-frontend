@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { mockDb } from '../../../services/mockDb';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Badge } from '../../../components/shared/Badge';
 import { Button } from '../../../components/shared/Button';
 
+const API_BASE_URL = 'http://localhost:5050/api/lecturer';
+
 export const LecturerPortal = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [school, setSchool] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [selectedFlag, setSelectedFlag] = useState(null);
 
@@ -60,75 +63,144 @@ export const LecturerPortal = () => {
   const [gradeFeedback, setGradeFeedback] = useState('');
   const [gradingSuccess, setGradingSuccess] = useState(false);
 
-  const reloadData = () => {
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
+
+  const reloadData = useCallback(async () => {
     if (!user || !user.schoolId) return;
-    const sch = mockDb.getSchool(user.schoolId);
-    if (sch) setSchool(sch);
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Fetch school info
+      const schoolResponse = await fetch(`${API_BASE_URL}/school/${user.schoolId}`, {
+        headers: getHeaders(),
+      });
+      if (schoolResponse.ok) {
+        const schoolData = await schoolResponse.json();
+        setSchool(schoolData.data || schoolData);
+      }
 
-    const lecCourses = mockDb.getCoursesBySchool(user.schoolId).filter(c => c.lecturerId === user.id || !c.lecturerId);
-    setCourses(lecCourses);
+      // Fetch courses for this lecturer
+      const coursesResponse = await fetch(`${API_BASE_URL}/courses?lecturerId=${user.id}&schoolId=${user.schoolId}`, {
+        headers: getHeaders(),
+      });
+      if (coursesResponse.ok) {
+        const coursesData = await coursesResponse.json();
+        setCourses(Array.isArray(coursesData) ? coursesData : coursesData.data || []);
+      }
 
-    const schoolUsers = mockDb.getUsersBySchool(user.schoolId);
-    setStudents(schoolUsers.filter(u => u.role === 'STUDENT'));
+      // Fetch students for this school
+      const studentsResponse = await fetch(`${API_BASE_URL}/school/${user.schoolId}/students`, {
+        headers: getHeaders(),
+      });
+      if (studentsResponse.ok) {
+        const studentsData = await studentsResponse.json();
+        setStudents(Array.isArray(studentsData) ? studentsData : studentsData.data || []);
+      }
 
-    const courseIds = lecCourses.map(c => c.id);
+      // Fetch all submissions, assignments, modules, quizzes, attempts for courses
+      const courseIds = courses.map(c => c.id);
+      if (courseIds.length > 0) {
+        const [subsResponse, assignsResponse, modsResponse, quizzesResponse, attemptsResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/submissions?courseIds=${courseIds.join(',')}`, { headers: getHeaders() }),
+          fetch(`${API_BASE_URL}/assignments?courseIds=${courseIds.join(',')}`, { headers: getHeaders() }),
+          fetch(`${API_BASE_URL}/modules?courseIds=${courseIds.join(',')}`, { headers: getHeaders() }),
+          fetch(`${API_BASE_URL}/quizzes?courseIds=${courseIds.join(',')}`, { headers: getHeaders() }),
+          fetch(`${API_BASE_URL}/quiz-attempts?courseIds=${courseIds.join(',')}`, { headers: getHeaders() }),
+        ]);
 
-    const subs = [];
-    const assigns = [];
-    const mods = [];
-    const quizzes = [];
-    const attempts = [];
-
-    courseIds.forEach(cid => {
-      subs.push(...mockDb.getSubmissionsByAssignment(cid).filter(s => true));
-      assigns.push(...mockDb.getAssignmentsByCourse(cid));
-      mods.push(...mockDb.getModulesByCourse(cid));
-      quizzes.push(...mockDb.getQuizzesByCourse(cid));
-      attempts.push(...mockDb.getQuizAttemptsByQuiz(cid).filter(a => true));
-    });
-
-    // Get all submissions for all assignments in lecturer's courses
-    const allSubsForCourse = [];
-    assigns.forEach(a => {
-      allSubsForCourse.push(...mockDb.getSubmissionsByAssignment(a.id));
-    });
-    setAllSubmissions(allSubsForCourse);
-    setAllAssignments(assigns);
-    setAllModules(mods);
-    setAllQuizzes(quizzes);
-    setAllQuizAttempts(attempts);
-  };
+        if (subsResponse.ok) {
+          const subsData = await subsResponse.json();
+          setAllSubmissions(Array.isArray(subsData) ? subsData : subsData.data || []);
+        }
+        if (assignsResponse.ok) {
+          const assignsData = await assignsResponse.json();
+          setAllAssignments(Array.isArray(assignsData) ? assignsData : assignsData.data || []);
+        }
+        if (modsResponse.ok) {
+          const modsData = await modsResponse.json();
+          setAllModules(Array.isArray(modsData) ? modsData : modsData.data || []);
+        }
+        if (quizzesResponse.ok) {
+          const quizzesData = await quizzesResponse.json();
+          setAllQuizzes(Array.isArray(quizzesData) ? quizzesData : quizzesData.data || []);
+        }
+        if (attemptsResponse.ok) {
+          const attemptsData = await attemptsResponse.json();
+          setAllQuizAttempts(Array.isArray(attemptsData) ? attemptsData : attemptsData.data || []);
+        }
+      }
+    } catch (err) {
+      console.error('Error loading lecturer data:', err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, getHeaders]);
 
   useEffect(() => {
     reloadData();
-  }, [user]);
+  }, [reloadData]);
 
-  if (!school) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400">
-        Syncing lecturer portal credentials...
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400 text-sm">
+        Loading faculty portal...
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-red-500 text-sm">
+        Error: {error}
+      </div>
+    );
+  }
+
+  if (!school) {
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400 text-sm">
+        No school data available.
+      </div>
+);
+  }
+
+  useEffect(() => {
+    reloadData();
+  }, [reloadData]);
 
   const plagiarismFlags = allSubmissions.filter(s => s.similarity > 30 && s.status !== 'graded');
   const pendingGrading = allSubmissions.filter(s => s.status === 'submitted');
   const gradedSubs = allSubmissions.filter(s => s.status === 'graded');
 
-  const handleCreateModule = (e) => {
+const handleCreateModule = async (e) => {
     e.preventDefault();
     if (!newModuleName || !newModuleCourseId) return;
-    mockDb.addModule({
-      courseId: newModuleCourseId,
-      title: newModuleName,
-      type: newModuleType,
-      content: newModuleContent
-    });
-    setIsModuleCreated(true);
-    setNewModuleName('');
-    setNewModuleContent('');
-    reloadData();
-    setTimeout(() => setIsModuleCreated(false), 3000);
+    try {
+      const response = await fetch(`${API_BASE_URL}/modules`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          courseId: newModuleCourseId,
+          name: newModuleName,
+          type: newModuleType,
+          content: newModuleContent,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to create module');
+      setIsModuleCreated(true);
+      setNewModuleName('');
+      setNewModuleContent('');
+      await reloadData();
+      setTimeout(() => setIsModuleCreated(false), 3000);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const addQuizQuestion = (e) => {
@@ -147,47 +219,65 @@ export const LecturerPortal = () => {
     setQCorrect(0);
   };
 
-  const handleCreateQuiz = (e) => {
+  const handleCreateQuiz = async (e) => {
     e.preventDefault();
     if (!newQuizTitle || !newQuizCourseId || quizQuestions.length === 0) return;
-    mockDb.addQuiz({
-      moduleId: newQuizModuleId || null,
-      courseId: newQuizCourseId,
-      title: newQuizTitle,
-      timeLimit: newQuizTimeLimit,
-      questions: quizQuestions.map((q, i) => ({
-        id: `q-${Date.now()}-${i}`,
-        prompt: q.prompt,
-        options: q.options,
-        correctIndex: q.correctIndex
-      }))
-    });
-    setQuizAdded(true);
-    setNewQuizTitle('');
-    setQuizQuestions([]);
-    setNewQuizModuleId('');
-    reloadData();
-    setTimeout(() => setQuizAdded(false), 3000);
+    try {
+      const response = await fetch(`${API_BASE_URL}/quizzes`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          moduleId: newQuizModuleId || null,
+          courseId: newQuizCourseId,
+          title: newQuizTitle,
+          timeLimit: newQuizTimeLimit,
+          questions: quizQuestions.map((q, i) => ({
+            id: `q-${Date.now()}-${i}`,
+            prompt: q.prompt,
+            options: q.options,
+            correctIndex: q.correctIndex
+          }))
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to create quiz');
+      setQuizAdded(true);
+      setNewQuizTitle('');
+      setQuizQuestions([]);
+      setNewQuizModuleId('');
+      await reloadData();
+      setTimeout(() => setQuizAdded(false), 3000);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  const handleCreateAssignment = (e) => {
+  const handleCreateAssignment = async (e) => {
     e.preventDefault();
     if (!newAssignTitle || !newAssignCourseId) return;
-    mockDb.addAssignment({
-      courseId: newAssignCourseId,
-      title: newAssignTitle,
-      description: newAssignDesc,
-      dueDate: newAssignDueDate || null,
-      maxScore: newAssignMaxScore,
-      rubric: { quality: 40, logic: 40, documentation: 20 }
-    });
-    setAssignCreated(true);
-    setNewAssignTitle('');
-    setNewAssignDesc('');
-    setNewAssignDueDate('');
-    setNewAssignMaxScore(100);
-    reloadData();
-    setTimeout(() => setAssignCreated(false), 3000);
+    try {
+      const response = await fetch(`${API_BASE_URL}/assignments`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          courseId: newAssignCourseId,
+          title: newAssignTitle,
+          description: newAssignDesc,
+          dueDate: newAssignDueDate || null,
+          maxScore: newAssignMaxScore,
+          rubric: { quality: 40, logic: 40, documentation: 20 }
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to create assignment');
+      setAssignCreated(true);
+      setNewAssignTitle('');
+      setNewAssignDesc('');
+      setNewAssignDueDate('');
+      setNewAssignMaxScore(100);
+      await reloadData();
+      setTimeout(() => setAssignCreated(false), 3000);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleSelectSubmission = (sub) => {
@@ -206,42 +296,64 @@ export const LecturerPortal = () => {
     }
   };
 
-  const handleSubmitGrade = () => {
+  const handleSubmitGrade = async () => {
     if (!selectedSubmission) return;
-    mockDb.gradeSubmission(selectedSubmission.id, {
-      quality: gradeQuality,
-      logic: gradeLogic,
-      documentation: gradeDoc,
-      feedback: gradeFeedback
-    });
-    setGradingSuccess(true);
-    reloadData();
-    setTimeout(() => {
-      setSelectedSubmission(null);
-      setGradingSuccess(false);
-    }, 2000);
-  };
-
-  const handlePlagiarismOverride = (subId) => {
-    mockDb.gradeSubmission(subId, {
-      quality: 50,
-      logic: 50,
-      documentation: 50,
-      feedback: 'Plagiarism flag overridden by lecturer. Submission accepted with review note.'
-    });
-    setSelectedFlag(null);
-    reloadData();
-  };
-
-  const handlePlagiarismConfirm = (subId) => {
-    const subs = mockDb.getSubmissions();
-    const idx = subs.findIndex(s => s.id === subId);
-    if (idx !== -1) {
-      subs[idx].status = 'flagged';
-      localStorage.setItem('soma_submissions', JSON.stringify(subs));
+    try {
+      const response = await fetch(`${API_BASE_URL}/submissions/${selectedSubmission.id}/grade`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          quality: gradeQuality,
+          logic: gradeLogic,
+          documentation: gradeDoc,
+          feedback: gradeFeedback
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to submit grade');
+      setGradingSuccess(true);
+      await reloadData();
+      setTimeout(() => {
+        setSelectedSubmission(null);
+        setGradingSuccess(false);
+      }, 2000);
+    } catch (err) {
+      alert(err.message);
     }
-    setSelectedFlag(null);
-    reloadData();
+  };
+
+  const handlePlagiarismOverride = async (subId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/submissions/${subId}/grade`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          quality: 50,
+          logic: 50,
+          documentation: 50,
+          feedback: 'Plagiarism flag overridden by lecturer. Submission accepted with review note.'
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to override plagiarism');
+      setSelectedFlag(null);
+      await reloadData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handlePlagiarismConfirm = async (subId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/submissions/${subId}/flag`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ reason: 'Plagiarism detected' }),
+      });
+      if (!response.ok) throw new Error('Failed to flag submission');
+      setSelectedFlag(null);
+      await reloadData();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const triggerNudge = (student) => {
@@ -259,9 +371,19 @@ export const LecturerPortal = () => {
     s.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const getStudentName = (studentId) => {
-    const s = mockDb.getUser(studentId);
-    return s ? s.name : studentId;
+  const getStudentName = async (studentId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${studentId}`, {
+        headers: getHeaders(),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data.data?.name || data.name || studentId;
+      }
+      return studentId;
+    } catch (err) {
+      return studentId;
+    }
   };
 
   const getAssignmentTitle = (assignmentId) => {

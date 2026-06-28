@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 import logo from '../../../assets/2.png';         
 import miniLogo from '../../../assets/1.png';      
 
 
-
-export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogout }) => {
+export const AdminLayout = () => {
+  const { user, logout } = useAuth();
+  const location = useLocation();
 
   // Layout navigation drawer control states
   const [isUserMenuExpanded, setIsUserMenuExpanded] = useState(true);
@@ -22,12 +25,43 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
+  // Helper to check if a path is active
+  const isActive = (path) => location.pathname === path;
+
   // Structural tracking variables for complex dashboard flows
-  const activeNavigationClass = "bg-white text-[#1d4ed8] shadow-md font-bold scale-[1.02] border-r-4 border-amber-400";
+  const activeNavigationClass = "bg-white text-[#1d4ed8] shadow-md font-bold scale-[1.02] border-r-4 border-purple-400";
   const inactiveNavigationClass = "text-white/80 hover:text-white hover:bg-white/10 font-medium hover:translate-x-1";
 
+  // Inject custom scrollbar styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .sidebar-scroll::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.4);
+        border-radius: 4px;
+        border: 1px solid transparent;
+        background-clip: content-box;
+      }
+      .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(99, 102, 241, 0.6);
+      }
+      .sidebar-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(99, 102, 241, 0.4) transparent;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
   return (
-    <div className="min-h-screen w-full bg-[#f4f7fe] text-gray-800 font-sans antialiased flex overflow-x-hidden p-0 sm:p-3 md:p-4 lg:p-5">
+    <div className="h-screen w-full bg-[#f4f7fe] text-gray-800 font-sans antialiased flex overflow-x-hidden p-0 sm:p-3 md:p-4 lg:p-5">
       
       {/* MOBILE BREAKPOINT DRAWER OVERLAY BACKDROP */}
       {isMobileSidebarOpen && (
@@ -112,7 +146,7 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
                     : 'translate-y-20 opacity-0 pointer-events-none scale-50 -rotate-45'
                 }`}
               >
-                 {/* STATE 2: COLLAPSED SECOND COMPACT MINI LOGO (Slides down/in with scale pulse when layout contracts) */}
+               {/* STATE 2: COLLAPSED SECOND COMPACT MINI LOGO (Slides down/in with scale pulse when layout contracts) */}
 
               <div
                 className={`absolute transition-all duration-500 ease-in-out transform flex items-center justify-center ${
@@ -176,8 +210,36 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
         </div>
 
         {/* Navigation Link Element Hierarchy */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar relative z-10">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto relative z-10 sidebar-scroll">
           
+          {/* Command Center Main Node */}
+          <div>
+            <NavLink
+              to="/admin/dashboard"
+              onClick={() => setIsMobileSidebarOpen(false)}
+              className={({ isActive }) => `w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isActive
+                  ? 'bg-white text-[#1d4ed8] shadow-md font-bold scale-[1.02] border-r-4 border-purple-400' 
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="21" x2="9" y2="9" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Command Center</span>}
+              </div>
+            </NavLink>
+          </div>
+
           {/* Main User Control Drawer Hub Node */}
           <div>
             <button
@@ -197,7 +259,7 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
               } ${
                 isUserMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
                   ? 'bg-white/15 text-white shadow-inner border border-white/5' 
-                  : isSidebarCollapsed && currentSubPage ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  : isSidebarCollapsed && (isActive('/admin/users') || isActive('/admin/roles') || isActive('/admin/permissions')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
@@ -233,48 +295,48 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
             >
               
               {/* Route Button: Users */}
-              <button
-                type="button"
-                onClick={() => { onSubPageChange('users'); setIsMobileSidebarOpen(false); }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
-                  currentSubPage === 'users' ? activeNavigationClass : inactiveNavigationClass
+              <NavLink
+                to="/admin/users"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
                 }`}
               >
-                <div className={`p-1 rounded-lg ${currentSubPage === 'users' ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
                   <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                   </svg>
                 </div>
                 <span>Users</span>
-              </button>
+              </NavLink>
 
               {/* Route Button: Roles */}
-              <button
-                type="button"
-                onClick={() => { onSubPageChange('roles'); setIsMobileSidebarOpen(false); }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
-                  currentSubPage === 'roles' ? activeNavigationClass : inactiveNavigationClass
+              <NavLink
+                to="/admin/roles"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
                 }`}
               >
-                <div className={`p-1 rounded-lg ${currentSubPage === 'roles' ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
                   <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="3" />
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </svg>
                 </div>
                 <span>Roles</span>
-              </button>
+              </NavLink>
 
               {/* Route Button: Permissions */}
-              <button
-                type="button"
-                onClick={() => { onSubPageChange('permissions'); setIsMobileSidebarOpen(false); }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
-                  currentSubPage === 'permissions' ? activeNavigationClass : inactiveNavigationClass
+              <NavLink
+                to="/admin/permissions"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
                 }`}
               >
-                <div className={`p-1 rounded-lg ${currentSubPage === 'permissions' ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
                   <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     <circle cx="12" cy="11" r="2.5" />
@@ -282,34 +344,60 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
                   </svg>
                 </div>
                 <span>Permissions</span>
-              </button>
+              </NavLink>
 
             </div>
           </div>
+
+          {/* School Approvals Main Node */}
+          <div>
+            <NavLink
+              to="/admin/approvals"
+              onClick={() => setIsMobileSidebarOpen(false)}
+              className={({ isActive }) => `w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isActive
+                  ? 'bg-white text-[#1d4ed8] shadow-md font-bold scale-[1.02] border-r-4 border-amber-400' 
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">School Approvals</span>}
+              </div>
+            </NavLink>
+          </div>
         </nav>
 
-        {/* System Storage Context Box */}
+        {/* System Storage Context Box - Pinned to bottom */}
         {(!isSidebarCollapsed || isMobileSidebarOpen) && (
-          <div className="p-4 mx-4 mb-6 bg-white/5 border border-white/10 text-left relative z-10 backdrop-blur-md rounded-2xl shadow-inner animate-fade-in">
-            <div className="flex items-center space-x-2 text-white/90 font-bold text-xs mb-1">
-              <svg className="w-4 h-4 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-              <span>Security Integrity System</span>
+          <div className="mt-auto p-4 mx-4 mb-4 bg-white/5 border-t border-white/10 text-left relative z-10 backdrop-blur-md rounded-2xl shadow-inner animate-fade-in">
+            <div className="flex items-center space-x-2 text-white/90 font-bold text-xs mb-2">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+              <span className="text-slate-300">Security Integrity System</span>
             </div>
-            <div className="w-full bg-white/20 h-1.5 rounded-full mt-2 overflow-hidden">
+            <div className="w-full bg-white/10 h-1.5 rounded-full mt-2 overflow-hidden">
               <div className="bg-gradient-to-r from-sky-400 to-emerald-400 h-full w-[85%] rounded-full" />
             </div>
-            <span className="text-[10px] text-white/60 block mt-1.5 font-medium">Environment Context: RWANDA</span>
+            <span className="text-[10px] text-white/50 block mt-1.5 font-medium tracking-wide">Environment Context: RWANDA</span>
           </div>
         )}
       </aside>
 
       {/* RIGHT SIDE DATA VIEWPORT WRAPPER */}
-      <div className="flex-1 flex flex-col min-h-screen w-full lg:px-4">
+      <div className="flex-1 flex flex-col h-full w-full lg:px-4 overflow-hidden">
+
         
         {/* TOP NAVBAR HEADER BOX */}
-        <header className="w-full bg-transparent h-20 flex items-center justify-between px-4 sm:px-6 mb-4 select-none">
+        <header className="w-full bg-transparent h-20 flex items-center justify-between px-4 sm:px-6 mb-4 select-none flex-shrink-0">
+
           
           {/* Collapse Controller & Localized System Title Context */}
           <div className="flex items-center space-x-3 sm:space-x-5">
@@ -336,7 +424,11 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
             <div className="flex flex-col text-left leading-tight">
               <span className="text-[11px] text-[#1d4ed8] font-extrabold tracking-wider uppercase">RWANDA</span>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 capitalize tracking-tight mt-0.5">
-                {currentSubPage ? currentSubPage : "Dashboard View"}
+                {location.pathname === '/admin/dashboard' ? 'Command Center' :
+                 location.pathname === '/admin/users' ? 'User Management' :
+                 location.pathname === '/admin/roles' ? 'Roles Management' :
+                 location.pathname === '/admin/permissions' ? 'Permissions' :
+                 location.pathname === '/admin/approvals' ? 'School Approvals' : 'Dashboard View'}
               </h2>
             </div>
           </div>
@@ -362,10 +454,10 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
                 className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group p-1.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 shadow-sm transition-all duration-150"
               >
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#1d4ed8] to-[#1e40af] flex items-center justify-center text-xs font-black text-white shadow-md transition-transform duration-150 group-hover:scale-105">
-                  GU
+                  {user?.name?.charAt(0) || 'G'}{user?.name?.split(' ')[1]?.charAt(0) || 'U'}
                 </div>
                 <span className="hidden sm:inline text-sm font-bold text-slate-700 tracking-tight transition-colors group-hover:text-[#1d4ed8]">
-                  Guest User
+                  {user?.name || 'Guest User'}
                 </span>
                 <svg 
                   className={`w-4 h-4 text-slate-400 transition-transform duration-200 mr-1 ${isProfileMenuOpen ? 'rotate-180 text-[#1d4ed8]' : ''}`} 
@@ -384,11 +476,11 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
 
                     <div className="px-5 py-3.5 flex items-center space-x-3.5 border-b border-slate-100/80 mb-2.5">
                       <div className="w-11 h-11 rounded-xl bg-slate-900 flex items-center justify-center text-sm font-black text-white shadow-sm">
-                        GU
+                        {user?.name?.charAt(0) || 'G'}{user?.name?.split(' ')[1]?.charAt(0) || 'U'}
                       </div>
                       <div className="flex flex-col text-left overflow-hidden">
-                        <span className="text-sm font-black text-slate-800 leading-tight">Guest User</span>
-                        <span className="text-xs text-slate-400 font-semibold truncate max-w-[160px] mt-0.5">guest@somaconnect.com</span>
+                        <span className="text-sm font-black text-slate-800 leading-tight">{user?.name || 'Guest User'}</span>
+                        <span className="text-xs text-slate-400 font-semibold truncate max-w-[160px] mt-0.5">{user?.email || 'guest@somaconnect.com'}</span>
                       </div>
                     </div>
 
@@ -420,7 +512,7 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
 
                     <button 
                       type="button"
-                      onClick={onLogout} 
+                      onClick={logout} 
                       className="w-full px-5 mt-2.5 py-3 flex items-center space-x-3.5 text-red-600 hover:bg-red-50/60 transition-colors text-left font-extrabold text-sm"
                     >
                       <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center text-red-500">
@@ -442,8 +534,9 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
         </header>
 
         {/* Dynamic Inner Workspace Context Router Portal */}
-        <main className="flex-1 bg-white rounded-[32px] border border-slate-200/60 p-5 sm:p-6 lg:p-8 shadow-sm min-h-[calc(100vh-140px)] transition-all duration-300">
-          {children}
+        <main className="flex-1 bg-white rounded-[32px] border border-slate-200/60 p-5 sm:p-6 lg:p-8 shadow-sm overflow-y-auto min-h-0 transition-all duration-300">
+
+          <Outlet />
         </main>
       </div>
 
@@ -462,7 +555,7 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Name</label>
-                  <input type="text" readOnly value="Guest User" className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-600 font-semibold focus:outline-none" />
+                  <input type="text" readOnly value={user?.name || 'Guest User'} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-600 font-semibold focus:outline-none" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Phone Number</label>
@@ -471,7 +564,7 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Email Address</label>
-                <input type="text" readOnly value="guest@somaconnect.com" className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-600 font-semibold focus:outline-none" />
+                <input type="text" readOnly value={user?.email || 'guest@somaconnect.com'} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-600 font-semibold focus:outline-none" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">User Type</label>
@@ -480,7 +573,9 @@ export const AdminLayout = ({ children, currentSubPage, onSubPageChange, onLogou
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Assigned Security Roles</label>
                 <div className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 flex items-center">
-                  <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-extrabold bg-blue-50 text-[#0062ff] border border-blue-100 tracking-wider">SUPER_ADMIN</span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-extrabold bg-blue-50 text-[#0062ff] border border-blue-100 tracking-wider">
+                    {user?.roles?.[0] || 'SUPER_ADMIN'}
+                  </span>
                 </div>
               </div>
             </div>

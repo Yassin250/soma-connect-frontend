@@ -1,7 +1,8 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export const DashboardLayout = ({ children }) => {
+export const DashboardLayout = () => {
   const { user, logout } = useAuth();
 
   return (
@@ -21,7 +22,7 @@ export const DashboardLayout = ({ children }) => {
             <div className="flex items-center space-x-4">
               <div className="text-right hidden sm:block">
                 <p className="text-xs font-medium text-white">{user?.name}</p>
-                <p className="text-[10px] text-zinc-400 font-mono uppercase">{user?.role}</p>
+                <p className="text-[10px] text-zinc-400 font-mono uppercase">{user?.roles?.[0] || 'user'}</p>
               </div>
               <button 
                 onClick={logout}
@@ -34,7 +35,7 @@ export const DashboardLayout = ({ children }) => {
         </div>
       </nav>
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {children}
+        <Outlet />
       </main>
     </div>
   );

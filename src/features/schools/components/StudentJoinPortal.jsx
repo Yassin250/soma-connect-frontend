@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { mockDb } from '../../../services/mockDb';
+
+const API_BASE_URL = 'http://localhost:5050/api/school';
 
 export const StudentJoinPortal = () => {
   const { schoolSlug } = useParams();
@@ -14,35 +15,47 @@ export const StudentJoinPortal = () => {
   
   const emailInput = watch('email');
 
-  useEffect(() => {
-    if (schoolSlug) {
-      const sch = mockDb.getSchool(schoolSlug);
-      if (sch) {
-        setSchool(sch);
+  const loadSchool = useCallback(async () => {
+    if (!schoolSlug) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/slug/${schoolSlug}`);
+      if (response.ok) {
+        const data = await response.json();
+        setSchool(data.data || data);
       } else {
         setErrorMsg('Invalid join link. Please verify with your registrar or rector.');
       }
+    } catch (err) {
+      setErrorMsg('Invalid join link. Please verify with your registrar or rector.');
     }
   }, [schoolSlug]);
 
-  const onSubmit = (data) => {
+  useEffect(() => {
+    loadSchool();
+  }, [loadSchool]);
+
+  const onSubmit = async (data) => {
     setErrorMsg('');
     setSuccessMsg('');
 
     // double check email domain suffix match
     const emailDomain = data.email.substring(data.email.lastIndexOf('@') + 1);
-    if (emailDomain.toLowerCase() !== school.domain.toLowerCase()) {
-      setErrorMsg(`Institutional verification failed: Email must end with @${school.domain} to match ${school.name}'s registry.`);
+    if (emailDomain.toLowerCase() !== school?.domain?.toLowerCase()) {
+      setErrorMsg(`Institutional verification failed: Email must end with @${school?.domain} to match ${school?.name}'s registry.`);
       return;
     }
 
     try {
-      mockDb.addUser({
-        name: data.name,
-        email: data.email,
-        role: 'STUDENT',
-        schoolId: school.id
+      const response = await fetch(`${API_BASE_URL}/${school.id}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          role: 'STUDENT',
+        }),
       });
+      if (!response.ok) throw new Error('Enrollment failed');
       setSuccessMsg('Account verified and enrolled successfully! You can now log into SomaConnect.');
     } catch (err) {
       setErrorMsg(err.message || 'Enrollment failed.');

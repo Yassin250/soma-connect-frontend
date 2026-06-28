@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 
-export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
+export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser }) => {
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('Active');
@@ -11,7 +12,36 @@ export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
   const { token } = useAuth();
 
   // Determine mode
-  const isEditMode = !!editData;
+  const isEditMode = !!editingUser;
+
+  // Resolves which role id should be preselected for an editingUser, no
+  // matter which shape the backend returned the role in. `roleList` is the
+  // freshly-fetched roles array, used as a fallback to resolve a bare
+  // `roleName` string to its id.
+  const resolveRoleId = (user, roleList) => {
+    if (!user) return '';
+    if (user.roleId != null) return user.roleId.toString();
+    if (user.role && typeof user.role === 'object' && user.role.id) {
+      return user.role.id.toString();
+    }
+    if (user.role != null && (typeof user.role === 'number' || typeof user.role === 'string')) {
+      return user.role.toString();
+    }
+    if (Array.isArray(user.roles) && user.roles.length > 0) {
+      const firstRole = user.roles[0];
+      if (firstRole?.id != null) return firstRole.id.toString();
+      if (typeof firstRole === 'string') {
+        const matched = roleList.find((r) => r.name === firstRole);
+        if (matched) return matched.id.toString();
+      }
+      return (firstRole || '').toString();
+    }
+    if (user.roleName) {
+      const matched = roleList.find((r) => r.name === user.roleName);
+      if (matched) return matched.id.toString();
+    }
+    return '';
+  };
 
   // Fetch roles when modal opens
   useEffect(() => {
@@ -24,13 +54,18 @@ export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
               Authorization: `Bearer ${token}`,
             },
           });
-          if (!response.ok) throw new Error('Failed to fetch roles');
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch roles: ${response.status} ${errorText}`);
+          }
           const data = await response.json();
           const roleList = Array.isArray(data) ? data : (data?.data || []);
           setRoles(roleList);
-          // If editing, preselect the role
-          if (editData && editData.roleId) {
-            setRoleId(editData.roleId.toString());
+
+          // If editing, preselect the role robustly (now that we have the
+          // full roles list to resolve a bare roleName against, if needed).
+          if (editingUser) {
+            setRoleId(resolveRoleId(editingUser, roleList));
           }
         } catch (err) {
           console.error('Error fetching roles:', err);
@@ -38,28 +73,30 @@ export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
       };
       fetchRoles();
     }
-  }, [isOpen, editData, token]);
+  }, [isOpen, editingUser, token]);
 
-  // Populate fields when opening or editData changes
+  // Populate fields when opening or editingUser changes
   useEffect(() => {
     if (isOpen) {
-      if (editData) {
-        setName(editData.name || '');
-        setEmail(editData.email || '');
-        setStatus(editData.status || 'Active');
+      if (editingUser) {
+        setName(editingUser.name || '');
+        setUsername(editingUser.username || '');
+        setEmail(editingUser.email || '');
+        setStatus(editingUser.status || 'Active');
         // password not filled for security
         setPassword('');
-        setRoleId(editData.roleId ? editData.roleId.toString() : '');
+        setRoleId(resolveRoleId(editingUser, roles));
       } else {
         // Reset for add
         setName('');
+        setUsername('');
         setEmail('');
         setPassword('');
         setStatus('Active');
         setRoleId('');
       }
     }
-  }, [editData, isOpen]);
+  }, [editingUser, isOpen]);
 
   if (!isOpen) return null;
 
@@ -90,7 +127,7 @@ export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onAddUser({ name, email, password, status, roleId });
+            onSubmit({ name, username, email, password, status, roleId });
           }}
           className="space-y-5"
         >
@@ -105,6 +142,21 @@ export const AddUserModal = ({ isOpen, onClose, onAddUser, editData }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Ganza Kenny"
+              className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
+            />
+          </div>
+
+          {/* Username */}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+              Username
+            </label>
+            <input
+              type="text"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="e.g. gkenny"
               className="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
             />
           </div>

@@ -1,28 +1,78 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { mockDb } from '../../../services/mockDb';
+
+const API_BASE_URL = 'http://localhost:5050/api/student';
 
 export const StudentDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
   const navigate = useNavigate();
   const [school, setSchool] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
 
   useEffect(() => {
-    if (user && user.schoolId) {
-      const sch = mockDb.getSchool(user.schoolId);
-      if (sch) setSchool(sch);
-      const data = mockDb.getStudentDashboardData(user.id);
-      setDashboardData(data);
-    }
-  }, [user]);
+    if (!user || !user.schoolId) return;
+    
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // Fetch school info
+        const schoolResponse = await fetch(`${API_BASE_URL}/school/${user.schoolId}`, {
+          headers: getHeaders(),
+        });
+        if (schoolResponse.ok) {
+          const schoolData = await schoolResponse.json();
+          setSchool(schoolData.data || schoolData);
+        }
+
+        // Fetch student dashboard data
+        const dashboardResponse = await fetch(`${API_BASE_URL}/dashboard/${user.id}`, {
+          headers: getHeaders(),
+        });
+        if (dashboardResponse.ok) {
+          const dashboardDataResult = await dashboardResponse.json();
+          setDashboardData(dashboardDataResult.data || dashboardDataResult);
+        }
+      } catch (err) {
+        console.error('Error loading student dashboard:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [user, getHeaders]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400 text-sm">
+        Loading student workspace...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-red-500 text-sm">
+        Error: {error}
+      </div>
+    );
+  }
 
   if (!school || !dashboardData) {
     return (
       <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400 text-sm">
-        Loading student workspace...
+        No data available.
       </div>
     );
   }

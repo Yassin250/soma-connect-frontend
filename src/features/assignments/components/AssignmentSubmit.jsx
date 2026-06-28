@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { mockDb } from '../../../services/mockDb';
 import { Button } from '../../../components/shared/Button';
 import { Input } from '../../../components/shared/Input';
 import { Badge } from '../../../components/shared/Badge';
 
+const API_BASE_URL = 'http://localhost:5050/api/assignment';
+
 export const AssignmentSubmit = () => {
   const { assignmentId } = useParams();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const [assignment, setAssignment] = useState(null);
   const [course, setCourse] = useState(null);
@@ -16,22 +17,61 @@ export const AssignmentSubmit = () => {
   const [code, setCode] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [newSubmission, setNewSubmission] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
 
   useEffect(() => {
-    if (assignmentId) {
-      const a = mockDb.getAssignment(assignmentId);
-      if (a) {
-        setAssignment(a);
-        const c = mockDb.getCourse(a.courseId);
-        setCourse(c);
-        const subs = mockDb.getSubmissionsByStudent(user.id);
-        const existing = subs.find((s) => s.assignmentId === assignmentId);
-        if (existing) setExistingSubmission(existing);
-      }
-    }
-  }, [assignmentId, user]);
+    if (!assignmentId || !user) return;
+    
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // Fetch assignment
+        const assignmentResponse = await fetch(`${API_BASE_URL}/${assignmentId}`, {
+            headers: getHeaders(),
+          });
+        if (assignmentResponse.ok) {
+          const assignmentData = await assignmentResponse.json();
+          setAssignment(assignmentData.data || assignmentData);
+          
+          // Fetch course
+          const courseResponse = await fetch(`${API_BASE_URL}/course/${assignmentData.data?.courseId || assignmentData.courseId}`, {
+            headers: getHeaders(),
+          });
+          if (courseResponse.ok) {
+            const courseData = await courseResponse.json();
+            setCourse(courseData.data || courseData);
+          }
+        }
 
-  if (!assignment || !course) {
+        // Fetch existing submission
+        const submissionsResponse = await fetch(`${API_BASE_URL}/submissions/student/${user.id}`, {
+          headers: getHeaders(),
+        });
+        if (submissionsResponse.ok) {
+          const submissionsData = await submissionsResponse.json();
+          const submissions = Array.isArray(submissionsData) ? submissionsData : submissionsData.data || [];
+          const existing = submissions.find((s) => s.assignmentId === assignmentId);
+          if (existing) setExistingSubmission(existing);
+        }
+      } catch (err) {
+        console.error('Error loading assignment:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [assignmentId, user, getHeaders]);
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400">
         Loading assignment...
@@ -39,19 +79,41 @@ export const AssignmentSubmit = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-red-500">
+        Error: {error}
+      </div>
+    );
+  }
+
+  if (!assignment || !course) {
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400">
+        Assignment not found.
+      </div>
+    );
+  }
+
   const isOverdue = assignment.dueDate && new Date(assignment.dueDate) < new Date() && !existingSubmission;
   const rubric = assignment.rubric || { quality: 40, logic: 40, documentation: 20 };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!code.trim()) return;
     try {
-      const sub = mockDb.addSubmission({
-        assignmentId: assignment.id,
-        studentId: user.id,
-        content: code
+      const response = await fetch(`${API_BASE_URL}/submissions`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          assignmentId: assignment.id,
+          studentId: user.id,
+          content: code
+        }),
       });
-      setNewSubmission(sub);
+      if (!response.ok) throw new Error('Submission failed');
+      const sub = await response.json();
+      setNewSubmission(sub.data || sub);
       setSubmitted(true);
     } catch (err) {
       alert(err.message);
