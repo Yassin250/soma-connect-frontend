@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 
 const API_BASE_URL = 'http://localhost:5050/api/school';
 
@@ -13,6 +14,8 @@ export const SchoolSubjectsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [newAllocation, setNewAllocation] = useState({ subject: '', className: '', teacher: '', hours: 0, code: '' });
   const [filterClass, setFilterClass] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -71,20 +74,29 @@ export const SchoolSubjectsPage = () => {
     }
   };
 
-  const handleDeleteAllocation = async (id) => {
-    if (confirm('Are you sure you want to remove this allocation?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/subject-allocations/${id}`, {
-          method: 'DELETE',
-          headers: getHeaders(),
-        });
-        if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
-        toast.success('Allocation removed');
-        loadAllocations();
-      } catch (err) {
-        toast.error(err.message);
-      }
-    }
+  const handleDeleteAllocation = (id, subjectName) => {
+    setConfirmDelete({
+      title: 'Remove Subject Allocation',
+      message: 'You are about to permanently remove this subject allocation.',
+      itemName: subjectName,
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await fetch(`${API_BASE_URL}/subject-allocations/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+          });
+          if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
+          toast.success('Allocation removed');
+          setConfirmDelete(null);
+          loadAllocations();
+        } catch (err) {
+          toast.error(err.message);
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+    });
   };
 
   const uniqueClasses = [...new Set(allocations.map((a) => a.className))];
@@ -198,7 +210,7 @@ export const SchoolSubjectsPage = () => {
                 </div>
                 <div className="flex gap-2 pt-2 border-t border-slate-100">
                   <button
-                    onClick={() => handleDeleteAllocation(alloc.id)}
+                    onClick={() => handleDeleteAllocation(alloc.id, alloc.subject)}
                     className="flex-1 py-2 text-xs font-bold uppercase tracking-wider bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all"
                   >
                     Remove
@@ -267,7 +279,7 @@ export const SchoolSubjectsPage = () => {
                     </td>
                     <td className="py-3 px-6 text-right">
                       <button
-                        onClick={() => handleDeleteAllocation(alloc.id)}
+                        onClick={() => handleDeleteAllocation(alloc.id, alloc.subject)}
                         className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -364,6 +376,18 @@ export const SchoolSubjectsPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {confirmDelete && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmDelete(null)}
+          onConfirm={confirmDelete.onConfirm}
+          title={confirmDelete.title}
+          message={confirmDelete.message}
+          itemName={confirmDelete.itemName}
+          isLoading={isDeleting}
+        />
       )}
     </div>
   );

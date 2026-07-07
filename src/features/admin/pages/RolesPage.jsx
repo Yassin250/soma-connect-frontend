@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AddRoleModal } from '../components/AddRoleModal';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 
 export const RolesPage = () => {
   const { token } = useAuth();
@@ -24,6 +25,8 @@ export const RolesPage = () => {
   const [filterRoleDate, setFilterRoleDate] = useState('');
   const [roles, setRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [permModalRole, setPermModalRole] = useState(null);
   const [allPermissions, setAllPermissions] = useState([]);
   const [selectedPermIds, setSelectedPermIds] = useState(new Set());
@@ -124,26 +127,36 @@ export const RolesPage = () => {
     closeDropdown();
   };
 
-  const deleteEntity = async (type, id) => {
-    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) {
-      closeDropdown();
-      return;
-    }
+  const promptDelete = (id, name) => {
+    closeDropdown();
+    setConfirmDelete({
+      id,
+      title: 'Delete Role',
+      message: 'You are about to permanently delete this role. Users with this role may lose access permissions.',
+      itemName: name,
+    });
+  };
+
+  const executeDelete = async () => {
+    if (!confirmDelete) return;
+    setIsDeleting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/roles/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/roles/${confirmDelete.id}`, {
         method: 'DELETE',
         headers: getHeaders(),
       });
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Failed to delete ${type}: ${response.status} ${errorText}`);
+        throw new Error(`Failed to delete role: ${response.status} ${errorText}`);
       }
       await fetchRoles();
       toast.success('Role deleted successfully');
+      setConfirmDelete(null);
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setIsDeleting(false);
     }
-    closeDropdown();
   };
 
   const handleActionClick = (e, type, id) => {
@@ -332,7 +345,7 @@ export const RolesPage = () => {
           <button
             onClick={() => {
               const role = roles.find((r) => r.id === dropdownConfig.id);
-              if (role) deleteEntity('role', role.id);
+              if (role) promptDelete(role.id, role.name);
             }}
             className="w-full px-4 py-2 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors flex items-center space-x-2"
           >
@@ -413,6 +426,18 @@ export const RolesPage = () => {
           </div>
         </div>,
         document.body
+      )}
+
+      {confirmDelete && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmDelete(null)}
+          onConfirm={executeDelete}
+          title={confirmDelete.title}
+          message={confirmDelete.message}
+          itemName={confirmDelete.itemName}
+          isLoading={isDeleting}
+        />
       )}
     </div>
   );

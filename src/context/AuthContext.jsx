@@ -10,13 +10,52 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('soma_token');
-    const storedUser = localStorage.getItem('soma_user');
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const init = async () => {
+      try {
+        const storedToken = localStorage.getItem('soma_token');
+        const storedUser = localStorage.getItem('soma_user');
+        if (!storedToken || !storedUser) {
+          setLoading(false);
+          return;
+        }
+        let parsedUser;
+        try {
+          parsedUser = JSON.parse(storedUser);
+        } catch {
+          localStorage.removeItem('soma_token');
+          localStorage.removeItem('soma_user');
+          localStorage.removeItem('soma_refresh_token');
+          setLoading(false);
+          return;
+        }
+        setToken(storedToken);
+        setUser(parsedUser);
+        // Try to silently refresh the token in case it's expired
+        const refreshToken = localStorage.getItem('soma_refresh_token');
+        if (refreshToken) {
+          try {
+            const response = await fetch(REFRESH_ENDPOINT, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refreshToken }),
+            });
+            if (response.ok) {
+              const data = await response.json();
+              const newToken = data.token || data.data?.token;
+              if (newToken) {
+                localStorage.setItem('soma_token', newToken);
+                setToken(newToken);
+              }
+            }
+          } catch {
+            // Refresh failed but we still have the old token — let it try
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
   }, []);
 
   const login = (newToken, newUser) => {
@@ -67,7 +106,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading, refreshAccessToken }}>
-      {!loading && children}
+      {loading ? (
+        <div className="w-screen h-screen bg-[#0a0f1d] flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-slate-400 font-medium">Loading...</p>
+          </div>
+        </div>
+      ) : children}
     </AuthContext.Provider>
   );
 };

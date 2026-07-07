@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { LecturerPortal } from './LecturerPortal';
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 import logo from '../../../assets/2.png';
 
 const API_BASE_URL = 'http://localhost:5050/api/school';
@@ -31,6 +32,8 @@ export const SchoolAdminDashboard = () => {
   const [showAddStud, setShowAddStud] = useState(false);
   const [newStudName, setNewStudName] = useState('');
   const [newStudEmail, setNewStudEmail] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -165,16 +168,25 @@ export const SchoolAdminDashboard = () => {
     } catch (err) { alert(err.message); }
   };
 
-  const handleRemoveUser = async (userId) => {
-    if (!confirm('Are you sure you want to remove this profile?') || !school) return;
-    try {
-      const response = await fetch(`${API_BASE_URL}/${school.id}/users/${userId}`, {
-        method: 'DELETE',
-        headers: getHeaders(),
-      });
-      if (!response.ok) throw new Error('Failed to remove user');
-      await reloadData();
-    } catch (err) { alert(err.message); }
+  const handleRemoveUser = (userId, userName) => {
+    setConfirmDelete({
+      title: 'Remove Profile',
+      message: 'You are about to permanently remove this profile from the school.',
+      itemName: userName,
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await fetch(`${API_BASE_URL}/${school.id}/users/${userId}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+          });
+          if (!response.ok) throw new Error('Failed to remove user');
+          setConfirmDelete(null);
+          await reloadData();
+        } catch (err) { alert(err.message); }
+        finally { setIsDeleting(false); }
+      },
+    });
   };
 
   const navigationItems = [
@@ -427,7 +439,7 @@ export const SchoolAdminDashboard = () => {
                         <td className="py-4 font-mono text-slate-500 font-medium">{lec.email}</td>
                         <td className="py-4 text-right">
                           <button
-                            onClick={() => handleRemoveUser(lec.id)}
+                            onClick={() => handleRemoveUser(lec.id, lec.name)}
                             className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-[11px] text-red-600 font-bold rounded-xl border border-red-100 transition-all"
                           >
                             Revoke Access
@@ -508,7 +520,7 @@ export const SchoolAdminDashboard = () => {
                             Verified
                           </span>
                           <button
-                            onClick={() => handleRemoveUser(stud.id)}
+                            onClick={() => handleRemoveUser(stud.id, stud.name)}
                             className="text-slate-400 hover:text-red-500 font-bold text-sm px-2 transition-colors"
                             title="Remove profile"
                           >
@@ -587,6 +599,18 @@ export const SchoolAdminDashboard = () => {
         )}
 
       </div>
+
+      {confirmDelete && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmDelete(null)}
+          onConfirm={confirmDelete.onConfirm}
+          title={confirmDelete.title}
+          message={confirmDelete.message}
+          itemName={confirmDelete.itemName}
+          isLoading={isDeleting}
+        />
+      )}
     </div>
   );
 };

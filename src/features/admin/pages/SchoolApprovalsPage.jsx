@@ -3,20 +3,28 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 
 export const SchoolApprovalsPage = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const API_BASE_URL = 'http://localhost:5050/api/admin';
+  const SCHOOL_API_BASE_URL = 'http://localhost:5050/api/school';
 
   const [schools, setSchools] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [schoolToDelete, setSchoolToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [simulatedEmail, setSimulatedEmail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
+  const [approveForm, setApproveForm] = useState({ name: '', email: '', password: '' });
 
   const [form, setForm] = useState({ name: '', type: 'UNIVERSITY', slug: '', email: '', phone: '', address: '', website: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,36 +81,64 @@ export const SchoolApprovalsPage = () => {
     loadSchools();
   }, [loadSchools]);
 
-  const handleApprove = async (id) => {
+  const handleOpenApprove = (school) => {
+    setSelectedSchool(school);
+    setApproveForm({
+      name: school.name || '',
+      email: school.email || `admin@${school.slug || ''}`,
+      password: '',
+    });
+    setIsApproveModalOpen(true);
+  };
+
+  const handleApproveConfirm = async () => {
+    if (!approveForm.password.trim()) {
+      toast.warning('Please set an admin password');
+      return;
+    }
+    setIsApproving(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/schools/${id}/status`, {
+      const userResponse = await fetch(`${SCHOOL_API_BASE_URL}/${selectedSchool.id}/users`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          name: approveForm.name.trim(),
+          email: approveForm.email.trim(),
+          role: 'SCHOOL_ADMIN',
+          password: approveForm.password,
+        }),
+      });
+      if (!userResponse.ok) {
+        const errText = await userResponse.text();
+        throw new Error(`Failed to create admin user: ${userResponse.status} ${errText}`);
+      }
+
+      const statusResponse = await fetch(`${API_BASE_URL}/schools/${selectedSchool.id}/status`, {
         method: 'PATCH',
         headers: getHeaders(),
-        body: JSON.stringify({ status: 'APPROVED' }),
+        body: JSON.stringify({ status: 'ACTIVE' }),
       });
-      if (!response.ok) throw new Error('Failed to approve school');
-      
-      const updated = await response.json();
-      const schoolData = updated.data || updated;
-      
-      const portalLoginUrl = `${window.location.origin}/login`;
+      if (!statusResponse.ok) throw new Error('Failed to activate school');
+
+      setIsApproveModalOpen(false);
       await loadSchools();
-      
-      toast.success(`${schoolData.name} approved successfully`);
-      
+
+      toast.success(`${selectedSchool.name} approved — admin user created`);
+
+      const portalLoginUrl = `${window.location.origin}/login`;
       setSimulatedEmail({
-        to: `admin@${schoolData.domain}`,
-        subject: `SomaConnect Instance Approved - ${schoolData.name}`,
-        body: `Hello ${schoolData.contactName},
+        to: approveForm.email.trim(),
+        subject: `SomaConnect Instance Approved - ${selectedSchool.name}`,
+        body: `Hello ${approveForm.name.trim()},
 
-We are pleased to inform you that your request for a SomaConnect instance for "${schoolData.name}" has been approved.
+We are pleased to inform you that your request for a SomaConnect instance for "${selectedSchool.name}" has been approved.
 
-Your school admin portal is ready for setup. Please sign in with the following credentials to initialize your platform:
+Your school admin portal is ready. Sign in with the following credentials:
 
-Email: admin@${schoolData.domain}
-Temporary Password: AdminPassword123
+Email: ${approveForm.email.trim()}
+Password: ${approveForm.password}
 
-Click the link below to configure your school profile, invite lecturers, and sync student CSV spreadsheets:
+Click the link below to access your school dashboard:
 ${portalLoginUrl}
 
 Welcome to the SomaConnect community.
@@ -112,6 +148,33 @@ SomaConnect Pilot Operations Team`
       });
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
+  const handleOpenDelete = (school) => {
+    setSchoolToDelete(school);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!schoolToDelete) return;
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/schools/${schoolToDelete.id}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+      });
+      if (!response.ok) throw new Error('Failed to delete school');
+      toast.success(`${schoolToDelete.name} deleted permanently`);
+      setIsDeleteModalOpen(false);
+      setSchoolToDelete(null);
+      await loadSchools();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -263,22 +326,33 @@ SomaConnect Operations Compliance`
                     </div>
                   </div>
 
-                  {school.status === 'PENDING' && (
-                    <div className="flex items-center gap-2 self-stretch md:self-auto justify-end shrink-0">
-                      <button
-                        onClick={() => handleApprove(school.id)}
-                        className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-xs font-bold rounded text-white transition-all"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleOpenReject(school)}
-                        className="px-4 py-1.5 bg-red-50 hover:bg-red-100 text-xs font-bold rounded text-red-600 border border-red-200 transition-all"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 self-stretch md:self-auto justify-end shrink-0">
+                    {school.status === 'PENDING' && (
+                      <>
+                        <button
+                          onClick={() => handleOpenApprove(school)}
+                          className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-xs font-bold rounded text-white transition-all"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleOpenReject(school)}
+                          className="px-4 py-1.5 bg-red-50 hover:bg-red-100 text-xs font-bold rounded text-red-600 border border-red-200 transition-all"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleOpenDelete(school)}
+                      className="p-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg transition-all"
+                      title="Delete school"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h18z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -382,6 +456,83 @@ SomaConnect Operations Compliance`
         </div>,
         document.body
       )}
+
+      {isApproveModalOpen && selectedSchool && createPortal(
+        <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">
+          <div className="absolute inset-0" onClick={() => setIsApproveModalOpen(false)} />
+          <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-xl p-6 shadow-2xl z-10 space-y-5">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Approve &amp; Create Admin</h3>
+              <p className="text-xs text-slate-500">Set up the school admin account for {selectedSchool.name}.</p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Admin Name</label>
+                <input
+                  type="text"
+                  value={approveForm.name}
+                  onChange={(e) => setApproveForm({ ...approveForm, name: e.target.value })}
+                  placeholder="e.g. Jean Bosco"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Admin Email</label>
+                <input
+                  type="email"
+                  value={approveForm.email}
+                  onChange={(e) => setApproveForm({ ...approveForm, email: e.target.value })}
+                  placeholder="admin@school.rw"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400"
+                />
+                <p className="text-[9px] text-slate-400">Must match the email used during registration.</p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Password</label>
+                <input
+                  type="password"
+                  value={approveForm.password}
+                  onChange={(e) => setApproveForm({ ...approveForm, password: e.target.value })}
+                  placeholder="Set admin password"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsApproveModalOpen(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-medium rounded-lg text-slate-600"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleApproveConfirm}
+                disabled={isApproving}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-xs font-medium rounded-lg text-white disabled:opacity-50"
+              >
+                {isApproving ? 'Creating Admin...' : 'Approve &amp; Create Admin'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      <ConfirmDialog
+        isOpen={isDeleteModalOpen}
+        onClose={() => { setIsDeleteModalOpen(false); setSchoolToDelete(null); }}
+        onConfirm={handleDeleteConfirm}
+        title="Delete School"
+        message="You are about to permanently delete this school. All associated data including users, courses, classes, and financial records will be permanently removed from the system. This cannot be reversed."
+        itemName={schoolToDelete?.name}
+        isLoading={isDeleting}
+      />
 
       {isRejectModalOpen && selectedSchool && createPortal(
         <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">

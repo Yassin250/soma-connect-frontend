@@ -7,7 +7,7 @@ const API_BASE_URL = 'http://localhost:5050/api/admin';
 export const SchoolRegistrationForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [registeredDomain, setRegisteredDomain] = useState('');
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ export const SchoolRegistrationForm = () => {
       if (!response.ok) throw new Error('Registration failed');
       const newSchool = await response.json();
       const schoolData = newSchool.data || newSchool;
-      setRegisteredDomain(schoolData.domain);
+      setRegisteredEmail(schoolData.email || data.email);
       setIsSubmitted(true);
     } catch (err) {
       setErrorMsg(err.message || 'Registration failed.');
@@ -52,8 +52,8 @@ export const SchoolRegistrationForm = () => {
               <span className="text-amber-400 font-bold uppercase tracking-wider">Pending Review</span>
             </div>
             <div className="flex justify-between text-xs border-t border-slate-700/50 pt-2">
-              <span className="text-slate-400">Auto-created Admin:</span>
-              <span className="text-blue-400 font-mono">admin@{registeredDomain}</span>
+              <span className="text-slate-400">Admin Email on File:</span>
+              <span className="text-blue-400 font-mono">{registeredEmail}</span>
             </div>
           </div>
 
@@ -139,10 +139,10 @@ export const SchoolRegistrationForm = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email Domain</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email Domain / Slug</label>
                 <input
-                  {...register('domain', {
-                    required: 'Email domain is required',
+                  {...register('slug', {
+                    required: 'Domain is required',
                     pattern: {
                       value: /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                       message: 'Provide a valid domain (e.g. ur.ac.rw)'
@@ -152,7 +152,7 @@ export const SchoolRegistrationForm = () => {
                   placeholder="e.g. ur.ac.rw"
                   className="w-full bg-[#141c33] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-white placeholder-slate-500"
                 />
-                {errors.domain && <p className="text-[9px] text-red-500">{errors.domain.message}</p>}
+                {errors.slug && <p className="text-[9px] text-red-500">{errors.slug.message}</p>}
               </div>
             </div>
 
@@ -160,12 +160,12 @@ export const SchoolRegistrationForm = () => {
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Province / District</label>
                 <input
-                  {...register('location', { required: 'Location is required' })}
+                  {...register('address', { required: 'Address is required' })}
                   type="text"
                   placeholder="e.g. Kigali / Gasabo"
                   className="w-full bg-[#141c33] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-white placeholder-slate-500"
                 />
-                {errors.location && <p className="text-[9px] text-red-500">{errors.location.message}</p>}
+                {errors.address && <p className="text-[9px] text-red-500">{errors.address.message}</p>}
               </div>
 
               <div className="space-y-1">
@@ -184,25 +184,30 @@ export const SchoolRegistrationForm = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Primary Contact Name</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Admin Email</label>
                 <input
-                  {...register('contactName', { required: 'Contact name is required' })}
-                  type="text"
-                  placeholder="e.g. Jean Bosco"
+                  {...register('email', {
+                    required: 'Admin email is required',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Provide a valid email'
+                    }
+                  })}
+                  type="email"
+                  placeholder="admin@ur.ac.rw"
                   className="w-full bg-[#141c33] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-white placeholder-slate-500"
                 />
-                {errors.contactName && <p className="text-[9px] text-red-500">{errors.contactName.message}</p>}
+                {errors.email && <p className="text-[9px] text-red-500">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Contact Phone</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Phone</label>
                 <input
-                  {...register('contactPhone', { required: 'Contact phone is required' })}
+                  {...register('phone')}
                   type="text"
                   placeholder="e.g. +250 788 123 456"
                   className="w-full bg-[#141c33] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-blue-500 text-white placeholder-slate-500"
                 />
-                {errors.contactPhone && <p className="text-[9px] text-red-500">{errors.contactPhone.message}</p>}
               </div>
             </div>
 

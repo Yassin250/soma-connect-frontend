@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 
 const API_BASE_URL = 'http://localhost:5050/api/school';
 
@@ -13,6 +14,8 @@ export const StudentDirectoryPage = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -51,16 +54,24 @@ export const StudentDirectoryPage = () => {
     } catch (err) { toast.error(err.message); }
   };
 
-  const handleRemove = async (userId) => {
-    if (!confirm('Remove this student?') || !user?.schoolId) return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/${user.schoolId}/users/${userId}`, {
-        method: 'DELETE', headers: getHeaders(),
-      });
-      if (!res.ok) throw new Error('Failed to remove');
-      toast.success('Student removed.');
-      await loadStudents();
-    } catch (err) { toast.error(err.message); }
+  const handleRemove = (userId) => {
+    setConfirmDelete({
+      title: 'Remove Student',
+      message: 'You are about to permanently remove this student from the school.',
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const res = await fetch(`${API_BASE_URL}/${user.schoolId}/users/${userId}`, {
+            method: 'DELETE', headers: getHeaders(),
+          });
+          if (!res.ok) throw new Error('Failed to remove');
+          toast.success('Student removed.');
+          setConfirmDelete(null);
+          await loadStudents();
+        } catch (err) { toast.error(err.message); }
+        finally { setIsDeleting(false); }
+      },
+    });
   };
 
   return (
@@ -141,6 +152,18 @@ export const StudentDirectoryPage = () => {
           </div>
         )}
       </div>
+
+      {confirmDelete && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmDelete(null)}
+          onConfirm={confirmDelete.onConfirm}
+          title={confirmDelete.title}
+          message={confirmDelete.message}
+          itemName={confirmDelete.itemName}
+          isLoading={isDeleting}
+        />
+      )}
     </div>
   );
 };
