@@ -61,7 +61,7 @@ export const LoginForm = ({ onToggleMode }) => {
       case 'STUDENT':
         return '/student/dashboard';
       case 'LECTURER':
-        return '/lecturer/dashboard';
+        return '/school/dashboard';
       default:
         return '/admin/dashboard';
     }
@@ -79,6 +79,7 @@ export const LoginForm = ({ onToggleMode }) => {
       email: response.email,
       roles: response.roles || [],
       permissions: response.permissions || [],
+      schoolId: response.schoolId || null,
     };
 
     login(response.token, authUser);
@@ -101,10 +102,10 @@ export const LoginForm = ({ onToggleMode }) => {
     setIsSubmitting(true);
     setErrorMessage('');
     try {
-      const response = await authService.login(data.username, data.password);
+      const response = await authService.login(data.email, data.password);
       if (response?.otpRequired) {
         setOtpRequired(true);
-        setPendingUsername(response.username || data.username);
+        setPendingUsername(response.username || data.email);
         setTimeLeft(32);
         setOtpValues(Array(6).fill(''));
         setOtpStatus('idle');
@@ -262,18 +263,18 @@ const toggleView = () => {
             )}
 
             <div className="space-y-6">
-              {/* Username / Email Field */}
+              {/* Email Field */}
               <div className="relative border-b border-gray-300 py-2 flex items-center">
                 <svg className="w-5 h-5 text-gray-400 absolute left-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <input
-                  {...register('username', { required: 'Username or Email is required' })}
-                  type="text"
-                  placeholder="Username or Email"
+                  {...register('email', { required: 'Email is required' })}
+                  type="email"
+                  placeholder="Email"
                   className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none pl-8 pr-4"
                 />
-                {errors.username && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.username.message}</p>}
+                {errors.email && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.email.message}</p>}
               </div>
 
               {/* Password Field */}

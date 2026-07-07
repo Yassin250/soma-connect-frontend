@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../../context/AuthContext';
 
 export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser }) => {
@@ -100,8 +101,8 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser }) => {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[1000]">
+  return createPortal(
+    <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">
       <div className="bg-white rounded-[24px] shadow-xl w-full max-w-[480px] overflow-hidden border border-gray-200 p-6 relative">
         {/* Close button */}
         <button
@@ -245,6 +246,7 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser }) => {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

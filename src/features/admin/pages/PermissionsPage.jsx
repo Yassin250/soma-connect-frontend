@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
+import { useToast } from '../../../context/ToastContext';
 
 export const PermissionsPage = () => {
   const { token } = useAuth();
   const [permissions, setPermissions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const toast = useToast();
 
   const API_BASE_URL = 'http://localhost:5050/api/admin';
 
@@ -16,14 +17,13 @@ export const PermissionsPage = () => {
 
   const fetchPermissions = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/permissions`, { headers: getHeaders() });
       if (!response.ok) throw new Error(`Failed to fetch permissions: ${response.status}`);
       const data = await response.json();
       setPermissions(Array.isArray(data) ? data : data?.data || []);
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message);
       setPermissions([]);
     } finally {
       setIsLoading(false);
@@ -68,8 +68,7 @@ export const PermissionsPage = () => {
             </tbody>
           </table>
           {isLoading && <div className="p-8 text-center text-sm text-gray-500">Loading permissions...</div>}
-          {error && <div className="p-8 text-center text-sm text-red-500 bg-red-50 rounded-b-xl">Error: {error}</div>}
-          {!isLoading && !error && permissions.length === 0 && <div className="p-8 text-center text-sm text-gray-500">No permissions found.</div>}
+          {!isLoading && permissions.length === 0 && <div className="p-8 text-center text-sm text-gray-500">No permissions found.</div>}
         </div>
       </div>
     </div>

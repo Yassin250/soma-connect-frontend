@@ -1,19 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import { useToast } from '../../../context/ToastContext';
 
 export const SchoolApprovalsPage = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
   const API_BASE_URL = 'http://localhost:5050/api/admin';
 
   const [schools, setSchools] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [simulatedEmail, setSimulatedEmail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const [form, setForm] = useState({ name: '', type: 'UNIVERSITY', slug: '', email: '', phone: '', address: '', website: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -22,7 +28,6 @@ export const SchoolApprovalsPage = () => {
 
   const loadSchools = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/schools`, {
         headers: getHeaders(),
@@ -31,11 +36,38 @@ export const SchoolApprovalsPage = () => {
       const data = await response.json();
       setSchools(Array.isArray(data) ? data : (data.data || []));
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
   }, [getHeaders]);
+
+  const handleRegister = async () => {
+    if (!form.name.trim() || !form.slug.trim()) {
+      toast.warning('Name and slug are required');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/schools`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(form),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || 'Failed to register school');
+      }
+      setIsRegisterModalOpen(false);
+      setForm({ name: '', type: 'UNIVERSITY', slug: '', email: '', phone: '', address: '', website: '' });
+      toast.success('School registered successfully');
+      await loadSchools();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     loadSchools();
@@ -55,6 +87,8 @@ export const SchoolApprovalsPage = () => {
       
       const portalLoginUrl = `${window.location.origin}/login`;
       await loadSchools();
+      
+      toast.success(`${schoolData.name} approved successfully`);
       
       setSimulatedEmail({
         to: `admin@${schoolData.domain}`,
@@ -77,7 +111,7 @@ Warm regards,
 SomaConnect Pilot Operations Team`
       });
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -88,7 +122,10 @@ SomaConnect Pilot Operations Team`
   };
 
   const handleRejectConfirm = async () => {
-    if (!rejectReason.trim()) return;
+    if (!rejectReason.trim()) {
+      toast.warning('Please provide a rejection reason');
+      return;
+    }
     
     try {
       const response = await fetch(`${API_BASE_URL}/schools/${selectedSchool.id}/status`, {
@@ -104,6 +141,8 @@ SomaConnect Pilot Operations Team`
       await loadSchools();
       setIsRejectModalOpen(false);
 
+      toast.info(`${selectedSchool.name} has been rejected`);
+      
       setSimulatedEmail({
         to: selectedSchool.contactPhone ? `${selectedSchool.contactName} (${selectedSchool.contactPhone})` : 'Registrar Office',
         subject: `SomaConnect Application Status Update - ${selectedSchool.name}`,
@@ -121,7 +160,7 @@ Best regards,
 SomaConnect Operations Compliance`
       });
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -171,9 +210,23 @@ SomaConnect Operations Compliance`
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-4">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">
-            Registration Queue ({schools.filter(s => s.status === 'PENDING').length} Pending)
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">
+              Registration Queue ({schools.filter(s => s.status === 'PENDING').length} Pending)
+            </h3>
+            <button
+              onClick={() => {
+                {/* cleared via toast */}
+                setIsRegisterModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#1d4ed8] hover:bg-[#1e40af] text-xs font-bold text-white rounded-xl transition-all shadow-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Register School
+            </button>
+          </div>
 
           {schools.length === 0 ? (
             <div className="bg-slate-50 p-8 rounded-xl border border-slate-200 text-center text-slate-500 text-xs">
@@ -186,7 +239,7 @@ SomaConnect Operations Compliance`
                   key={school.id}
                   className="p-5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1 flex-1">
                     <div className="flex items-center space-x-2.5">
                       <h4 className="text-base font-bold text-slate-900">{school.name}</h4>
                       <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider ${
@@ -200,20 +253,18 @@ SomaConnect Operations Compliance`
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
                       <span className="flex items-center">
-                        <strong className="text-slate-700 font-semibold mr-1">Domain:</strong> @{school.domain}
+                        <strong className="text-slate-700 font-semibold mr-1">Email:</strong> {school.email || '---'}
                       </span>
-                      <span>•</span>
-                      <span>{school.location}</span>
                       <span>•</span>
                       <span className="uppercase font-mono text-[10px]">{school.type}</span>
                     </div>
                     <div className="text-[11px] text-slate-400 pt-1">
-                      Contact: {school.contactName} ({school.contactPhone})
+                      {school.website || school.address || ''}
                     </div>
                   </div>
 
                   {school.status === 'PENDING' && (
-                    <div className="flex items-center gap-2 self-stretch md:self-auto justify-end">
+                    <div className="flex items-center gap-2 self-stretch md:self-auto justify-end shrink-0">
                       <button
                         onClick={() => handleApprove(school.id)}
                         className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-xs font-bold rounded text-white transition-all"
@@ -267,9 +318,74 @@ SomaConnect Operations Compliance`
         </div>
       </div>
 
-      {isRejectModalOpen && selectedSchool && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setIsRejectModalOpen(false)} />
+      {isRegisterModalOpen && createPortal(
+        <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">
+          <div className="absolute inset-0" onClick={() => setIsRegisterModalOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-xl p-6 shadow-2xl z-10 space-y-5">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Register New School</h3>
+              <p className="text-xs text-slate-500">Create a new institution on the platform.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2 space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">School Name *</label>
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. University of Kigali" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Slug *</label>
+                <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g. university-of-kigali" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Type</label>
+                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900">
+                  <option value="UNIVERSITY">University</option>
+                  <option value="SECONDARY">Secondary School</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email</label>
+                <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="admin@school.rw" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Phone</label>
+                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+250 7XX XXX XXX" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+              </div>
+              <div className="sm:col-span-2 space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Address</label>
+                <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Kigali, Rwanda" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+              </div>
+              <div className="sm:col-span-2 space-y-1">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Website</label>
+                <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://school.rw" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsRegisterModalOpen(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-medium rounded-lg text-slate-600"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleRegister}
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-xs font-medium rounded-lg text-white disabled:opacity-50"
+              >
+                {isSubmitting ? 'Registering...' : 'Register'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {isRejectModalOpen && selectedSchool && createPortal(
+        <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">
+          <div className="absolute inset-0" onClick={() => setIsRejectModalOpen(false)} />
           <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-xl p-6 shadow-2xl z-10 space-y-4">
             <div>
               <h3 className="text-lg font-bold text-slate-900">Reject Registry Application</h3>
@@ -304,7 +420,8 @@ SomaConnect Operations Compliance`
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
