@@ -25,7 +25,8 @@ export const authService = {
       throw new Error(getApiErrorMessage(error, 'Invalid credentials'));
     }
   },
-  verifyOtp: async (email, otp) => {
+
+  verifyOtp: async (username, otp) => {
     try {
       const response = await apiClient.post('/admin/auth/verify-otp', {
         email,
@@ -37,34 +38,56 @@ export const authService = {
     }
   },
 
+  // Resend the login OTP. Backend: POST /admin/auth/resend-otp { username }.
+  resendOtp: async (username) => {
+    try {
+      const response = await apiClient.post('/admin/auth/resend-otp', { username });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Could not resend the code'));
+    }
+  },
+
+  // Forced first-login / self-service password change while authenticated.
+  // Backend: POST /admin/auth/change-password { oldPassword, newPassword, confirmPassword }.
+  changePassword: async ({ oldPassword, newPassword, confirmPassword }) => {
+    try {
+      const response = await apiClient.post('/admin/auth/change-password', {
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Could not change password'));
+    }
+  },
+
+  // Step 1 of password reset: backend generates a reset token for the account.
+  // Backend: POST /admin/auth/forgot-password { email }.
   requestPasswordReset: async (email) => {
-  try {
-    const response = await apiClient.post('/admin/auth/forgot-password', { email });
-    return unwrapApiResult(response);
-  } catch (error) {
-    throw new Error(getApiErrorMessage(error, 'Could not send reset code'));
-  }
-},
+    try {
+      const response = await apiClient.post('/admin/auth/forgot-password', { email });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Could not start password reset'));
+    }
+  },
 
-verifyPasswordResetOtp: async (email, otp) => {
-  try {
-    const response = await apiClient.post('/admin/auth/forgot-password/verify-otp', { email, otp });
-    return unwrapApiResult(response);
-  } catch (error) {
-    throw new Error(getApiErrorMessage(error, 'Invalid or expired code'));
-  }
-},
-
-resetPassword: async (email, newPassword) => {
-  try {
-    const response = await apiClient.post('/admin/auth/reset-password', { email, newPassword });
-    return unwrapApiResult(response);
-  } catch (error) {
-    throw new Error(getApiErrorMessage(error, 'Could not reset password'));
-  }
-},
-
-
+  // Step 2 of password reset: submit the reset token + new password.
+  // Backend: POST /admin/auth/reset-password { token, newPassword, confirmPassword }.
+  resetPassword: async ({ token, newPassword, confirmPassword }) => {
+    try {
+      const response = await apiClient.post('/admin/auth/reset-password', {
+        token,
+        newPassword,
+        confirmPassword,
+      });
+      return unwrapApiResult(response);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Could not reset password'));
+    }
+  },
 };
 
 export const adminService = {

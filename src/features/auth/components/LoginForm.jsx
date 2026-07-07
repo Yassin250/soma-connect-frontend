@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../../services/api';
 import { useAuth } from '../../../context/AuthContext';
+import { REFRESH_TOKEN_KEY } from '../../../services/apiClient';
 import { Link } from 'react-router-dom';
 
 
@@ -75,8 +76,16 @@ export const LoginForm = ({ onToggleMode }) => {
 
     login(response.token, authUser);
     if (response.refreshToken) {
-      localStorage.setItem('soma_refresh_token', response.refreshToken);
+      localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
     }
+
+    // First-login accounts must change their password before anything else —
+    // the backend's PasswordChangeFilter 403s every other call until they do.
+    if (response.isPasswordChanged === false) {
+      navigate('/change-password', { replace: true });
+      return;
+    }
+
     const redirectPath = getRedirectPath(authUser.roles);
     navigate(redirectPath, { replace: true });
   };
@@ -142,12 +151,17 @@ export const LoginForm = ({ onToggleMode }) => {
   };
 
   const handleResendCode = async () => {
-    // Add resend API logic here
-    setTimeLeft(32);
+    if (!pendingUsername) return;
+    setErrorMessage('');
     setOtpStatus('idle');
     setOtpValues(Array(6).fill(''));
-    setErrorMessage('');
-    inputRefs.current[0]?.focus();
+    try {
+      await authService.resendOtp(pendingUsername);
+      setTimeLeft(32);
+      inputRefs.current[0]?.focus();
+    } catch (error) {
+      setErrorMessage(error?.message || 'Could not resend the code');
+    }
   };
 
   // OTP Input Handlers
