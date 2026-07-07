@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import { useToast } from '../../../context/ToastContext';
 
 export const AdminCommandCenter = () => {
-  const { token } = useAuth();
+  const { token, refreshAccessToken } = useAuth();
   const API_BASE_URL = 'http://localhost:5050/api/admin';
 
   const [stats, setStats] = useState({
@@ -18,43 +19,43 @@ export const AdminCommandCenter = () => {
   });
   const [recentActivity, setRecentActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const toast = useToast();
 
-  const getHeaders = useCallback(() => ({
+  const getHeaders = useCallback((t) => ({
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${t || token}`,
   }), [token]);
+
+  const fetchWithAuth = useCallback(async (url, retried = false) => {
+    const res = await fetch(url, { headers: getHeaders() });
+    if (res.status === 401 && !retried) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        const retryRes = await fetch(url, { headers: getHeaders(newToken) });
+        if (!retryRes.ok) throw new Error(`Failed: ${retryRes.status} ${retryRes.statusText}`);
+        return retryRes.json();
+      }
+      throw new Error('Session expired. Please log in again.');
+    }
+    if (!res.ok) throw new Error(`Failed: ${res.status} ${res.statusText}`);
+    return res.json();
+  }, [getHeaders, refreshAccessToken]);
 
   const loadGlobalStats = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     try {
-      // Fetch Summary Stats
-      const statsResponse = await fetch(`${API_BASE_URL}/stats`, {
-        headers: getHeaders(),
-      });
-      if (!statsResponse.ok) {
-        throw new Error(`Failed to fetch stats: ${statsResponse.status} ${statsResponse.statusText}`);
-      }
-      const statsData = await statsResponse.json();
+      const statsData = await fetchWithAuth(`${API_BASE_URL}/stats`);
       setStats(statsData.data || statsData);
 
-      // Fetch Recent Activity
-      const activityResponse = await fetch(`${API_BASE_URL}/activity`, {
-        headers: getHeaders(),
-      });
-      if (!activityResponse.ok) {
-        throw new Error(`Failed to fetch activity: ${activityResponse.status} ${activityResponse.statusText}`);
-      }
-      const activityData = await activityResponse.json();
+      const activityData = await fetchWithAuth(`${API_BASE_URL}/activity`);
       setRecentActivity(Array.isArray(activityData) ? activityData : (activityData.data || []));
     } catch (err) {
       console.error('Error loading global stats:', err);
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [getHeaders]);
+  }, [fetchWithAuth, toast]);
 
   useEffect(() => {
     loadGlobalStats();
@@ -64,20 +65,6 @@ export const AdminCommandCenter = () => {
     return (
       <div className="flex items-center justify-center h-full text-slate-500 font-mono text-sm">
         Initializing Command Center...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full space-y-4">
-        <div className="text-red-500 font-medium">Error loading dashboard: {error}</div>
-        <button
-          onClick={loadGlobalStats}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold"
-        >
-          Retry
-        </button>
       </div>
     );
   }
@@ -100,10 +87,10 @@ export const AdminCommandCenter = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
         </svg>
       ),
-      iconBg: 'bg-indigo-50',
-      iconColor: 'text-indigo-600',
-      subValueClass: 'bg-indigo-50 text-indigo-700',
-      accentBar: 'bg-indigo-500',
+      gradient: 'from-indigo-500 via-indigo-600 to-indigo-700',
+      shadow: 'shadow-indigo-500/20',
+      badge: 'bg-white/20 text-white',
+      corner: 'bg-indigo-400/20',
     },
     {
       label: 'Total Users',
@@ -114,10 +101,10 @@ export const AdminCommandCenter = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
       ),
-      iconBg: 'bg-violet-50',
-      iconColor: 'text-violet-600',
-      subValueClass: 'bg-violet-50 text-violet-700',
-      accentBar: 'bg-violet-500',
+      gradient: 'from-violet-500 via-violet-600 to-fuchsia-600',
+      shadow: 'shadow-violet-500/20',
+      badge: 'bg-white/20 text-white',
+      corner: 'bg-violet-400/20',
     },
     {
       label: 'Academic Courses',
@@ -128,10 +115,10 @@ export const AdminCommandCenter = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       ),
-      iconBg: 'bg-emerald-50',
-      iconColor: 'text-emerald-600',
-      subValueClass: 'bg-emerald-50 text-emerald-700',
-      accentBar: 'bg-emerald-500',
+      gradient: 'from-emerald-500 via-emerald-600 to-teal-700',
+      shadow: 'shadow-emerald-500/20',
+      badge: 'bg-white/20 text-white',
+      corner: 'bg-emerald-400/20',
     },
     {
       label: 'Global Submissions',
@@ -142,10 +129,10 @@ export const AdminCommandCenter = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
-      iconBg: 'bg-amber-50',
-      iconColor: 'text-amber-600',
-      subValueClass: 'bg-amber-50 text-amber-700',
-      accentBar: 'bg-amber-500',
+      gradient: 'from-amber-500 via-orange-500 to-rose-600',
+      shadow: 'shadow-amber-500/20',
+      badge: 'bg-white/20 text-white',
+      corner: 'bg-amber-400/20',
     },
   ];
 
@@ -182,19 +169,25 @@ export const AdminCommandCenter = () => {
         {kpiCards.map((card, idx) => (
           <div
             key={idx}
-            className="p-6 bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow relative overflow-hidden"
+            className={`relative p-4 rounded-xl bg-gradient-to-br ${card.gradient} ${card.shadow} shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 overflow-hidden group`}
           >
-            {/* Left accent bar */}
-            <div className={`absolute left-0 top-0 bottom-0 w-1 ${card.accentBar}`} />
-            <div className="flex items-start justify-between">
-              <div className={`p-3 rounded-xl border ${card.iconBg} ${card.iconColor}`}>
+            {/* Decorative corner ring */}
+            <div className={`absolute -top-4 -right-4 w-16 h-16 rounded-full ${card.corner} blur-lg group-hover:scale-150 transition-transform duration-700`} />
+            <div className="absolute -bottom-3 -left-3 w-10 h-10 rounded-full border-2 border-white/5 group-hover:scale-125 transition-transform duration-500" />
+
+            {/* Top row: icon + subtle indicator */}
+            <div className="flex items-start justify-between relative z-10">
+              <div className="p-2 rounded-lg bg-white/15 text-white backdrop-blur-sm ring-1 ring-white/20 shadow-inner">
                 {card.icon}
               </div>
+              <div className="w-1 h-1 rounded-full bg-white/40 animate-pulse" />
             </div>
-            <div className="mt-4">
-              <p className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400">{card.label}</p>
-              <p className="text-4xl font-black text-slate-900 mt-1">{card.value}</p>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold mt-2 ${card.subValueClass}`}>
+
+            {/* Value area */}
+            <div className="mt-3 relative z-10">
+              <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-white/60">{card.label}</p>
+              <p className="text-2xl font-black text-white mt-0.5 drop-shadow-sm tabular-nums">{card.value}</p>
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold mt-2 ${card.badge} backdrop-blur-sm`}>
                 {card.subValue}
               </span>
             </div>

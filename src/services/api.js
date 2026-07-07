@@ -14,10 +14,10 @@ const getApiErrorMessage = (error, fallbackMessage) => {
 };
 
 export const authService = {
-  login: async (username, password) => {
+  login: async (email, password) => {
     try {
       const response = await apiClient.post('/admin/auth/login', {
-        username,
+        email,
         password,
       });
       return unwrapApiResult(response);
@@ -25,10 +25,10 @@ export const authService = {
       throw new Error(getApiErrorMessage(error, 'Invalid credentials'));
     }
   },
-  verifyOtp: async (username, otp) => {
+  verifyOtp: async (email, otp) => {
     try {
       const response = await apiClient.post('/admin/auth/verify-otp', {
-        username,
+        email,
         otp,
       });
       return unwrapApiResult(response);

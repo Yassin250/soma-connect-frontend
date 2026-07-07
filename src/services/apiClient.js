@@ -22,10 +22,67 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const onRefreshed = (newToken) => {
+  refreshSubscribers.forEach((callback) => callback(newToken));
+  refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = (callback) => {
+  refreshSubscribers.push(callback);
+};
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    console.error("API response error intercept details:", error.response?.status, error.response?.data);
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          addRefreshSubscriber((newToken) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(apiClient(originalRequest));
+          });
+        });
+      }
+      originalRequest._retry = true;
+      isRefreshing = true;
+      const refreshToken = localStorage.getItem('soma_refresh_token');
+      if (!refreshToken) {
+        isRefreshing = false;
+        localStorage.removeItem('soma_token');
+        localStorage.removeItem('soma_user');
+        localStorage.removeItem('soma_refresh_token');
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+      try {
+        const resp = await fetch('http://localhost:5050/admin/auth/refresh-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken }),
+        });
+        if (!resp.ok) throw new Error('Refresh failed');
+        const data = await resp.json();
+        const newToken = data.token || data.data?.token;
+        if (!newToken) throw new Error('No token in refresh response');
+        localStorage.setItem('soma_token', newToken);
+        onRefreshed(newToken);
+        isRefreshing = false;
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return apiClient(originalRequest);
+      } catch {
+        isRefreshing = false;
+        refreshSubscribers = [];
+        localStorage.removeItem('soma_token');
+        localStorage.removeItem('soma_user');
+        localStorage.removeItem('soma_refresh_token');
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+    }
     return Promise.reject(error);
   }
 );

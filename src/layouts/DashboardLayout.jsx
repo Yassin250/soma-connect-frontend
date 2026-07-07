@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/2.png';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();
@@ -11,7 +12,7 @@ export const DashboardLayout = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <span className="text-xl font-black text-blue-500 tracking-wider">SomaConnect</span>
+              <img src={logo} alt="Logo" className="h-8 w-auto" />
               {user && (
                 <span className="px-2 py-0.5 text-xs font-semibold bg-zinc-800 text-zinc-300 rounded border border-zinc-700 uppercase">
                   {user.tenantId}
