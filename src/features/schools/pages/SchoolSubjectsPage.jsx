@@ -1,72 +1,89 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
 
-const mockAllocations = [
-  { id: 1, subject: 'Mathematics', className: 'Senior One', teacher: 'Jean Bosco Niyigaba', hours: 6, code: 'MAT' },
-  { id: 2, subject: 'Physics', className: 'Senior Two', teacher: 'Marie Claire Uwase', hours: 4, code: 'PHY' },
-  { id: 3, subject: 'Kinyarwanda', className: 'Senior One', teacher: 'Innocent Mugisha', hours: 5, code: 'KIN' },
-  { id: 4, subject: 'Chemistry', className: 'Senior Two', teacher: 'Dr. Pascal Nkunda', hours: 4, code: 'CHEM' },
-  { id: 5, subject: 'Biology', className: 'Senior One', teacher: 'Grace Murekatete', hours: 5, code: 'BIO' },
-  { id: 6, subject: 'ICT', className: 'Year 1 Computer Science', teacher: 'Robert Habimana', hours: 8, code: 'ICT' },
-  { id: 7, subject: 'English', className: 'Senior One', teacher: 'Alice Keza', hours: 5, code: 'ENG' },
-  { id: 8, subject: 'History', className: 'Senior Two', teacher: 'Patrick Zirima', hours: 3, code: 'HIS' },
-  { id: 9, subject: 'Entrepreneurship', className: 'Senior Two', teacher: 'Jean Bosco Niyigaba', hours: 2, code: 'ENT' },
-  { id: 10, subject: 'Geography', className: 'Senior One', teacher: 'Patrick Zirima', hours: 3, code: 'GEO' },
-];
-
-const mockClassesList = [
-  'Senior One',
-  'Senior Two',
-  'Senior Three',
-  'Senior Four',
-  'Senior Five',
-  'Senior Six',
-  'Year 1 Computer Science',
-  'Year 2 Engineering',
-];
-
-const mockTeachersList = [
-  'Jean Bosco Niyigaba',
-  'Marie Claire Uwase',
-  'Innocent Mugisha',
-  'Dr. Pascal Nkunda',
-  'Grace Murekatete',
-  'Robert Habimana',
-  'Alice Keza',
-  'Patrick Zirima',
-  'Denis Sekamana',
-  'Claudine Iradukunda',
-];
+const API_BASE_URL = 'http://localhost:5050/api/school';
 
 export const SchoolSubjectsPage = () => {
+  const { token } = useAuth();
   const toast = useToast();
-  const [allocations, setAllocations] = useState(mockAllocations);
+
+  const [allocations, setAllocations] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [newAllocation, setNewAllocation] = useState({ subject: '', className: '', teacher: '', hours: 0, code: '' });
   const [filterClass, setFilterClass] = useState('');
+
+  const getHeaders = useCallback(() => ({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }), [token]);
+
+  const loadAllocations = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/subject-allocations`, { headers: getHeaders() });
+      if (!response.ok) {
+        if (response.status === 404) {
+          setAllocations([]);
+        } else {
+          throw new Error(`Failed to fetch: ${response.status}`);
+        }
+      } else {
+        const data = await response.json();
+        setAllocations(data.data || data);
+      }
+    } catch (err) {
+      toast.error(err.message);
+      setAllocations([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getHeaders, toast]);
+
+  useEffect(() => {
+    loadAllocations();
+  }, [loadAllocations]);
 
   const filteredAllocations = useCallback(() => {
     if (!filterClass) return allocations;
     return allocations.filter((a) => a.className === filterClass);
   }, [allocations, filterClass])();
 
-  const handleAddAllocation = () => {
+  const handleAddAllocation = async () => {
     if (!newAllocation.subject.trim() || !newAllocation.className || !newAllocation.teacher) {
       toast.error('Please fill in all required fields');
       return;
     }
-    const id = allocations.length > 0 ? Math.max(...allocations.map((a) => a.id)) + 1 : 1;
-    const code = newAllocation.code.trim() || newAllocation.subject.slice(0, 3).toUpperCase();
-    setAllocations([...allocations, { id, ...newAllocation, code }]); // eslint-disable-line
-    toast.success('Subject allocation added successfully');
-    setShowForm(false);
-    setNewAllocation({ subject: '', className: '', teacher: '', hours: 0, code: '' });
+    try {
+      const response = await fetch(`${API_BASE_URL}/subject-allocations`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(newAllocation),
+      });
+      if (!response.ok) throw new Error(`Failed to create: ${response.status}`);
+      toast.success('Subject allocation added successfully');
+      setShowForm(false);
+      setNewAllocation({ subject: '', className: '', teacher: '', hours: 0, code: '' });
+      loadAllocations();
+    } catch (err) {
+      toast.error(err.message);
+    }
   };
 
-  const handleDeleteAllocation = (id) => {
+  const handleDeleteAllocation = async (id) => {
     if (confirm('Are you sure you want to remove this allocation?')) {
-      setAllocations(allocations.filter((a) => a.id !== id));
-      toast.success('Allocation removed');
+      try {
+        const response = await fetch(`${API_BASE_URL}/subject-allocations/${id}`, {
+          method: 'DELETE',
+          headers: getHeaders(),
+        });
+        if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
+        toast.success('Allocation removed');
+        loadAllocations();
+      } catch (err) {
+        toast.error(err.message);
+      }
     }
   };
 
@@ -130,7 +147,15 @@ export const SchoolSubjectsPage = () => {
 
       {/* Allocations Grid (Cards) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredAllocations.length === 0 ? (
+        {isLoading ? (
+          <div className="col-span-full text-center py-12 text-slate-400">
+            <svg className="w-8 h-8 mx-auto animate-spin text-[#5429FF]" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <p className="mt-3 text-sm font-medium">Loading allocations...</p>
+          </div>
+        ) : filteredAllocations.length === 0 ? (
           <div className="col-span-full text-center py-12 text-slate-400">
             <svg className="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
@@ -195,7 +220,15 @@ export const SchoolSubjectsPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          {filteredAllocations.length === 0 ? (
+          {isLoading ? (
+            <div className="text-center py-12 text-slate-400">
+              <svg className="w-8 h-8 mx-auto animate-spin text-[#5429FF]" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <p className="mt-3 text-sm font-medium">Loading allocations...</p>
+            </div>
+          ) : filteredAllocations.length === 0 ? (
             <div className="text-center py-12 text-slate-400">
               <svg className="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
@@ -272,29 +305,23 @@ export const SchoolSubjectsPage = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Class</label>
-                <select
+                <input
+                  type="text"
+                  placeholder="e.g., Senior One"
                   value={newAllocation.className}
                   onChange={(e) => setNewAllocation({ ...newAllocation, className: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800"
-                >
-                  <option value="">Select class</option>
-                  {mockClassesList.map((cls) => (
-                    <option key={cls} value={cls}>{cls}</option>
-                  ))}
-                </select>
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Teacher</label>
-                <select
+                <input
+                  type="text"
+                  placeholder="e.g., Jean Bosco Niyigaba"
                   value={newAllocation.teacher}
                   onChange={(e) => setNewAllocation({ ...newAllocation, teacher: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800"
-                >
-                  <option value="">Select teacher</option>
-                  {mockTeachersList.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Weekly Hours</label>
