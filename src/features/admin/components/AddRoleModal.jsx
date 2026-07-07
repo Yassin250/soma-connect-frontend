@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export const AddRoleModal = ({ isOpen, onClose, onSubmit, editingRole }) => {
   const [newRoleName, setNewRoleName] = useState('');
@@ -43,8 +44,8 @@ export const AddRoleModal = ({ isOpen, onClose, onSubmit, editingRole }) => {
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+  return createPortal(
+    <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">
       <div className="bg-white rounded-[24px] shadow-xl w-full max-w-[480px] overflow-hidden border border-slate-100 p-6 relative">
         
         {/* Upper Right Dismiss Cross Marker */}
@@ -133,6 +134,7 @@ export const AddRoleModal = ({ isOpen, onClose, onSubmit, editingRole }) => {
         </form>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -7,12 +7,43 @@ import { RolesPage } from '../features/admin/pages/RolesPage';
 import { PermissionsPage } from '../features/admin/pages/PermissionsPage';
 import { SchoolApprovalsPage } from '../features/admin/pages/SchoolApprovalsPage';
 import { AdminCommandCenter } from '../features/admin/pages/AdminCommandCenter';
-import { SchoolSetupChecklist } from '../features/schools/components/SchoolSetupChecklist';
-import { SchoolAdminDashboard } from '../features/schools/components/SchoolAdminDashboard';
+import { SystemHealthPage } from '../features/admin/pages/SystemHealthPage';
+import { AuditLogsPage } from '../features/admin/pages/AuditLogsPage';
+import { SubscriptionsPage } from '../features/admin/pages/SubscriptionsPage';
+import { CoursesPage } from '../features/admin/pages/CoursesPage';
+import { PlagiarismPage } from '../features/admin/pages/PlagiarismPage';
+import { RevenuePage } from '../features/admin/pages/RevenuePage';
+import { InvoicesPage } from '../features/admin/pages/InvoicesPage';
+import { PayoutsPage } from '../features/admin/pages/PayoutsPage';
+import { NotificationsPage } from '../features/admin/pages/NotificationsPage';
+import { EmployersPage } from '../features/admin/pages/EmployersPage';
+import { JobBoardPage } from '../features/admin/pages/JobBoardPage';
+import { PlacementTrackingPage } from '../features/admin/pages/PlacementTrackingPage';
+import { AITuningPage } from '../features/admin/pages/AITuningPage';
+import { SchoolAdminDashboardLayout } from '../features/schools/layouts/SchoolAdminDashboardLayout';
+import { SchoolOverviewPage } from '../features/schools/pages/SchoolOverviewPage';
+import { SchoolProfilePage } from '../features/schools/pages/SchoolProfilePage';
+import { SchoolClassesPage } from '../features/schools/pages/SchoolClassesPage';
+import { SchoolSubjectsPage } from '../features/schools/pages/SchoolSubjectsPage';
+import { SchoolTimetablePage } from '../features/schools/pages/SchoolTimetablePage';
+import { SchoolAssessmentsPage } from '../features/schools/pages/SchoolAssessmentsPage';
+import { SchoolStaffPage } from '../features/schools/pages/SchoolStaffPage';
+import { SchoolStudentsPage } from '../features/schools/pages/SchoolStudentsPage';
+import { SchoolAttendancePage } from '../features/schools/pages/SchoolAttendancePage';
+import { SchoolCoursesPage } from '../features/schools/pages/SchoolCoursesPage';
+import { SchoolPlagiarismPage } from '../features/schools/pages/SchoolPlagiarismPage';
+import { SchoolLibraryPage } from '../features/schools/pages/SchoolLibraryPage';
+import { SchoolFeesPage } from '../features/schools/pages/SchoolFeesPage';
+import { SchoolExpenditurePage } from '../features/schools/pages/SchoolExpenditurePage';
+import { SchoolFinancialReportsPage } from '../features/schools/pages/SchoolFinancialReportsPage';
+import { SchoolNotificationsPage } from '../features/schools/pages/SchoolNotificationsPage';
+import { SchoolDisciplinePage } from '../features/schools/pages/SchoolDisciplinePage';
+import { SchoolHealthPage } from '../features/schools/pages/SchoolHealthPage';
+import { SchoolInternshipsPage } from '../features/schools/pages/SchoolInternshipsPage';
+import { SchoolAlumniPage } from '../features/schools/pages/SchoolAlumniPage';
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import { RegisterPage } from '../features/auth/pages/RegisterPage';
 import { AdminLayout } from '../features/admin/layouts/AdminLayout';
-import { DashboardLayout } from '../layouts/DashboardLayout';
 import { LearningLayout } from '../layouts/LearningLayout';
 
 const ProtectedRoute = ({ children }) => {
@@ -51,15 +82,47 @@ export const AppRouter = () => {
         <Route element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/dashboard" element={<AdminRoute><AdminCommandCenter /></AdminRoute>} />
+          <Route path="/admin/system-health" element={<AdminRoute><SystemHealthPage /></AdminRoute>} />
+          <Route path="/admin/audit-logs" element={<AdminRoute><AuditLogsPage /></AdminRoute>} />
+          <Route path="/admin/subscriptions" element={<AdminRoute><SubscriptionsPage /></AdminRoute>} />
+          <Route path="/admin/courses" element={<AdminRoute><CoursesPage /></AdminRoute>} />
+          <Route path="/admin/plagiarism" element={<AdminRoute><PlagiarismPage /></AdminRoute>} />
+          <Route path="/admin/revenue" element={<AdminRoute><RevenuePage /></AdminRoute>} />
+          <Route path="/admin/invoices" element={<AdminRoute><InvoicesPage /></AdminRoute>} />
+          <Route path="/admin/payouts" element={<AdminRoute><PayoutsPage /></AdminRoute>} />
+          <Route path="/admin/notifications" element={<AdminRoute><NotificationsPage /></AdminRoute>} />
           <Route path="/admin/users" element={<AdminRoute><UserManagementPage /></AdminRoute>} />
           <Route path="/admin/roles" element={<AdminRoute><RolesPage /></AdminRoute>} />
           <Route path="/admin/permissions" element={<AdminRoute><PermissionsPage /></AdminRoute>} />
           <Route path="/admin/approvals" element={<AdminRoute><SchoolApprovalsPage /></AdminRoute>} />
+          <Route path="/admin/employers" element={<AdminRoute><EmployersPage /></AdminRoute>} />
+          <Route path="/admin/jobs" element={<AdminRoute><JobBoardPage /></AdminRoute>} />
+          <Route path="/admin/placements" element={<AdminRoute><PlacementTrackingPage /></AdminRoute>} />
+          <Route path="/admin/ai-tuning" element={<AdminRoute><AITuningPage /></AdminRoute>} />
         </Route>
 
-        <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-          <Route path="/school/setup" element={<SchoolSetupChecklist />} />
-          <Route path="/school/dashboard" element={<SchoolRoute><SchoolAdminDashboard /></SchoolRoute>} />
+        <Route element={<ProtectedRoute><SchoolAdminDashboardLayout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="/school/dashboard" replace />} />
+          <Route path="/school/dashboard" element={<SchoolRoute><SchoolOverviewPage /></SchoolRoute>} />
+          <Route path="/school/profile" element={<SchoolRoute><SchoolProfilePage /></SchoolRoute>} />
+          <Route path="/school/classes" element={<SchoolRoute><SchoolClassesPage /></SchoolRoute>} />
+          <Route path="/school/subjects" element={<SchoolRoute><SchoolSubjectsPage /></SchoolRoute>} />
+          <Route path="/school/timetable" element={<SchoolRoute><SchoolTimetablePage /></SchoolRoute>} />
+          <Route path="/school/assessments" element={<SchoolRoute><SchoolAssessmentsPage /></SchoolRoute>} />
+          <Route path="/school/staff" element={<SchoolRoute><SchoolStaffPage /></SchoolRoute>} />
+          <Route path="/school/students" element={<SchoolRoute><SchoolStudentsPage /></SchoolRoute>} />
+          <Route path="/school/attendance" element={<SchoolRoute><SchoolAttendancePage /></SchoolRoute>} />
+          <Route path="/school/courses" element={<SchoolRoute><SchoolCoursesPage /></SchoolRoute>} />
+          <Route path="/school/plagiarism" element={<SchoolRoute><SchoolPlagiarismPage /></SchoolRoute>} />
+          <Route path="/school/library" element={<SchoolRoute><SchoolLibraryPage /></SchoolRoute>} />
+          <Route path="/school/fees" element={<SchoolRoute><SchoolFeesPage /></SchoolRoute>} />
+          <Route path="/school/expenditure" element={<SchoolRoute><SchoolExpenditurePage /></SchoolRoute>} />
+          <Route path="/school/financial-reports" element={<SchoolRoute><SchoolFinancialReportsPage /></SchoolRoute>} />
+          <Route path="/school/notifications" element={<SchoolRoute><SchoolNotificationsPage /></SchoolRoute>} />
+          <Route path="/school/discipline" element={<SchoolRoute><SchoolDisciplinePage /></SchoolRoute>} />
+          <Route path="/school/health" element={<SchoolRoute><SchoolHealthPage /></SchoolRoute>} />
+          <Route path="/school/internships" element={<SchoolRoute><SchoolInternshipsPage /></SchoolRoute>} />
+          <Route path="/school/alumni" element={<SchoolRoute><SchoolAlumniPage /></SchoolRoute>} />
         </Route>
 
         <Route element={<ProtectedRoute><LearningLayout /></ProtectedRoute>}>

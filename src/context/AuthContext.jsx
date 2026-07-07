@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(undefined);
 
+const REFRESH_ENDPOINT = 'http://localhost:5050/admin/auth/refresh-token';
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -32,8 +34,39 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem('soma_refresh_token');
+    if (!refreshToken) {
+      logout();
+      return null;
+    }
+    try {
+      const response = await fetch(REFRESH_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+      if (!response.ok) {
+        logout();
+        return null;
+      }
+      const data = await response.json();
+      const newToken = data.token || data.data?.token;
+      if (!newToken) {
+        logout();
+        return null;
+      }
+      localStorage.setItem('soma_token', newToken);
+      setToken(newToken);
+      return newToken;
+    } catch {
+      logout();
+      return null;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading, refreshAccessToken }}>
       {!loading && children}
     </AuthContext.Provider>
   );

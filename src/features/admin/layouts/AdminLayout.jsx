@@ -11,6 +11,14 @@ export const AdminLayout = () => {
 
   // Layout navigation drawer control states
   const [isUserMenuExpanded, setIsUserMenuExpanded] = useState(true);
+  const [isDashboardMenuExpanded, setIsDashboardMenuExpanded] = useState(true);
+  const [isUserAccessMenuExpanded, setIsUserAccessMenuExpanded] = useState(false);
+  const [isInstitutionsMenuExpanded, setIsInstitutionsMenuExpanded] = useState(false);
+  const [isAcademicMenuExpanded, setIsAcademicMenuExpanded] = useState(false);
+  const [isCareerMenuExpanded, setIsCareerMenuExpanded] = useState(false);
+  const [isFinancialsMenuExpanded, setIsFinancialsMenuExpanded] = useState(false);
+  const [isCommsMenuExpanded, setIsCommsMenuExpanded] = useState(false);
+  const [isSettingsMenuExpanded, setIsSettingsMenuExpanded] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   
@@ -24,6 +32,7 @@ export const AdminLayout = () => {
   const [showCurrentPass, setShowCurrentPass] = useState(false);
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState('');
 
   // Helper to check if a path is active
   const isActive = (path) => location.pathname === path;
@@ -212,44 +221,16 @@ export const AdminLayout = () => {
         {/* Navigation Link Element Hierarchy */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto relative z-10 sidebar-scroll">
           
-          {/* Command Center Main Node */}
-          <div>
-            <NavLink
-              to="/admin/dashboard"
-              onClick={() => setIsMobileSidebarOpen(false)}
-              className={({ isActive }) => `w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
-                isSidebarCollapsed && !isMobileSidebarOpen
-                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
-                  : 'justify-between px-5'
-              } ${
-                isActive
-                  ? 'bg-white text-[#1d4ed8] shadow-md font-bold scale-[1.02] border-r-4 border-purple-400' 
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
-                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-white/10' : ''}`}>
-                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <line x1="3" y1="9" x2="21" y2="9" />
-                    <line x1="9" y1="21" x2="9" y2="9" />
-                  </svg>
-                </div>
-                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Command Center</span>}
-              </div>
-            </NavLink>
-          </div>
-
-          {/* Main User Control Drawer Hub Node */}
+          {/* Module 1 - Dashboard & Analytics */}
           <div>
             <button
               type="button"
               onClick={() => {
                 if (isSidebarCollapsed) {
                   setIsSidebarCollapsed(false);
-                  setIsUserMenuExpanded(true);
+                  setIsDashboardMenuExpanded(true);
                 } else {
-                  setIsUserMenuExpanded(!isUserMenuExpanded);
+                  setIsDashboardMenuExpanded(!isDashboardMenuExpanded);
                 }
               }}
               className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
@@ -257,13 +238,97 @@ export const AdminLayout = () => {
                   ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
                   : 'justify-between px-5'
               } ${
-                isUserMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                isDashboardMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
                   ? 'bg-white/15 text-white shadow-inner border border-white/5' 
-                  : isSidebarCollapsed && (isActive('/admin/users') || isActive('/admin/roles') || isActive('/admin/permissions')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  : isSidebarCollapsed && (isActive('/admin/dashboard') || isActive('/admin/system-health')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
-                <div className={`p-1.5 rounded-xl transition-colors ${isUserMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isDashboardMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Dashboard &amp; Analytics</span>}
+              </div>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isDashboardMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+
+            <div 
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isDashboardMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/dashboard"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="21" x2="9" y2="9" />
+                  </svg>
+                </div>
+                <span>Overview</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/system-health"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                  </svg>
+                </div>
+                <span>System Health</span>
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Module 2 - User & Access */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsUserAccessMenuExpanded(true);
+                } else {
+                  setIsUserAccessMenuExpanded(!isUserAccessMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isUserAccessMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/users') || isActive('/admin/roles') || isActive('/admin/permissions') || isActive('/admin/audit-logs')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isUserAccessMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
                   <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-3-3.87" />
                     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
@@ -272,12 +337,12 @@ export const AdminLayout = () => {
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                   </svg>
                 </div>
-                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">User Management</span>}
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">User &amp; Access</span>}
               </div>
               
               {(!isSidebarCollapsed || isMobileSidebarOpen) && (
                 <svg 
-                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isUserMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isUserAccessMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
                   fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -285,16 +350,13 @@ export const AdminLayout = () => {
               )}
             </button>
 
-            {/* Nested Subcategory Navigation Track */}
             <div 
               className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
-                isUserMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                isUserAccessMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
                   ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
                   : 'max-h-0 opacity-0 pointer-events-none'
               }`}
             >
-              
-              {/* Route Button: Users */}
               <NavLink
                 to="/admin/users"
                 onClick={() => setIsMobileSidebarOpen(false)}
@@ -311,7 +373,6 @@ export const AdminLayout = () => {
                 <span>Users</span>
               </NavLink>
 
-              {/* Route Button: Roles */}
               <NavLink
                 to="/admin/roles"
                 onClick={() => setIsMobileSidebarOpen(false)}
@@ -328,7 +389,6 @@ export const AdminLayout = () => {
                 <span>Roles</span>
               </NavLink>
 
-              {/* Route Button: Permissions */}
               <NavLink
                 to="/admin/permissions"
                 onClick={() => setIsMobileSidebarOpen(false)}
@@ -346,33 +406,535 @@ export const AdminLayout = () => {
                 <span>Permissions</span>
               </NavLink>
 
+              <NavLink
+                to="/admin/audit-logs"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
+                <span>Audit Logs</span>
+              </NavLink>
             </div>
           </div>
 
-          {/* School Approvals Main Node */}
+          {/* Module 3 - Institutions */}
           <div>
-            <NavLink
-              to="/admin/approvals"
-              onClick={() => setIsMobileSidebarOpen(false)}
-              className={({ isActive }) => `w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsInstitutionsMenuExpanded(true);
+                } else {
+                  setIsInstitutionsMenuExpanded(!isInstitutionsMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 isSidebarCollapsed && !isMobileSidebarOpen
                   ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
                   : 'justify-between px-5'
               } ${
-                isActive
-                  ? 'bg-white text-[#1d4ed8] shadow-md font-bold scale-[1.02] border-r-4 border-amber-400' 
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                isInstitutionsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/approvals') || isActive('/admin/subscriptions')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
-                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-white/10' : ''}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isInstitutionsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
                   <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
                   </svg>
                 </div>
-                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">School Approvals</span>}
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Institutions</span>}
               </div>
-            </NavLink>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isInstitutionsMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+
+            <div 
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isInstitutionsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/approvals"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </div>
+                <span>Schools &amp; Universities</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/subscriptions"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                    <line x1="1" y1="10" x2="23" y2="10" />
+                  </svg>
+                </div>
+                <span>Subscriptions</span>
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Module 4 - Academic Oversight */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsAcademicMenuExpanded(true);
+                } else {
+                  setIsAcademicMenuExpanded(!isAcademicMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isAcademicMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/courses') || isActive('/admin/plagiarism')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isAcademicMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    <line x1="8" y1="7" x2="16" y2="7" />
+                    <line x1="8" y1="11" x2="14" y2="11" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Academic Oversight</span>}
+              </div>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isAcademicMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+
+            <div 
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isAcademicMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/courses"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  </svg>
+                </div>
+                <span>Course Library</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/plagiarism"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </div>
+                <span>Plagiarism Reports</span>
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Module 5 - Career Marketplace */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsCareerMenuExpanded(true);
+                } else {
+                  setIsCareerMenuExpanded(!isCareerMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isCareerMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/employers') || isActive('/admin/jobs') || isActive('/admin/placements')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isCareerMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Career Marketplace</span>}
+              </div>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isCareerMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+
+            <div 
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isCareerMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/employers"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </div>
+                <span>Employers</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/jobs"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                </div>
+                <span>Job Board</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/placements"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <span>Placement Tracking</span>
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Module 6 - Financials */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsFinancialsMenuExpanded(true);
+                } else {
+                  setIsFinancialsMenuExpanded(!isFinancialsMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isFinancialsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/revenue') || isActive('/admin/invoices') || isActive('/admin/payouts')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isFinancialsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Financials</span>}
+              </div>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isFinancialsMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+
+            <div 
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isFinancialsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/revenue"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </div>
+                <span>Revenue</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/invoices"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                </div>
+                <span>Invoices</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/payouts"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                    <path d="M18 12a2 2 0 0 0 0 4h4v-4h-4z" />
+                  </svg>
+                </div>
+                <span>Payouts</span>
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Module 7 - Communication */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsCommsMenuExpanded(true);
+                } else {
+                  setIsCommsMenuExpanded(!isCommsMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isCommsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/notifications')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isCommsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Communication</span>}
+              </div>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isCommsMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+
+            <div 
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isCommsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/notifications"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                </div>
+                <span>Notifications</span>
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Module 8 - Settings */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isSidebarCollapsed) {
+                  setIsSidebarCollapsed(false);
+                  setIsSettingsMenuExpanded(true);
+                } else {
+                  setIsSettingsMenuExpanded(!isSettingsMenuExpanded);
+                }
+              }}
+              className={`w-full flex items-center py-3 text-sm font-bold rounded-2xl transition-all duration-200 ${
+                isSidebarCollapsed && !isMobileSidebarOpen
+                  ? 'lg:justify-center h-12 lg:w-12 mx-auto px-0 justify-between px-4' 
+                  : 'justify-between px-5'
+              } ${
+                isSettingsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'bg-white/15 text-white shadow-inner border border-white/5' 
+                  : isSidebarCollapsed && (isActive('/admin/ai-tuning')) ? 'lg:bg-white lg:text-[#1d4ed8] lg:shadow-md text-white/80' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <div className={`flex items-center ${isSidebarCollapsed && !isMobileSidebarOpen ? 'lg:justify-center lg:w-full' : 'space-x-4'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isSettingsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen) ? 'bg-white/10' : ''}`}>
+                  <svg className="w-5 h-5 fill-none stroke-current flex-shrink-0" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </div>
+                {(!isSidebarCollapsed || isMobileSidebarOpen) && <span className="tracking-wide text-[14px]">Settings</span>}
+              </div>
+              
+              {(!isSidebarCollapsed || isMobileSidebarOpen) && (
+                <svg 
+                  className={`w-4 h-4 transform transition-transform duration-200 text-white/60 ${isSettingsMenuExpanded ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </button>
+            <div 
+
+              className={`transition-all duration-300 ease-in-out overflow-hidden relative space-y-1.5 ${
+                isSettingsMenuExpanded && (!isSidebarCollapsed || isMobileSidebarOpen)
+                  ? 'max-h-72 opacity-100 mt-3 pb-2 ml-2 pl-3 border-l border-white/20' 
+                  : 'max-h-0 opacity-0 pointer-events-none'
+              }`}
+            >
+              <NavLink
+                to="/admin/ai-tuning"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className={({ isActive }) => `w-full flex items-center space-x-3 px-4 py-3 text-xs font-semibold rounded-xl transition-all text-left tracking-wide uppercase ${
+                  isActive ? activeNavigationClass : inactiveNavigationClass
+                }`}
+              >
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-[#1d4ed8]/10 text-[#1d4ed8]' : 'bg-white/10 text-white'}`}>
+                  <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+                    <rect x="9" y="9" width="6" height="6" />
+                    <line x1="9" y1="1" x2="9" y2="4" />
+                    <line x1="15" y1="1" x2="15" y2="4" />
+                    <line x1="9" y1="20" x2="9" y2="23" />
+                    <line x1="15" y1="20" x2="15" y2="23" />
+                    <line x1="20" y1="9" x2="23" y2="9" />
+                    <line x1="20" y1="14" x2="23" y2="14" />
+                    <line x1="1" y1="9" x2="4" y2="9" />
+                    <line x1="1" y1="14" x2="4" y2="14" />
+                  </svg>
+                </div>
+                <span>AI Tuning</span>
+              </NavLink>
+            </div>
           </div>
         </nav>
 
@@ -392,7 +954,7 @@ export const AdminLayout = () => {
       </aside>
 
       {/* RIGHT SIDE DATA VIEWPORT WRAPPER */}
-      <div className="flex-1 flex flex-col h-full w-full lg:px-4 overflow-hidden">
+      <div className="flex-1 flex flex-col h-full w-full lg:px-4">
 
         
         {/* TOP NAVBAR HEADER BOX */}
@@ -424,11 +986,24 @@ export const AdminLayout = () => {
             <div className="flex flex-col text-left leading-tight">
               <span className="text-[11px] text-[#1d4ed8] font-extrabold tracking-wider uppercase">RWANDA</span>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 capitalize tracking-tight mt-0.5">
-                {location.pathname === '/admin/dashboard' ? 'Command Center' :
+                {location.pathname === '/admin/dashboard' ? 'Overview' :
+                 location.pathname === '/admin/system-health' ? 'System Health' :
                  location.pathname === '/admin/users' ? 'User Management' :
-                 location.pathname === '/admin/roles' ? 'Roles Management' :
+                 location.pathname === '/admin/roles' ? 'Roles' :
                  location.pathname === '/admin/permissions' ? 'Permissions' :
-                 location.pathname === '/admin/approvals' ? 'School Approvals' : 'Dashboard View'}
+                 location.pathname === '/admin/audit-logs' ? 'Audit Logs' :
+                  location.pathname === '/admin/approvals' ? 'Schools & Universities' :
+                 location.pathname === '/admin/subscriptions' ? 'Subscriptions' :
+                 location.pathname === '/admin/courses' ? 'Course Library' :
+                 location.pathname === '/admin/plagiarism' ? 'Plagiarism Reports' :
+                 location.pathname === '/admin/employers' ? 'Employers' :
+                 location.pathname === '/admin/jobs' ? 'Job Board' :
+                 location.pathname === '/admin/placements' ? 'Placement Tracking' :
+                 location.pathname === '/admin/revenue' ? 'Revenue' :
+                 location.pathname === '/admin/invoices' ? 'Invoices' :
+                 location.pathname === '/admin/payouts' ? 'Payouts' :
+                 location.pathname === '/admin/notifications' ? 'Notifications' :
+                 location.pathname === '/admin/ai-tuning' ? 'AI Tuning' : 'Dashboard'}
               </h2>
             </div>
           </div>
@@ -442,11 +1017,22 @@ export const AdminLayout = () => {
               </svg>
               <input 
                 type="text" 
+                value={globalSearch}
+                onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search global operations..." 
                 className="bg-transparent text-xs text-slate-700 outline-none w-full font-medium placeholder-slate-400"
-                readOnly
               />
             </div>
+
+            <NavLink
+              to="/admin/notifications"
+              className="relative p-2 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 transition-all"
+            >
+              <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </NavLink>
 
             <div className="relative">
               <div 
