@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../../context/AuthContext';
 import { BrandLockup } from '../../../components/shared/Brand';
+import { NotificationBell } from '../../../components/shared/NotificationBell';
+import { notificationService } from '../../../services/api';
 
 const API_BASE_URL = 'http://localhost:5050/api/student';
 
@@ -24,6 +26,7 @@ export const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -68,6 +71,12 @@ export const StudentDashboard = () => {
 
     loadData();
   }, [user, getHeaders]);
+
+  useEffect(() => {
+    notificationService.list()
+      .then((data) => setNotifications(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   if (isLoading) {
     return (
@@ -246,6 +255,15 @@ export const StudentDashboard = () => {
                 </button>
               );
             })}
+            <button
+              onClick={() => { navigate('/learning/notifications'); setSidebarOpen(false); }}
+              className="flex items-center gap-3 px-4 py-2 rounded-xl text-[13px] font-semibold text-white/60 hover:text-white hover:bg-white/[0.06] transition-all"
+            >
+              <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span>Notifications</span>
+            </button>
           </nav>
         </div>
 
@@ -280,6 +298,7 @@ export const StudentDashboard = () => {
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" /></svg>
           </button>
           <Link to="/"><BrandLockup dark size={28} /></Link>
+          <span className="ml-auto"><NotificationBell seed={notifications} viewAllPath="/learning/notifications" /></span>
         </div>
 
         <div className="p-5 sm:p-8 lg:p-10 max-w-[1400px] mx-auto">

@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { learnerCourseService } from '../../../services/api';
 import { BrandLockup } from '../../../components/shared/Brand';
 import { useAuth } from '../../../context/AuthContext';
+import { NotificationBell } from '../../../components/shared/NotificationBell';
+import { notificationService } from '../../../services/api';
 
 /* ─────────────────────────── helpers ─────────────────────────── */
 
@@ -443,6 +445,7 @@ export const CourseLearningPage = () => {
   const [openModules, setOpenModules] = useState({});
   const [completing, setCompleting] = useState(false);
   const [completeError, setCompleteError] = useState('');
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -469,6 +472,12 @@ export const CourseLearningPage = () => {
     })();
     return () => { cancelled = true; };
   }, [courseId]);
+
+  useEffect(() => {
+    notificationService.list()
+      .then((data) => setNotifications(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   // Flatten the curriculum, tagging each item with its module + global lock state.
   const flat = useMemo(() => {
@@ -638,60 +647,57 @@ export const CourseLearningPage = () => {
     <div className="h-screen bg-[#f7f8fa] flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 shrink-0 z-40">
-        <div className="h-16 px-4 sm:px-6 flex items-center gap-4">
-          <button onClick={() => setSidebarOpen((o) => !o)} className="w-10 h-10 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-[#1b1e26] flex items-center justify-center transition-colors" aria-label="Toggle content">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" /></svg>
-          </button>
-          <Link to="/" className="shrink-0" aria-label="Back to home"><BrandLockup dark size={30} /></Link>
-          <div className="min-w-0 hidden md:block">
-            <h1 className="text-sm font-semibold text-[#1b1e26] truncate max-w-xs">{course.title}</h1>
-            <p className="text-[11px] text-gray-400 truncate">{[course.category, course.entityName].filter(Boolean).join(' · ')}</p>
+        <div className="h-20 px-4 sm:px-6 flex items-center">
+
+          {/* Left zone — logo only */}
+          <div className="flex items-center w-auto lg:w-[320px] shrink-0">
+            <Link to="/" className="shrink-0" aria-label="Home">
+              <BrandLockup dark size={34} />
+            </Link>
           </div>
 
-          {/* Progress */}
-          <div className="flex items-center gap-2.5 ml-auto">
-            <div className="hidden sm:block w-28 h-2 bg-gray-100 rounded-full overflow-hidden">
-              <motion.div className="h-full bg-[#d0f24a] rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.5 }} />
-            </div>
-            <span className="text-xs font-bold text-[#1b1e26] tabular-nums">{progress}%</span>
+          {/* Course title zone — starts right after sidebar-end zone */}
+          <div className="min-w-0 flex-1 pl-4 md:pl-6 lg:pl-8">
+            <h1 className="text-sm font-semibold text-[#1b1e26] truncate">{course.title}</h1>
+            <p className="text-[11px] text-gray-400 truncate mt-0.5">{[course.category, course.entityName].filter(Boolean).join(' · ')}</p>
           </div>
 
-          {/* Account — the way back out of the player */}
-          <div className="flex items-center gap-2 pl-3 border-l border-gray-100">
+          {/* Right zone: dashboard button → progress → notification bell */}
+          <div className="flex items-center gap-3 md:gap-4 shrink-0 ml-auto">
             <Link
               to="/learning/dashboard"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:text-[#1b1e26] hover:bg-gray-100 transition-colors"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-gray-500 hover:text-[#1b1e26] hover:bg-gray-100 transition-colors"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              My courses
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5m7-7l-7 7 7 7" />
+              </svg>
+              Dashboard
             </Link>
-            <span className="w-9 h-9 rounded-xl bg-[#1b1e26] text-[#d0f24a] flex items-center justify-center text-xs font-bold" title={user?.name}>{initials}</span>
-            <button
-              onClick={signOut}
-              className="w-9 h-9 sm:w-auto sm:px-3.5 sm:py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-1.5"
-              title="Sign out"
-            >
-              <svg className="w-4 h-4 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              <span className="hidden sm:inline">Sign out</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:block w-[230px] md:w-[262px] h-3 bg-gray-100 rounded-full overflow-hidden">
+                <motion.div className="h-full bg-[#d0f24a] rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.5 }} />
+              </div>
+              <span className="text-xl md:text-2xl font-black text-[#1b1e26] tabular-nums tracking-tight">{progress}%</span>
+            </div>
+            <NotificationBell seed={notifications} viewAllPath="/learning/notifications" />
           </div>
 
         </div>
       </header>
 
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar — content tree */}
-        <AnimatePresence initial={false}>
-          {sidebarOpen && (
-            <motion.aside
-              initial={{ x: -320, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -320, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-              className="w-[320px] shrink-0 bg-white border-r border-gray-100 overflow-y-auto"
-            >
-              <div className="p-5">
+        {/* Sidebar — content tree with collapse toggle */}
+        {sidebarOpen ? (
+          <aside className="w-[320px] shrink-0 bg-white border-r border-gray-100 overflow-y-auto">
+            <div className="p-5">
+              <div className="flex items-center justify-between">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">Course content</p>
+                <button onClick={() => setSidebarOpen(false)} className="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1b1e26] flex items-center justify-center transition-colors" aria-label="Collapse sidebar">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              </div>
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
                   <span>{course.modules.length} modules</span><span>·</span>
                   <span>{totalItems} items</span><span>·</span>
@@ -771,9 +777,16 @@ export const CourseLearningPage = () => {
                   })}
                 </div>
               </div>
-            </motion.aside>
-          )}
-        </AnimatePresence>
+            </aside>
+        ) : (
+          <div className="w-[44px] shrink-0 bg-white border-r border-gray-100 flex flex-col items-center pt-5">
+            <button onClick={() => setSidebarOpen(true)} className="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1b1e26] flex items-center justify-center transition-colors" aria-label="Expand sidebar">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Main stage */}
         <main className="flex-1 min-w-0 overflow-y-auto flex flex-col">

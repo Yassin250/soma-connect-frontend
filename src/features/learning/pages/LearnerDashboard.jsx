@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../../context/AuthContext';
-import { BrandLockup } from '../../../components/shared/Brand';
 import { learnerCourseService } from '../../../services/api';
 
 const fadeUp = {
@@ -57,7 +56,7 @@ const Cover = ({ course, className = '', overlay = true }) => (
 );
 
 export const LearnerDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [courses, setCourses] = useState([]);
@@ -79,7 +78,6 @@ export const LearnerDashboard = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  const initials = user?.name?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'ST';
   const firstName = user?.name?.split(' ')[0] || 'Learner';
 
   const inProgress = courses.filter((c) => c.status === 'ACTIVE' && c.overallProgressPercent > 0 && c.overallProgressPercent < 100);
@@ -168,28 +166,7 @@ export const LearnerDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa] text-[#1b1e26] antialiased">
-      {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-5 sm:px-8 h-16 flex items-center justify-between">
-        <Link to="/"><BrandLockup dark size={30} /></Link>
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <Link to="/" className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#1b1e26]/70 hover:text-[#1b1e26] hover:bg-gray-100 transition-colors">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" strokeLinecap="round" /></svg>
-            Browse catalog
-          </Link>
-          <div className="w-9 h-9 rounded-xl bg-[#1b1e26] text-[#d0f24a] flex items-center justify-center text-xs font-bold">{initials}</div>
-          <button
-            onClick={() => { logout(); navigate('/login'); }}
-            className="inline-flex items-center justify-center gap-2 w-9 h-9 sm:w-auto sm:h-auto sm:px-3.5 sm:py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors"
-            title="Sign out"
-          >
-            <svg className="w-4 h-4 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <span className="hidden sm:inline">Sign Out</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="p-5 sm:p-8 lg:p-10 max-w-[1240px] mx-auto space-y-6">
+    <div className="space-y-6">
 
         {/* ── HERO — greeting + big overall-progress ring ── */}
         <motion.div
@@ -324,7 +301,7 @@ export const LearnerDashboard = () => {
             </span>
             <h2 className="relative text-xl font-bold text-[#1b1e26] mb-1.5">Your journey starts here</h2>
             <p className="relative text-sm text-gray-500 mb-6 max-w-sm mx-auto">You haven't enrolled in any course yet. Browse the catalog and pick your first one — it only takes a click.</p>
-            <Link to="/" className="relative inline-flex items-center gap-2 px-6 py-3 bg-[#1b1e26] text-white rounded-2xl font-bold hover:bg-black transition-colors">
+            <Link to="/courses" className="relative inline-flex items-center gap-2 px-6 py-3 bg-[#1b1e26] text-white rounded-2xl font-bold hover:bg-black transition-colors">
               Browse courses
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
@@ -337,7 +314,6 @@ export const LearnerDashboard = () => {
           </div>
         )}
       </div>
-    </div>
   );
 };
 
