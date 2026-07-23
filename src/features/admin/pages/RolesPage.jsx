@@ -466,6 +466,18 @@ export const RolesPage = () => {
         </div>,
         document.body
       )}
+
+      {confirmDelete && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmDelete(null)}
+          onConfirm={executeDelete}
+          title={confirmDelete.title}
+          message={confirmDelete.message}
+          itemName={confirmDelete.itemName}
+          isLoading={isDeleting}
+        />
+      )}
     </div>
   );
 };

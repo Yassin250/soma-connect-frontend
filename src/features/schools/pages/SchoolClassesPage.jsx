@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 
 const API_BASE_URL = 'http://localhost:5050/api/school';
 
@@ -18,6 +19,8 @@ export const SchoolClassesPage = () => {
   const [showSections, setShowSections] = useState(false);
   const [newClass, setNewClass] = useState({ name: '', code: '', level: '', description: '' });
   const [newSection, setNewSection] = useState({ name: '', students: 0, teacher: '', room: '' });
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -100,20 +103,29 @@ export const SchoolClassesPage = () => {
     }
   };
 
-  const handleDeleteClass = async (id) => {
-    if (confirm('Are you sure?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/classes/${id}`, {
-          method: 'DELETE',
-          headers: getHeaders(),
-        });
-        if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
-        toast.success('Class deleted');
-        loadClasses();
-      } catch (err) {
-        toast.error(err.message);
-      }
-    }
+  const handleDeleteClass = (id, name) => {
+    setConfirmDelete({
+      title: 'Delete Class',
+      message: 'You are about to permanently delete this class and all its sections.',
+      itemName: name,
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await fetch(`${API_BASE_URL}/classes/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+          });
+          if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
+          toast.success('Class deleted');
+          setConfirmDelete(null);
+          loadClasses();
+        } catch (err) {
+          toast.error(err.message);
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+    });
   };
 
   const handleAddSection = async () => {
@@ -137,20 +149,29 @@ export const SchoolClassesPage = () => {
     }
   };
 
-  const handleDeleteSection = async (id) => {
-    if (confirm('Are you sure?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/sections/${id}`, {
-          method: 'DELETE',
-          headers: getHeaders(),
-        });
-        if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
-        toast.success('Section deleted');
-        loadSections(selectedClass);
-      } catch (err) {
-        toast.error(err.message);
-      }
-    }
+  const handleDeleteSection = (id, name) => {
+    setConfirmDelete({
+      title: 'Delete Section',
+      message: 'You are about to permanently delete this section.',
+      itemName: name,
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await fetch(`${API_BASE_URL}/sections/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+          });
+          if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
+          toast.success('Section deleted');
+          setConfirmDelete(null);
+          loadSections(selectedClass);
+        } catch (err) {
+          toast.error(err.message);
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+    });
   };
 
   return (
@@ -219,7 +240,7 @@ export const SchoolClassesPage = () => {
                     Sections
                   </button>
                   <button
-                    onClick={(e) => { e.stopPropagation(); handleDeleteClass(cls.id); }}
+                    onClick={(e) => { e.stopPropagation(); handleDeleteClass(cls.id, cls.name); }}
                     className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -295,7 +316,7 @@ export const SchoolClassesPage = () => {
                       </td>
                       <td className="px-4 py-2.5 text-right">
                         <button
-                          onClick={() => handleDeleteSection(section.id)}
+                          onClick={() => handleDeleteSection(section.id, section.name)}
                           className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -386,6 +407,18 @@ export const SchoolClassesPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {confirmDelete && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmDelete(null)}
+          onConfirm={confirmDelete.onConfirm}
+          title={confirmDelete.title}
+          message={confirmDelete.message}
+          itemName={confirmDelete.itemName}
+          isLoading={isDeleting}
+        />
       )}
     </div>
   );

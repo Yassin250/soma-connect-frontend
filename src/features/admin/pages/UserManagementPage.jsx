@@ -213,6 +213,8 @@ export const UserManagementPage = () => {
       toast.success('User locked');
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 

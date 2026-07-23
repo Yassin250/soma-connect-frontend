@@ -24,6 +24,7 @@ export const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
   const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
@@ -68,6 +69,12 @@ export const StudentDashboard = () => {
 
     loadData();
   }, [user, getHeaders]);
+
+  useEffect(() => {
+    notificationService.list()
+      .then((data) => setNotifications(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   if (isLoading) {
     return (
