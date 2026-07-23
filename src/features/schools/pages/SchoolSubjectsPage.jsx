@@ -317,9 +317,7 @@ export const SchoolSubjectsPage = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Class</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Senior One"
+                <select
                   value={newAllocation.className}
                   onChange={(e) => setNewAllocation({ ...newAllocation, className: e.target.value })}
                   className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800"
@@ -332,9 +330,7 @@ export const SchoolSubjectsPage = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Teacher</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Jean Bosco Niyigaba"
+                <select
                   value={newAllocation.teacher}
                   onChange={(e) => setNewAllocation({ ...newAllocation, teacher: e.target.value })}
                   className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800"

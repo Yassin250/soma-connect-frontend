@@ -37,7 +37,7 @@ export const authService = {
   login: async (username, password) => {
     try {
       const response = await apiClient.post('/admin/auth/login', {
-        email,
+        username,
         password,
       });
       return unwrapApiResult(response);
@@ -49,7 +49,7 @@ export const authService = {
   verifyOtp: async (username, otp) => {
     try {
       const response = await apiClient.post('/admin/auth/verify-otp', {
-        email,
+        username,
         otp,
       });
       return unwrapApiResult(response);
