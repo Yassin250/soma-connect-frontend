@@ -1,15 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../../services/api';
 import { useAuth } from '../../../context/AuthContext';
+import { REFRESH_TOKEN_KEY } from '../../../services/apiClient';
 import { Link } from 'react-router-dom';
+import { ButtonLoader } from '../../../components/shared/ButtonLoader';
+import { dashboardPathForRoles } from '../../../utils/dashboardPath';
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// Keep the button loader on screen long enough to read as a smooth transition,
+// even when the API answers in a few milliseconds (otherwise it just flickers).
+const MIN_LOADER_MS = 600;
 
 export const LoginForm = ({ onToggleMode }) => {
   const [view, setView] = useState('login');
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+
+  // One-off confirmation after landing back here from reset / forced change.
+  const successMessage = location.state?.passwordReset
+    ? 'Password reset successfully. Please sign in with your new password.'
+    : location.state?.passwordChanged
+    ? 'Password changed successfully. Please sign in with your new password.'
+    : '';
   const {
     register,
     handleSubmit,
@@ -33,30 +48,20 @@ export const LoginForm = ({ onToggleMode }) => {
   // Timer Countdown Effect
   useEffect(() => {
     if (!otpRequired || timeLeft === 0) return;
-    
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
-    
+
     return () => clearInterval(timer);
   }, [otpRequired, timeLeft]);
 
-  const getRedirectPath = (roles) => {
-    const primaryRole = roles?.[0]?.toUpperCase();
-    switch (primaryRole) {
-      case 'SUPER_ADMIN':
-      case 'ADMIN':
-        return '/admin/dashboard';
-      case 'SCHOOL_ADMIN':
-        return '/school/dashboard';
-      case 'STUDENT':
-        return '/student/dashboard';
-      case 'LECTURER':
-        return '/school/dashboard';
-      default:
-        return '/admin/dashboard';
-    }
-  };
+  // Drop the cursor into the first code box the moment the OTP view appears.
+  useEffect(() => {
+    if (!otpRequired) return;
+    const id = setTimeout(() => inputRefs.current[0]?.focus(), 50);
+    return () => clearTimeout(id);
+  }, [otpRequired]);
 
   const saveAuthAndRedirect = (response) => {
     if (!response?.token) {
@@ -70,34 +75,58 @@ export const LoginForm = ({ onToggleMode }) => {
       email: response.email,
       roles: response.roles || [],
       permissions: response.permissions || [],
-      schoolId: response.schoolId || null,
+      entityId: response.entityId || null,
+      entityName: response.entityName || null,
+      entityType: response.entityType || null,
+      // The school area is keyed on schoolId, but the backend identifies an entity
+      // admin's institution as entityId — bridge the two so SchoolRoute/data calls work.
+      schoolId: response.schoolId || response.entityId || null,
     };
 
     login(response.token, authUser);
     if (response.refreshToken) {
-      localStorage.setItem('soma_refresh_token', response.refreshToken);
+      localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
     }
-    const redirectPath = getRedirectPath(authUser.roles);
+
+    // First-login accounts must change their password before anything else —
+    // the backend's PasswordChangeFilter 403s every other call until they do.
+    if (response.isPasswordChanged === false) {
+      navigate('/change-password', { replace: true });
+      return;
+    }
+
+    // A ?next= (e.g. a course a learner clicked before signing in) wins over the
+    // role's default home, so they resume exactly where they intended.
+    const next = new URLSearchParams(location.search).get('next');
+    const redirectPath = next || dashboardPathForRoles(authUser);
     navigate(redirectPath, { replace: true });
   };
 
   const onSubmitCredentials = async (data) => {
     setIsSubmitting(true);
     setErrorMessage('');
+    const startedAt = Date.now();
     try {
       const response = await authService.login(data.email, data.password);
+      // Let the spinner breathe before we transition away or show the OTP view.
+      const remaining = MIN_LOADER_MS - (Date.now() - startedAt);
+      if (remaining > 0) await sleep(remaining);
+
       if (response?.otpRequired) {
         setOtpRequired(true);
         setPendingUsername(response.username || data.email);
         setTimeLeft(32);
         setOtpValues(Array(6).fill(''));
         setOtpStatus('idle');
+        setIsSubmitting(false);
         return;
       }
+      // On success we navigate away; keep the loader spinning through the unmount.
       saveAuthAndRedirect(response);
     } catch (error) {
+      const remaining = MIN_LOADER_MS - (Date.now() - startedAt);
+      if (remaining > 0) await sleep(remaining);
       setErrorMessage(error?.message || 'Unable to sign in');
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -142,12 +171,17 @@ export const LoginForm = ({ onToggleMode }) => {
   };
 
   const handleResendCode = async () => {
-    // Add resend API logic here
-    setTimeLeft(32);
+    if (!pendingUsername) return;
+    setErrorMessage('');
     setOtpStatus('idle');
     setOtpValues(Array(6).fill(''));
-    setErrorMessage('');
-    inputRefs.current[0]?.focus();
+    try {
+      await authService.resendOtp(pendingUsername);
+      setTimeLeft(32);
+      inputRefs.current[0]?.focus();
+    } catch (error) {
+      setErrorMessage(error?.message || 'Could not resend the code');
+    }
   };
 
   // OTP Input Handlers
@@ -196,17 +230,18 @@ export const LoginForm = ({ onToggleMode }) => {
 
   // Dynamic styling based on the verification status
   const getOtpInputClasses = () => {
-    const baseClasses = "w-12 h-14 border rounded-xl text-center text-xl font-bold outline-none transition-all duration-300";
-    
+    const baseClasses = "w-11 h-14 sm:w-12 border rounded-xl text-center text-xl font-semibold text-[#1b1e26] caret-[#1b1e26] outline-none transition-all duration-200";
+
     if (otpStatus === 'error') {
-      return `${baseClasses} border-red-500 bg-red-50 text-red-700 animate-shake shadow-[0_0_10px_rgba(239,68,68,0.2)]`;
+      return `${baseClasses} border-red-400 bg-red-50 text-red-600 animate-shake shadow-[0_0_10px_rgba(239,68,68,0.15)]`;
     }
     if (otpStatus === 'success') {
-      return `${baseClasses} border-green-500 bg-green-50 text-green-700 shadow-[0_0_15px_rgba(34,197,94,0.4)] scale-105`;
+      // Same lime as the Sign In button — no off-brand green.
+      return `${baseClasses} border-[#d0f24a] bg-[#d0f24a]/20 text-[#1b1e26] shadow-[0_0_14px_rgba(208,242,74,0.5)] scale-105`;
     }
-    
-    // Default / Idle state
-    return `${baseClasses} border-gray-200 bg-gray-50/30 text-gray-900 focus:bg-white focus:border-[#1064ff] focus:ring-4 focus:ring-blue-50`;
+
+    // Default / Idle — hover picks up the lime accent from the primary button
+    return `${baseClasses} border-gray-200 bg-gray-50/60 hover:border-[#d0f24a] hover:bg-[#d0f24a]/10 focus:bg-white focus:border-[#1b1e26] focus:ring-4 focus:ring-[#d0f24a]/40`;
   };
 const toggleView = () => {
     setView(prev => prev === 'login' ? 'register' : 'login');
@@ -228,42 +263,63 @@ const toggleView = () => {
       <div className="w-full max-w-md mx-auto font-sans">
         {!otpRequired ? (
           // --- STANDARD LOGIN VIEW ---
-          <form onSubmit={handleSubmit(onSubmitCredentials)} className="space-y-6">
-            <div className="space-y-1 mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Log In</h1>
-              <p className="text-sm text-gray-500">Welcome back! Please enter your details.</p>
+          <form onSubmit={handleSubmit(onSubmitCredentials)} className="space-y-5">
+            <div className="space-y-1.5 mb-8">
+              <h1 className="text-[28px] leading-tight font-semibold text-[#1b1e26] tracking-tight">Welcome back!</h1>
+              <p className="text-sm text-gray-500">Enter your details to access your dashboard.</p>
             </div>
 
-            <div className="space-y-6">
-              {/* Email Field */}
-              <div className="relative border-b border-gray-300 py-2 flex items-center">
-                <svg className="w-5 h-5 text-gray-400 absolute left-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <input
-                  {...register('email', { required: 'Email is required' })}
-                  type="email"
-                  placeholder="Email"
-                  className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none pl-8 pr-4"
-                />
-                {errors.email && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.email.message}</p>}
-              </div>
+            {successMessage && (
+              <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl px-3.5 py-2.5">
+                {successMessage}
+              </p>
+            )}
 
-              {/* Password Field */}
-              <div className="relative border-b border-gray-300 py-2 flex items-center">
-                <svg className="w-5 h-5 text-gray-400 absolute left-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+            {/* Username Field */}
+            <div className="space-y-1.5">
+              <label htmlFor="login-email" className="text-[13px] font-semibold text-gray-700">Username</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
+                  </svg>
+                </span>
                 <input
+                  id="login-email"
+                  {...register('email', { required: 'Email is required' })}
+                  type="text"
+                  placeholder="Enter your username"
+                  className={`w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border transition-all focus:bg-white focus:ring-4 focus:ring-[#1b1e26]/5 ${errors.email ? 'border-red-300' : 'border-transparent focus:border-[#1b1e26]/20'}`}
+                />
+              </div>
+              {errors.email && <p className="text-red-500 text-[11px] font-medium">Username is required</p>}
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="login-password" className="text-[13px] font-semibold text-gray-700">Password</label>
+                <Link to="/forgot-password" className="text-[13px] font-medium text-gray-500 hover:text-[#1b1e26] transition-colors">
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </span>
+                <input
+                  id="login-password"
                   {...register('password', { required: 'Password is required' })}
                   type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none pl-8 pr-10"
+                  placeholder="••••••••"
+                  className={`w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-11 text-sm text-gray-900 placeholder-gray-400 outline-none border transition-all focus:bg-white focus:ring-4 focus:ring-[#1b1e26]/5 ${errors.password ? 'border-red-300' : 'border-transparent focus:border-[#1b1e26]/20'}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-0 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -277,77 +333,77 @@ const toggleView = () => {
                     </svg>
                   )}
                 </button>
-                {errors.password && <p className="text-red-500 text-[10px] mt-1 absolute bottom-[-16px]">{errors.password.message}</p>}
               </div>
+              {errors.password && <p className="text-red-500 text-[11px] font-medium">{errors.password.message}</p>}
             </div>
 
             {errorMessage && (
-              <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-2">
+              <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-xl px-3.5 py-2.5">
                 {errorMessage}
               </p>
             )}
 
-            <div className="flex items-center pt-4 space-x-6">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-8 py-2.5 bg-[#1064ff] hover:bg-blue-700 text-white text-sm font-semibold rounded-md shadow-sm transition-colors disabled:opacity-70"
-              >
-                {isSubmitting ? 'Signing in...' : 'Sign in'}
-              </button>
-              <label className="flex items-center space-x-2 cursor-pointer text-gray-500 text-sm">
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#1064ff] focus:ring-[#1064ff]" />
-                <span>Remember</span>
-              </label>
-            </div>
+            <label className="flex items-center gap-2.5 cursor-pointer select-none pt-1">
+              <input type="checkbox" className="peer sr-only" />
+              <span className="w-5 h-5 rounded-full border-2 border-[#1b1e26]/20 bg-white text-transparent peer-checked:bg-[#d0f24a] peer-checked:border-[#d0f24a] peer-checked:text-[#1b1e26] transition-all duration-150 flex items-center justify-center">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <span className="text-sm text-gray-600">Keep me logged in</span>
+            </label>
 
-            <div className="text-center pt-8 space-y-3 border-t border-gray-100 mt-8">
-              <p className="text-sm text-gray-500">
-                Don't have an account?{' '}
-                <Link to="/register"
-                  type="button" 
-                  onClick={onToggleMode} 
-                  className="text-[#1064ff] hover:underline font-semibold"
-                >
-                  Create an account
-                </Link>
-              </p>
-              <Link to="/forgot-password" className="text-sm text-[#1064ff] hover:underline font-medium block">Forgot your password?</Link>
-            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
+              className={`w-full py-3.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
+                isSubmitting ? 'btn-loading-glow opacity-95' : ''
+              }`}
+            >
+              <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
+                {isSubmitting && <ButtonLoader size={18} className="text-[#1b1e26]" />}
+                <span className={isSubmitting ? 'opacity-90' : ''}>
+                  {isSubmitting ? 'Signing in...' : 'Sign In'}
+                </span>
+              </span>
+            </button>
+
+            <p className="text-center text-sm text-gray-500 pt-4">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                onClick={onToggleMode}
+                className="text-[#1b1e26] hover:underline font-bold"
+              >
+                Create an account
+              </Link>
+            </p>
           </form>
 
         ) : (
           // --- OTP VERIFICATION VIEW ---
-          <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
+          <div className="space-y-7 animate-in fade-in zoom-in-95 duration-300">
             {/* Header Area */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold text-[#1064ff] uppercase tracking-widest">
+            <div className="space-y-1.5">
+              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                 Two-Factor Authentication
               </h3>
-              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-                Security Verification
+              <h1 className="text-[28px] leading-tight font-semibold text-[#1b1e26] tracking-tight">
+                Security verification
               </h1>
-              <p className="text-sm text-gray-500">
-                Enter the 6-digit code sent to your registered device
-              </p>
-            </div>
-
-            {/* User Display Box */}
-            <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-5 shadow-sm space-y-1.5">
-              <p className="text-[11px] text-gray-400 uppercase font-bold tracking-widest">
-                Verifying access for
-              </p>
-              <p className="text-sm font-mono font-bold text-gray-900">
-                {pendingUsername}
+              <p className="text-sm text-gray-500 leading-relaxed pt-1">
+                Enter the 6-digit code sent to{' '}
+                <span className="font-medium text-[#1b1e26] break-all">{pendingUsername}</span>
               </p>
             </div>
 
             {/* 6-Digit Code Input */}
-            <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-700">
-                6-Digit Verification Code
+            <div className="space-y-2.5">
+              <label className="text-[13px] font-semibold text-gray-700">
+                Verification code
               </label>
-              <div className="flex gap-2 justify-between">
+              <div className="flex gap-2 sm:gap-2.5 justify-between">
                 {otpValues.map((digit, index) => (
                   <input
                     key={index}
@@ -375,9 +431,17 @@ const toggleView = () => {
               type="button"
               onClick={handleVerifyOtpClick}
               disabled={isSubmitting || otpValues.join('').length < 6 || otpStatus === 'success'}
-              className="w-full py-3.5 bg-[#1064ff] hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-sm transition-all disabled:opacity-70"
+              aria-busy={isSubmitting}
+              className={`w-full py-3.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] text-sm font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:opacity-70 ${
+                isSubmitting ? 'btn-loading-glow' : ''
+              }`}
             >
-              {isSubmitting ? 'Verifying...' : otpStatus === 'success' ? 'Verified!' : 'Verify Access'}
+              <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
+                {isSubmitting && <ButtonLoader size={18} className="text-[#1b1e26]" />}
+                <span>
+                  {isSubmitting ? 'Verifying...' : otpStatus === 'success' ? 'Verified!' : 'Verify Access'}
+                </span>
+              </span>
             </button>
 
             {/* Footer Navigation & Timer */}
@@ -389,9 +453,9 @@ const toggleView = () => {
                     Resend In {timeLeft}s
                   </p>
                 ) : (
-                  <button 
+                  <button
                     onClick={handleResendCode}
-                    className="text-sm font-semibold text-[#1064ff] hover:underline"
+                    className="text-sm font-semibold text-[#1b1e26] hover:underline"
                   >
                     Resend Code
                   </button>

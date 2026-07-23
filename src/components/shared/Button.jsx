@@ -1,32 +1,35 @@
 import React from 'react';
 
-export const Button = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
-  className = '', 
-  ...props 
+// Design-system button — ink primary, lime accent, quiet neutrals.
+// Kept intentionally compact: no oversized paddings, 13px max label.
+export const Button = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  className = '',
+  ...props
 }) => {
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm',
-    secondary: 'bg-slate-200 text-slate-800 hover:bg-slate-300',
-    outline: 'bg-transparent border border-slate-300 text-slate-700 hover:bg-slate-50',
-    danger: 'bg-red-600 text-white hover:bg-red-700',
-    ghost: 'bg-transparent text-slate-600 hover:bg-slate-100',
+    primary: 'bg-[#1b1e26] text-white hover:bg-black shadow-sm',
+    accent: 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] shadow-sm',
+    secondary: 'bg-[#1b1e26]/[0.06] text-[#1b1e26] hover:bg-[#1b1e26]/10',
+    outline: 'bg-transparent border border-[#1b1e26]/15 text-[#1b1e26]/80 hover:bg-[#f7f8fa]',
+    danger: 'bg-rose-600 text-white hover:bg-rose-700',
+    ghost: 'bg-transparent text-[#1b1e26]/60 hover:bg-[#1b1e26]/[0.06] hover:text-[#1b1e26]',
   };
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-xs',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
+    sm: 'px-3 py-1.5 text-[12px]',
+    md: 'px-4 py-2 text-[13px]',
+    lg: 'px-5 py-2 text-[13px]',
   };
 
   const selectedVariant = variants[variant] || variants.primary;
   const selectedSize = sizes[size] || sizes.md;
 
   return (
-    <button 
-      className={`inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 active:scale-95 ${selectedVariant} ${selectedSize} ${className}`} 
+    <button
+      className={`inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none ${selectedVariant} ${selectedSize} ${className}`}
       {...props}
     >
       {children}

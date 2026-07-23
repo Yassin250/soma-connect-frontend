@@ -168,10 +168,10 @@ SomaConnect Operations Compliance`
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
             Internal Controls
           </span>
-          <h1 className="text-3xl font-extrabold tracking-tight mt-2 text-slate-900">
+          <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
             School Review Panel
           </h1>
           <p className="text-xs text-slate-500">
@@ -219,7 +219,7 @@ SomaConnect Operations Compliance`
                 {/* cleared via toast */}
                 setIsRegisterModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#1d4ed8] hover:bg-[#1e40af] text-xs font-bold text-white rounded-xl transition-all shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-[#1b1e26] hover:bg-black text-xs font-bold text-white rounded-xl transition-all shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -237,14 +237,14 @@ SomaConnect Operations Compliance`
               {schools.map((school) => (
                 <div
                   key={school.id}
-                  className="p-5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm"
+                  className="p-5 bg-white border border-slate-200 rounded-xl hover:border-[#d0f24a]/50 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm"
                 >
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center space-x-2.5">
                       <h4 className="text-base font-bold text-slate-900">{school.name}</h4>
                       <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider ${
                         school.status === 'ACTIVE' ? 'bg-green-100 text-green-700 border border-green-200' :
-                        school.status === 'APPROVED' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                        school.status === 'APPROVED' ? 'bg-[#d0f24a]/20 text-[#5b6b12] border border-[#d0f24a]/50' :
                         school.status === 'REJECTED' ? 'bg-red-100 text-red-700 border border-red-200' :
                         'bg-amber-100 text-amber-700 border border-amber-200'
                       }`}>
@@ -297,7 +297,7 @@ SomaConnect Operations Compliance`
             </div>
             <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-200">
               <span className="text-slate-500">Approved (Pending Setup)</span>
-              <span className="font-bold text-blue-600">
+              <span className="font-bold text-[#5b6b12]">
                 {schools.filter(s => s.status === 'APPROVED').length}
               </span>
             </div>
@@ -309,8 +309,8 @@ SomaConnect Operations Compliance`
             </div>
           </div>
 
-          <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg space-y-2">
-            <h4 className="text-xs font-bold text-blue-700">Manual review protocol:</h4>
+          <div className="p-4 bg-[#d0f24a]/20 border border-[#d0f24a]/50 rounded-lg space-y-2">
+            <h4 className="text-xs font-bold text-[#5b6b12]">Manual review protocol:</h4>
             <p className="text-[11px] text-slate-600 leading-relaxed">
               Confirm domain records match official high-level registrar tables from UR/IPRC or HECC/WDA databases before clicking Approve.
             </p>
@@ -323,41 +323,41 @@ SomaConnect Operations Compliance`
           <div className="absolute inset-0" onClick={() => setIsRegisterModalOpen(false)} />
           <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-xl p-6 shadow-2xl z-10 space-y-5">
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Register New School</h3>
+              <h3 className="text-[15px] font-semibold text-slate-900">Register New School</h3>
               <p className="text-xs text-slate-500">Create a new institution on the platform.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2 space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">School Name *</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. University of Kigali" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. University of Kigali" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400" />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Slug *</label>
-                <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g. university-of-kigali" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+                <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g. university-of-kigali" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400" />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Type</label>
-                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900">
+                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900">
                   <option value="UNIVERSITY">University</option>
                   <option value="SECONDARY">Secondary School</option>
                 </select>
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email</label>
-                <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="admin@school.rw" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+                <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="admin@school.rw" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400" />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Phone</label>
-                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+250 7XX XXX XXX" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+250 7XX XXX XXX" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400" />
               </div>
               <div className="sm:col-span-2 space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Address</label>
-                <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Kigali, Rwanda" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+                <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Kigali, Rwanda" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400" />
               </div>
               <div className="sm:col-span-2 space-y-1">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Website</label>
-                <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://school.rw" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400" />
+                <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://school.rw" className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400" />
               </div>
             </div>
 
@@ -373,7 +373,7 @@ SomaConnect Operations Compliance`
                 type="button"
                 onClick={handleRegister}
                 disabled={isSubmitting}
-                className="px-4 py-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-xs font-medium rounded-lg text-white disabled:opacity-50"
+                className="px-4 py-2 bg-[#1b1e26] hover:bg-black text-xs font-medium rounded-lg text-white disabled:opacity-50"
               >
                 {isSubmitting ? 'Registering...' : 'Register'}
               </button>
@@ -388,7 +388,7 @@ SomaConnect Operations Compliance`
           <div className="absolute inset-0" onClick={() => setIsRejectModalOpen(false)} />
           <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-xl p-6 shadow-2xl z-10 space-y-4">
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Reject Registry Application</h3>
+              <h3 className="text-[15px] font-semibold text-slate-900">Reject Registry Application</h3>
               <p className="text-xs text-slate-500">Provide feedback explanation for {selectedSchool.name}.</p>
             </div>
 
@@ -399,7 +399,7 @@ SomaConnect Operations Compliance`
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="e.g. Email domain '@gmail.com' does not represent an official university registry..."
                 rows={4}
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-3 focus:outline-none focus:border-blue-500 text-slate-900 placeholder-slate-400 resize-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs p-3 focus:outline-none focus:border-[#d0f24a] text-slate-900 placeholder-slate-400 resize-none"
               />
             </div>
 

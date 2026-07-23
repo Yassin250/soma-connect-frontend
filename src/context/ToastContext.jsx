@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const ToastContext = createContext(null);
@@ -30,7 +30,7 @@ const BORDERS = {
   success: 'border-l-emerald-500',
   error: 'border-l-red-500',
   warning: 'border-l-amber-500',
-  info: 'border-l-blue-500',
+  info: 'border-l-[#d0f24a]',
 };
 
 export const ToastProvider = ({ children }) => {
@@ -48,8 +48,20 @@ export const ToastProvider = ({ children }) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
+  // Stable identity: consumers list `toast` in hook dependency arrays, so the
+  // value must not be recreated on every toast state change or their effects
+  // re-fire in a loop (fetch fails → toast.error → new value → refetch → …).
+  const value = useMemo(() => ({
+    addToast,
+    removeToast,
+    success: (msg) => addToast(msg, 'success'),
+    error: (msg) => addToast(msg, 'error'),
+    warning: (msg) => addToast(msg, 'warning'),
+    info: (msg) => addToast(msg, 'info'),
+  }), [addToast, removeToast]);
+
   return (
-    <ToastContext.Provider value={{ addToast, removeToast, success: (msg) => addToast(msg, 'success'), error: (msg) => addToast(msg, 'error'), warning: (msg) => addToast(msg, 'warning'), info: (msg) => addToast(msg, 'info') }}>
+    <ToastContext.Provider value={value}>
       {children}
       <div className="fixed top-4 right-4 z-[9999] flex flex-col items-end gap-3 pointer-events-none">
         <AnimatePresence mode="popLayout">
@@ -61,13 +73,13 @@ export const ToastProvider = ({ children }) => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.9 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className={`pointer-events-auto flex items-start gap-3 min-w-[320px] max-w-[420px] p-4 bg-blue-600 border border-blue-400/30 rounded-xl shadow-2xl shadow-blue-900/30 border-l-4 ${BORDERS[toast.type]}`}
+              className={`pointer-events-auto flex items-start gap-3 min-w-[320px] max-w-[420px] p-4 bg-[#1b1e26] border border-white/10 rounded-xl shadow-2xl shadow-[#1b1e26]/30 border-l-4 ${BORDERS[toast.type]}`}
             >
               <div className="shrink-0 mt-0.5">{ICONS[toast.type]}</div>
               <p className="text-sm text-white leading-relaxed flex-1">{toast.message}</p>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="shrink-0 text-blue-200 hover:text-white transition-colors"
+                className="shrink-0 text-white/50 hover:text-white transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

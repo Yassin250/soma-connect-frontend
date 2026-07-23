@@ -1,8 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY } from '../services/apiClient';
 
 const AuthContext = createContext(undefined);
 
-const REFRESH_ENDPOINT = 'http://localhost:5050/admin/auth/refresh-token';
+// Decode a JWT payload without a library. Returns null on any malformed token.
+const decodeJwt = (token) => {
+  try {
+    const payload = token.split('.')[1];
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const json = atob(normalized);
+    return JSON.parse(decodeURIComponent(escape(json)));
+  } catch {
+    return null;
+  }
+};
+
+// A token is usable only if it decodes and hasn't hit its `exp` (seconds).
+export const isTokenValid = (token) => {
+  if (!token) return false;
+  const claims = decodeJwt(token);
+  if (!claims || !claims.exp) return false;
+  return claims.exp * 1000 > Date.now();
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -10,63 +29,71 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('soma_token');
-    const storedUser = localStorage.getItem('soma_user');
-    if (storedToken && storedUser) {
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedUser = localStorage.getItem(USER_KEY);
+
+    // Only restore a session when the access token is present AND still valid.
+    // A stale/expired token used to slip through here and drop the user straight
+    // into the app — now we clear it and fall back to the login screen.
+    if (storedToken && storedUser && isTokenValid(storedToken)) {
       setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsed = JSON.parse(storedUser);
+        // Sessions stored before the permission-aware login response lack the
+        // permissions array. Every route guard fails on them, which used to
+        // leave the portal shell rendered with a permanently blank content
+        // area. Treat those sessions as stale and force a clean re-login.
+        if (!Array.isArray(parsed.roles) || !Array.isArray(parsed.permissions)) {
+          throw new Error('legacy session shape');
+        }
+        setUser(parsed);
+      } catch {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        setToken(null);
+      }
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
     }
     setLoading(false);
   }, []);
 
   const login = (newToken, newUser) => {
-    localStorage.setItem('soma_token', newToken);
-    localStorage.setItem('soma_user', JSON.stringify(newUser));
+    localStorage.setItem(TOKEN_KEY, newToken);
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
   };
 
   const logout = () => {
-    localStorage.removeItem('soma_token');
-    localStorage.removeItem('soma_user');
-    localStorage.removeItem('soma_refresh_token');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     setToken(null);
     setUser(null);
   };
 
-  const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem('soma_refresh_token');
-    if (!refreshToken) {
-      logout();
-      return null;
-    }
-    try {
-      const response = await fetch(REFRESH_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
-      });
-      if (!response.ok) {
-        logout();
-        return null;
-      }
-      const data = await response.json();
-      const newToken = data.token || data.data?.token;
-      if (!newToken) {
-        logout();
-        return null;
-      }
-      localStorage.setItem('soma_token', newToken);
-      setToken(newToken);
-      return newToken;
-    } catch {
-      logout();
-      return null;
-    }
+  const isAuthenticated = Boolean(token && user && isTokenValid(token));
+
+  // Authorization on the backend is permission-based (@PreAuthorize("hasAuthority(...)")),
+  // so the UI must gate on the same permissions the login response returns — not on role
+  // names. Comparison is case-insensitive because the backend exposes both the raw and
+  // upper-cased forms of each authority.
+  const hasPermission = (permission) => {
+    if (!permission) return false;
+    const wanted = permission.toUpperCase();
+    return (user?.permissions || []).some((p) => String(p).toUpperCase() === wanted);
   };
 
+  const hasAnyPermission = (permissions = []) => permissions.some((p) => hasPermission(p));
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading, refreshAccessToken }}>
+    <AuthContext.Provider
+      value={{ user, token, login, logout, loading, isAuthenticated, hasPermission, hasAnyPermission }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );

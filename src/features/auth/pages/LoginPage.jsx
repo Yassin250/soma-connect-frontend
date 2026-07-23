@@ -1,36 +1,73 @@
 import React from 'react';
-import logo from '../../../assets/2.png';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { LoginForm } from "../components/LoginForm";
-import { useAuth } from '../../../context/AuthContext';
+import { BrandLockup } from '../../../components/shared/Brand';
+
+const Wordmark = ({ dark = false }) => <BrandLockup dark={dark} />;
 
 export const LoginPage = ({ onToggleMode }) => {
-  const { logout } = useAuth();
-
-  React.useEffect(() => {
-    // Keep login entry behavior aligned with e-proc flow.
-    logout();
-  }, [logout]);
-
+  const year = new Date().getFullYear();
   return (
-    <div className="min-h-screen w-full flex bg-white font-sans antialiased select-none">
-      <div className="hidden md:flex relative flex-col justify-center items-center w-3/5 bg-[#1660FF] text-white p-20 [clip-path:polygon(0_0,100%_0,88%_100%,0_100%)] z-10 overflow-hidden">
-        <div className="absolute top-[20%] right-[20%] w-32 h-32 bg-white/10 rounded-3xl rotate-12 backdrop-blur-md animate-[pulse_6s_ease-in-out_infinite]" />
-        <div className="absolute bottom-[20%] left-[10%] w-20 h-20 bg-cyan-400/20 rounded-full backdrop-blur-md animate-[bounce_8s_ease-in-out_infinite]" />
-        <div className="absolute top-12 left-12"><img src={logo} alt="SomaConnect" className="h-12 w-auto object-contain brightness-0 invert" /></div>
-        <motion.div initial={{ x: -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} className="max-w-md text-left transform -translate-x-10 space-y-6 relative z-20">
-          <h2 className="text-5xl font-extrabold tracking-tight leading-tight">Learn with Integrity, Lead with Opportunity.</h2>
-          <p className="text-blue-100/80 text-base leading-relaxed font-medium">Bridging the gap between Rwandan classrooms and the global job market through AI-verified excellence.</p>
+    <div className="h-screen w-full flex bg-white antialiased overflow-hidden">
+
+      {/* Left — full-bleed dark brand panel with diagonal edge */}
+      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
+        {/* Ambient glow — lime brand accent up top, cool depth toward the middle */}
+        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#d0f24a]/20 blur-[100px]" />
+        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#39435a]/40 blur-[100px]" />
+
+        {/* Floating glass shapes near the diagonal */}
+        <div className="absolute top-[16%] right-[7%] w-44 h-44 rounded-[2.5rem] border border-white/10 rotate-[18deg]" />
+        <div className="absolute top-[29%] right-[15%] w-24 h-24 rounded-[1.5rem] bg-white/[0.05] backdrop-blur-md -rotate-6" />
+        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#d0f24a]/25 rotate-12" />
+        <div className="absolute bottom-24 left-6 w-24 h-24 rounded-full border border-white/[0.08]" />
+
+        <div className="relative z-10">
+          <Link to="/" className="inline-block" aria-label="Go to Soma Connect landing page">
+            <Wordmark />
+          </Link>
+        </div>
+
+        <motion.div
+          initial={{ x: -40, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="relative z-10 max-w-xl space-y-6"
+        >
+          <h1 className="text-[2.75rem] xl:text-[3.5rem] font-semibold tracking-tight leading-[1.12]">
+            Learn with Integrity, Lead with Opportunity.
+          </h1>
+          <p className="text-white/60 text-base lg:text-lg leading-relaxed max-w-md">
+            Bridging the gap between Rwandan classrooms and the global job market through AI-verified excellence.
+          </p>
         </motion.div>
+
+        <div className="relative z-10">
+          <p className="text-xs text-white/35">© {year} Soma Connect Platform. All rights reserved.</p>
+        </div>
       </div>
 
-      <div className="w-full md:w-2/5 flex flex-col justify-center p-8 sm:p-16 lg:px-20 bg-white">
-        <motion.div initial={{ x: 60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} className="w-full max-w-[400px] mx-auto">
+      {/* Right — form panel, fills remaining height */}
+      <div className="w-full md:w-[48%] flex flex-col justify-center p-8 sm:p-16 lg:px-24 bg-white overflow-y-auto">
+        {/* Mobile-only brand mark (left panel is hidden below md) */}
+        <div className="md:hidden mb-10">
+          <Link to="/" className="inline-block" aria-label="Go to Soma Connect landing page">
+            <Wordmark dark />
+          </Link>
+        </div>
+
+        <motion.div
+          initial={{ x: 40, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="w-full max-w-md mx-auto"
+        >
           <LoginForm onToggleMode={onToggleMode} />
-          <div className="mt-12" />
         </motion.div>
       </div>
     </div>
   );
 };
+
 export default LoginPage;

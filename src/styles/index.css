@@ -1,3 +1,96 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* Global density: render the whole app at 90% — what 90% browser zoom used
+     to show is now the 100% default. Tune the single factor here; the
+     viewport-unit compensation below reads the same variable. */
+  :root {
+    --app-zoom: 0.9;
+  }
+  html {
+    zoom: var(--app-zoom);
+  }
+
+  /* Printing (certificates, reports) keeps true 1:1 scale. */
+  @media print {
+    :root {
+      --app-zoom: 1;
+    }
+    html {
+      zoom: 1;
+    }
+  }
+
+  /* Old browsers without `zoom` (Firefox < 126): degrade to scaling the
+     rem-based sizes via root font-size. No zoom → no compensation needed. */
+  @supports not (zoom: 1) {
+    :root {
+      --app-zoom: 1;
+    }
+    html {
+      font-size: 90%;
+    }
+  }
+}
+
+@layer utilities {
+  /* vh/vw units are resolved against the PHYSICAL viewport and ignore the root
+     `zoom`, so 100vh-tall shells would paint at only 90% of the screen and
+     leave a white band at the bottom (and w-screen a band at the right).
+     Dividing by the zoom factor makes them land exactly on the viewport edge. */
+  .h-screen {
+    height: calc(100vh / var(--app-zoom));
+  }
+  .min-h-screen {
+    min-height: calc(100vh / var(--app-zoom));
+  }
+  .max-h-screen {
+    max-height: calc(100vh / var(--app-zoom));
+  }
+  .w-screen {
+    width: calc(100vw / var(--app-zoom));
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(27, 30, 38, 0.06) 0%,
+      rgba(208, 242, 74, 0.22) 50%,
+      rgba(27, 30, 38, 0.06) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  @keyframes btn-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(208, 242, 74, 0.35);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(208, 242, 74, 0);
+    }
+  }
+
+  .btn-loading-glow {
+    animation: btn-glow 1.6s ease-in-out infinite;
+  }
+}
