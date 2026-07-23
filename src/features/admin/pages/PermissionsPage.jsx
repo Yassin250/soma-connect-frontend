@@ -1,76 +1,101 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import React, { useState, useEffect, useRef } from 'react';
+import { adminService } from '../../../services/api';
 import { useToast } from '../../../context/ToastContext';
+import { DataTable } from '../../../components/shared/DataTable';
+
+const columns = [
+  {
+    key: 'name',
+    header: 'Name',
+    sortable: true,
+    sortValue: (p) => p.name || '',
+    render: (p) => (
+      <span className="text-[13px] font-medium text-[#1b1e26]">{p.name}</span>
+    ),
+  },
+  {
+    key: 'description',
+    header: 'Description',
+    sortable: true,
+    sortValue: (p) => p.description || '',
+    render: (p) => <span className="text-gray-500 max-w-sm block">{p.description || '—'}</span>,
+  },
+  {
+    key: 'category',
+    header: 'Category',
+    sortable: true,
+    sortValue: (p) => p.category || '',
+    render: (p) => (
+      <span className="px-2.5 py-1 bg-[#d0f24a]/25 text-[#1b1e26] rounded-full text-[11px] font-semibold">
+        {p.category || 'General'}
+      </span>
+    ),
+  },
+  {
+    key: 'createdAt',
+    header: 'Created At',
+    sortable: true,
+    sortValue: (p) => (p.createdAt ? new Date(p.createdAt).getTime() : 0),
+    render: (p) => (
+      <span className="text-gray-400">{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'N/A'}</span>
+    ),
+  },
+];
 
 export const PermissionsPage = () => {
-  const { token } = useAuth();
   const [permissions, setPermissions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const toast = useToast();
-
-  const API_BASE_URL = 'http://localhost:5050/api/admin';
-
-  const getHeaders = useCallback(() => ({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  }), [token]);
-
-  const fetchPermissions = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/permissions`, { headers: getHeaders() });
-      if (!response.ok) throw new Error(`Failed to fetch permissions: ${response.status}`);
-      const data = await response.json();
-      setPermissions(Array.isArray(data) ? data : data?.data || []);
-    } catch (err) {
-      toast.error(err.message);
-      setPermissions([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [getHeaders]);
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
 
   useEffect(() => {
-    fetchPermissions();
-  }, [fetchPermissions]);
+    let cancelled = false;
+    (async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const data = await adminService.getPermissions();
+        if (!cancelled) setPermissions(Array.isArray(data) ? data : []);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message || 'Failed to load permissions');
+          toastRef.current.error(err.message || 'Failed to load permissions');
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="space-y-6">
-      <div className="text-left">
-        <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight">Permissions</h1>
-        <p className="text-xs text-gray-500 mt-0.5">Manage system Permissions</p>
+      <div>
+        <h1 className="text-[19px] font-medium text-[#1b1e26] tracking-tight">Permissions</h1>
+        <p className="text-[12px] text-gray-500 mt-0.5">Fine-grained privileges that power every role.</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-[#fafafa] border-b border-gray-200 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                <th className="p-3.5 pl-5">Name</th>
-                <th className="p-3.5">Description</th>
-                <th className="p-3.5">Category</th>
-                <th className="p-3.5 pr-5">Created At</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
-              {permissions.map((perm) => (
-                <tr key={perm.id} className="hover:bg-slate-50/70">
-                  <td className="p-3.5 pl-5 font-mono text-[11px] text-blue-600 font-bold">{perm.name}</td>
-                  <td className="p-3.5 text-gray-500 max-w-sm">{perm.description}</td>
-                  <td className="p-3.5">
-                    <span className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[11px] font-semibold">{perm.category}</span>
-                  </td>
-                  <td className="p-3.5 pr-5 text-gray-400 font-normal">
-                    {perm.createdAt ? new Date(perm.createdAt).toLocaleDateString() : 'N/A'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {isLoading && <div className="p-8 text-center text-sm text-gray-500">Loading permissions...</div>}
-          {!isLoading && permissions.length === 0 && <div className="p-8 text-center text-sm text-gray-500">No permissions found.</div>}
-        </div>
-      </div>
+      <DataTable
+        columns={columns}
+        rows={permissions}
+        loading={isLoading}
+        error={error}
+        minWidth={780}
+        skeletonRows={10}
+        pageSize={10}
+        rowLabel="permissions"
+        filters={[
+          { key: 'category', label: 'Category', getValue: (p) => p.category },
+        ]}
+        emptyTitle="No permissions yet"
+        emptyMessage="Permissions will appear here once configured on the server."
+      />
     </div>
   );
 };
+
+export default PermissionsPage;

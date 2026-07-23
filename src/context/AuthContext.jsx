@@ -38,9 +38,20 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser && isTokenValid(storedToken)) {
       setToken(storedToken);
       try {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        // Sessions stored before the permission-aware login response lack the
+        // permissions array. Every route guard fails on them, which used to
+        // leave the portal shell rendered with a permanently blank content
+        // area. Treat those sessions as stale and force a clean re-login.
+        if (!Array.isArray(parsed.roles) || !Array.isArray(parsed.permissions)) {
+          throw new Error('legacy session shape');
+        }
+        setUser(parsed);
       } catch {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
+        setToken(null);
       }
     } else {
       localStorage.removeItem(TOKEN_KEY);
@@ -67,8 +78,22 @@ export const AuthProvider = ({ children }) => {
 
   const isAuthenticated = Boolean(token && user && isTokenValid(token));
 
+  // Authorization on the backend is permission-based (@PreAuthorize("hasAuthority(...)")),
+  // so the UI must gate on the same permissions the login response returns — not on role
+  // names. Comparison is case-insensitive because the backend exposes both the raw and
+  // upper-cased forms of each authority.
+  const hasPermission = (permission) => {
+    if (!permission) return false;
+    const wanted = permission.toUpperCase();
+    return (user?.permissions || []).some((p) => String(p).toUpperCase() === wanted);
+  };
+
+  const hasAnyPermission = (permissions = []) => permissions.some((p) => hasPermission(p));
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ user, token, login, logout, loading, isAuthenticated, hasPermission, hasAnyPermission }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );

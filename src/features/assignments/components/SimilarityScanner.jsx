@@ -45,7 +45,7 @@ export const SimilarityScanner = ({ onScanComplete, title, studentName, course }
     <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
       <div className="p-5 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+          <div className="p-2 rounded-lg bg-[#1b1e26]/[0.06] text-[#1b1e26]/70">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
@@ -67,7 +67,7 @@ export const SimilarityScanner = ({ onScanComplete, title, studentName, course }
               onDrop={handleDrop}
               onClick={() => inputRef.current?.click()}
               className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
-                dragOver ? 'border-indigo-400 bg-indigo-50' : file ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 hover:border-slate-300 bg-slate-50'
+                dragOver ? 'border-[#d0f24a]/50 bg-[#d0f24a]/20' : file ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 hover:border-slate-300 bg-slate-50'
               }`}
             >
               <input ref={inputRef} type="file" accept=".txt,.pdf,.docx" onChange={handleSelect} className="hidden" />
@@ -99,10 +99,10 @@ export const SimilarityScanner = ({ onScanComplete, title, studentName, course }
             <button
               onClick={handleScan}
               disabled={!file || scanning}
-              className={`mt-4 w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`mt-4 w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                 !file || scanning
                   ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-sm hover:from-indigo-700 hover:to-blue-700'
+                  : 'bg-[#1b1e26] text-white shadow-sm hover:bg-black'
               }`}
             >
               {scanning ? (
@@ -125,7 +125,7 @@ export const SimilarityScanner = ({ onScanComplete, title, studentName, course }
                   <span className={`w-2 h-2 rounded-full ${sev.dot}`} />
                   <span className={`text-xs font-bold uppercase tracking-wider ${sev.text}`}>{sev.label}</span>
                 </div>
-                <span className={`text-2xl font-black ${sev.text}`}>{result.similarity}%</span>
+                <span className={`text-xl font-black ${sev.text}`}>{result.similarity}%</span>
               </div>
               <div className="h-2 bg-white/60 rounded-full overflow-hidden">
                 <div className={`h-full rounded-full transition-all duration-1000 ${sev.bar}`} style={{ width: `${result.similarity}%` }} />

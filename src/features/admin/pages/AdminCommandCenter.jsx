@@ -1,258 +1,286 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { adminService } from '../../../services/api';
 import { useToast } from '../../../context/ToastContext';
 
-export const AdminCommandCenter = () => {
-  const { token, refreshAccessToken } = useAuth();
-  const API_BASE_URL = 'http://localhost:5050/api/admin';
+const EMPTY_STATS = {
+  totalUsers: 0,
+  totalStudents: 0,
+  totalFaculty: 0,
+  totalAdmins: 0,
+  activeUsers: 0,
+  lockedUsers: 0,
+  totalRoles: 0,
+  totalPermissions: 0,
+};
 
-  const [stats, setStats] = useState({
-    totalSchools: 0,
-    activeSchools: 0,
-    pendingSchools: 0,
-    totalUsers: 0,
-    totalStudents: 0,
-    totalLecturers: 0,
-    totalCourses: 0,
-    globalSubmissions: 0,
-  });
+const roleNames = (user) =>
+  (user?.roles || []).map((r) => (typeof r === 'string' ? r : r?.name || '').toUpperCase());
+
+const hasAnyRole = (user, wanted) => {
+  const names = roleNames(user);
+  return wanted.some((w) => names.includes(w));
+};
+
+// Human-friendly "time ago" for the activity feed derived from createdAt.
+const timeAgo = (isoDate) => {
+  if (!isoDate) return '';
+  const then = new Date(isoDate).getTime();
+  if (Number.isNaN(then)) return '';
+  const seconds = Math.max(0, Math.floor((Date.now() - then) / 1000));
+  const units = [
+    ['year', 31536000],
+    ['month', 2592000],
+    ['day', 86400],
+    ['hour', 3600],
+    ['minute', 60],
+  ];
+  for (const [label, secs] of units) {
+    const value = Math.floor(seconds / secs);
+    if (value >= 1) return `${value} ${label}${value > 1 ? 's' : ''} ago`;
+  }
+  return 'just now';
+};
+
+export const AdminCommandCenter = () => {
+  const [stats, setStats] = useState(EMPTY_STATS);
   const [recentActivity, setRecentActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
+  // useToast() returns a fresh object each provider render, so keep it in a ref
+  // instead of an effect dependency — otherwise showing a toast would re-run the
+  // loader and could loop.
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
 
-  const getHeaders = useCallback((t) => ({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${t || token}`,
-  }), [token]);
-
-  const fetchWithAuth = useCallback(async (url, retried = false) => {
-    const res = await fetch(url, { headers: getHeaders() });
-    if (res.status === 401 && !retried) {
-      const newToken = await refreshAccessToken();
-      if (newToken) {
-        const retryRes = await fetch(url, { headers: getHeaders(newToken) });
-        if (!retryRes.ok) throw new Error(`Failed: ${retryRes.status} ${retryRes.statusText}`);
-        return retryRes.json();
-      }
-      throw new Error('Session expired. Please log in again.');
-    }
-    if (!res.ok) throw new Error(`Failed: ${res.status} ${res.statusText}`);
-    return res.json();
-  }, [getHeaders, refreshAccessToken]);
-
-  const loadGlobalStats = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const statsData = await fetchWithAuth(`${API_BASE_URL}/stats`);
-      setStats(statsData.data || statsData);
-
-      const activityData = await fetchWithAuth(`${API_BASE_URL}/activity`);
-      setRecentActivity(Array.isArray(activityData) ? activityData : (activityData.data || []));
-    } catch (err) {
-      console.error('Error loading global stats:', err);
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchWithAuth, toast]);
-
+  // Derive the command-center metrics from the endpoints the API actually
+  // exposes today (users / roles / permissions). Dedicated /stats and /activity
+  // endpoints don't exist yet, so each source is loaded independently and a
+  // single failure degrades that metric to 0 instead of blanking the dashboard.
   useEffect(() => {
-    loadGlobalStats();
-  }, [loadGlobalStats]);
+    let cancelled = false;
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full text-slate-500 font-mono text-sm">
-        Initializing Command Center...
-      </div>
-    );
-  }
+    (async () => {
+      setIsLoading(true);
 
-  // Color maps
-  const typeColors = {
-    School: { dot: 'bg-indigo-500', badge: 'bg-indigo-50 text-indigo-700 border-indigo-200', border: 'hover:border-indigo-400' },
-    User:   { dot: 'bg-violet-500', badge: 'bg-violet-50 text-violet-700 border-violet-200',  border: 'hover:border-violet-400' },
-    Course: { dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', border: 'hover:border-emerald-400' },
-    System: { dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200',     border: 'hover:border-amber-400' },
-  };
+      const [usersRes, rolesRes, permsRes] = await Promise.allSettled([
+        adminService.getUsers(),
+        adminService.getRoles(),
+        adminService.getPermissions(),
+      ]);
+      if (cancelled) return;
+
+      const users = usersRes.status === 'fulfilled' && Array.isArray(usersRes.value) ? usersRes.value : [];
+      const roles = rolesRes.status === 'fulfilled' && Array.isArray(rolesRes.value) ? rolesRes.value : [];
+      const permissions = permsRes.status === 'fulfilled' && Array.isArray(permsRes.value) ? permsRes.value : [];
+
+      setStats({
+        totalUsers: users.length,
+        totalStudents: users.filter((u) => hasAnyRole(u, ['STUDENT'])).length,
+        totalFaculty: users.filter((u) => hasAnyRole(u, ['LECTURER', 'FACULTY', 'TEACHER'])).length,
+        totalAdmins: users.filter((u) => hasAnyRole(u, ['ADMIN', 'SUPER_ADMIN'])).length,
+        activeUsers: users.filter((u) => u.active && u.enabled && u.accountNonLocked !== false).length,
+        lockedUsers: users.filter((u) => u.accountNonLocked === false).length,
+        totalRoles: roles.length,
+        totalPermissions: permissions.length,
+      });
+
+      const activity = [...users]
+        .filter((u) => u.createdAt)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 6)
+        .map((u) => ({
+          id: u.id,
+          type: 'User',
+          action: `New account created — ${u.name || u.username || u.email}`,
+          time: timeAgo(u.createdAt),
+        }));
+      setRecentActivity(activity);
+
+      if (usersRes.status === 'rejected') {
+        toastRef.current.error(usersRes.reason?.message || 'Could not load dashboard metrics');
+      }
+
+      setIsLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const kpiCards = [
     {
-      label: 'Total Institutions',
-      value: stats.totalSchools,
-      subValue: `${stats.activeSchools} Active / ${stats.pendingSchools} Pending`,
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
-        </svg>
-      ),
-      gradient: 'from-indigo-500 via-indigo-600 to-indigo-700',
-      shadow: 'shadow-indigo-500/20',
-      badge: 'bg-white/20 text-white',
-      corner: 'bg-indigo-400/20',
-    },
-    {
       label: 'Total Users',
       value: stats.totalUsers,
-      subValue: `${stats.totalStudents} Students · ${stats.totalLecturers} Faculty`,
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      ),
-      gradient: 'from-violet-500 via-violet-600 to-fuchsia-600',
-      shadow: 'shadow-violet-500/20',
-      badge: 'bg-white/20 text-white',
-      corner: 'bg-violet-400/20',
+      sub: `${stats.totalStudents} students · ${stats.totalFaculty} faculty`,
+      accent: true,
+      icon: 'M17 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
     },
     {
-      label: 'Academic Courses',
-      value: stats.totalCourses,
-      subValue: 'Distributed across all institutes',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      ),
-      gradient: 'from-emerald-500 via-emerald-600 to-teal-700',
-      shadow: 'shadow-emerald-500/20',
-      badge: 'bg-white/20 text-white',
-      corner: 'bg-emerald-400/20',
+      label: 'Active Accounts',
+      value: stats.activeUsers,
+      sub: `${stats.lockedUsers} locked`,
+      icon: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3',
     },
     {
-      label: 'Global Submissions',
-      value: stats.globalSubmissions,
-      subValue: 'Verified academic work',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      gradient: 'from-amber-500 via-orange-500 to-rose-600',
-      shadow: 'shadow-amber-500/20',
-      badge: 'bg-white/20 text-white',
-      corner: 'bg-amber-400/20',
+      label: 'Roles Configured',
+      value: stats.totalRoles,
+      sub: `${stats.totalPermissions} permissions`,
+      icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4',
+    },
+    {
+      label: 'Administrators',
+      value: stats.totalAdmins,
+      sub: 'Platform operators',
+      icon: 'M12 2 4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5l-8-3z',
     },
   ];
 
   const quickLinks = [
-    { label: 'Manage Users',       desc: 'Audit roles and account statuses',      path: '/admin/users',       icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
-    { label: 'Manage Roles',       desc: 'Configure system role permissions',      path: '/admin/roles',       icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4' },
-    { label: 'Manage Permissions', desc: 'Audit fine-grained privileges',          path: '/admin/permissions', icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z' },
-    { label: 'Review Schools',     desc: 'Approve pending institutions',           path: '/admin/approvals',   icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5' },
+    { label: 'Manage Users', desc: 'Audit accounts & statuses', to: '/admin/users', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
+    { label: 'Manage Roles', desc: 'Configure role permissions', to: '/admin/roles', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
+    { label: 'Permissions', desc: 'Fine-grained privileges', to: '/admin/permissions', icon: 'M15.5 7.5 21 2M18 5l-3 3M11 11a4 4 0 1 1-5.66 5.66A4 4 0 0 1 11 11z' },
+    { label: 'Review Schools', desc: 'Approve institutions', to: '/admin/approvals', icon: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3' },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-6">
+        <div className="h-10 w-64 bg-gray-200 rounded-xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[0, 1, 2, 3].map((i) => <div key={i} className="h-32 bg-gray-200/70 rounded-2xl" />)}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 h-80 bg-gray-200/70 rounded-2xl" />
+          <div className="h-80 bg-gray-200/70 rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-8 antialiased">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-6">
+    <div className="space-y-7">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded">
+          <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.16em] text-[#1b1e26]/50 bg-[#d0f24a]/40 px-2.5 py-1 rounded-full">
             Global Oversight
           </span>
-          <h1 className="text-3xl font-black tracking-tight mt-2 text-slate-900">
-            Command Center
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Real-time platform health, institutional growth, and user distribution metrics.
-          </p>
+          <h1 className="text-[19px] font-medium tracking-tight text-[#1b1e26] mt-3">Command Center</h1>
+          <p className="text-[12px] text-gray-500 mt-1">Real-time platform health, growth, and user distribution.</p>
         </div>
-        <div className="flex items-center space-x-2 text-xs font-medium text-slate-400">
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
-          <span>System Operational</span>
+        <div className="flex items-center gap-2.5 text-xs font-semibold bg-[#d0f24a] text-[#1b5e20] rounded-2xl px-4 py-2.5 shadow-sm relative overflow-hidden">
+          <span className="absolute -right-3 -bottom-3 w-14 h-14 rounded-full bg-white/25 pointer-events-none" />
+          <span className="relative flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#2e7d32] animate-pulse shrink-0" />
+            <span className="uppercase tracking-wide text-[11px]">System Operational</span>
+          </span>
+          <span className="relative hidden sm:block text-[10px] font-medium text-[#1b5e20]/70 before:content-['·'] before:mr-2">
+            Environment · Rwanda
+          </span>
         </div>
       </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpiCards.map((card, idx) => (
+      {/* KPI cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {kpiCards.map((card) => (
           <div
-            key={idx}
-            className={`relative p-4 rounded-xl bg-gradient-to-br ${card.gradient} ${card.shadow} shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 overflow-hidden group`}
+            key={card.label}
+            className={`relative rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md ${
+              card.accent ? 'bg-[#1b1e26] border-[#1b1e26]' : 'bg-white border-gray-100 shadow-sm'
+            }`}
           >
-            {/* Decorative corner ring */}
-            <div className={`absolute -top-4 -right-4 w-16 h-16 rounded-full ${card.corner} blur-lg group-hover:scale-150 transition-transform duration-700`} />
-            <div className="absolute -bottom-3 -left-3 w-10 h-10 rounded-full border-2 border-white/5 group-hover:scale-125 transition-transform duration-500" />
-
-            {/* Top row: icon + subtle indicator */}
-            <div className="flex items-start justify-between relative z-10">
-              <div className="p-2 rounded-lg bg-white/15 text-white backdrop-blur-sm ring-1 ring-white/20 shadow-inner">
-                {card.icon}
-              </div>
-              <div className="w-1 h-1 rounded-full bg-white/40 animate-pulse" />
-            </div>
-
-            {/* Value area */}
-            <div className="mt-3 relative z-10">
-              <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-white/60">{card.label}</p>
-              <p className="text-2xl font-black text-white mt-0.5 drop-shadow-sm tabular-nums">{card.value}</p>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold mt-2 ${card.badge} backdrop-blur-sm`}>
-                {card.subValue}
+            <div className="flex items-start justify-between">
+              <span className={`w-11 h-11 rounded-xl flex items-center justify-center ${card.accent ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#f3f4f6] text-[#1b1e26]'}`}>
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={card.icon} />
+                </svg>
               </span>
             </div>
+            <p className={`text-3xl font-bold tabular-nums mt-4 ${card.accent ? 'text-white' : 'text-[#1b1e26]'}`}>{card.value}</p>
+            <p className={`text-sm font-medium mt-0.5 ${card.accent ? 'text-white/80' : 'text-gray-600'}`}>{card.label}</p>
+            <p className={`text-xs mt-2 ${card.accent ? 'text-white/50' : 'text-gray-400'}`}>{card.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Activity Feed */}
-        <div className="lg:col-span-8 space-y-4">
-          <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400 mb-2">Global Event Stream</h3>
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-            <div className="divide-y divide-slate-100">
-              {recentActivity.length === 0 ? (
-                <div className="p-10 text-center text-slate-400 text-xs italic">No recent platform activity recorded.</div>
-              ) : (
-                recentActivity.map((act) => {
-                  const colors = typeColors[act.type] || typeColors.System;
-                  return (
-                    <div
-                      key={act.id}
-                      className={`p-4 flex items-center justify-between transition-all border-l-4 border-transparent hover:bg-slate-50 ${colors.border}`}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-2 h-2 rounded-full ${colors.dot} flex-shrink-0`} />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-slate-900 truncate">{act.action}</p>
-                          <p className="text-xs text-slate-400 font-mono">{act.time}</p>
-                        </div>
-                      </div>
-                      <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ${colors.badge} border whitespace-nowrap flex-shrink-0`}>
-                        {act.type}
-                      </span>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+      {/* Activity + quick actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Activity feed */}
+        <div className="lg:col-span-2 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
+            <h3 className="text-sm font-semibold text-[#1b1e26]">Recent Activity</h3>
+            <Link to="/admin/audit-logs" className="text-xs font-medium text-gray-400 hover:text-[#1b1e26] transition-colors">View all</Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {recentActivity.length === 0 ? (
+              <div className="px-6 py-14 text-center text-sm text-gray-400">No recent platform activity recorded.</div>
+            ) : (
+              recentActivity.map((act) => (
+                <div key={act.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-gray-50/60 transition-colors">
+                  <span className="w-9 h-9 rounded-xl bg-[#d0f24a]/25 text-[#1b1e26] flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-[#1b1e26] truncate">{act.action}</p>
+                    <p className="text-xs text-gray-400">{act.time}</p>
+                  </div>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 bg-gray-100 px-2 py-1 rounded-full shrink-0">{act.type}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="lg:col-span-4 space-y-6">
-          <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400 mb-2">Admin Fast-Track</h3>
-          <div className="grid grid-cols-1 gap-3">
-            {quickLinks.map((link, idx) => (
+        {/* Quick actions */}
+        <div className="space-y-5">
+          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+            <h3 className="text-sm font-semibold text-[#1b1e26] mb-4">Admin Fast-Track</h3>
+            <div className="space-y-1.5">
+              {quickLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="group flex items-center gap-3.5 p-2.5 rounded-xl hover:bg-[#f3f4f6] transition-colors"
+                >
+                  <span className="w-10 h-10 rounded-xl bg-[#f3f4f6] group-hover:bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center transition-colors shrink-0">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={link.icon} /></svg>
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[#1b1e26]">{link.label}</p>
+                    <p className="text-[11px] text-gray-400 truncate">{link.desc}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-300 group-hover:text-[#1b1e26] ml-auto transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Lime highlight */}
+          <div className="rounded-2xl bg-[#d0f24a] p-6 relative overflow-hidden shadow-[0_8px_32px_rgba(208,242,74,0.25)]">
+            <div className="absolute -bottom-10 -right-8 w-32 h-32 rounded-full bg-white/20 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-[#e8ff6a]/40 blur-2xl pointer-events-none" />
+            <div className="relative">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#1b1e26]/55">Access control</p>
+              <p className="text-xl font-bold text-[#1b1e26] mt-2 leading-snug">
+                {stats.totalPermissions} permissions across {stats.totalRoles} roles
+              </p>
               <Link
-                key={idx}
-                to={link.path}
-                className="flex items-center p-4 bg-white border border-slate-200 rounded-2xl transition-all border-l-4 border-transparent hover:border-l-indigo-400 hover:bg-slate-50 group"
+                to="/admin/roles"
+                className="inline-flex items-center gap-2 mt-5 bg-[#1b1e26] text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-black transition-all duration-200 hover:gap-2.5 shadow-md"
               >
-                <div className="p-2.5 rounded-xl transition-colors bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={link.icon} />
-                  </svg>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-bold text-slate-900">{link.label}</p>
-                  <p className="text-[11px] text-slate-500">{link.desc}</p>
-                </div>
+                Review access
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </Link>
-            ))}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default AdminCommandCenter;

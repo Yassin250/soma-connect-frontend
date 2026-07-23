@@ -125,12 +125,12 @@ export const AssignmentSubmit = () => {
       <div className="min-h-screen bg-[#0a0f1d] text-white flex items-center justify-center p-6">
         <div className="w-full max-w-2xl bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-6">
           <div className="text-center space-y-3">
-            <div className="w-14 h-14 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto">
-              <svg className="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 rounded-full bg-[#d0f24a]/10 border border-[#d0f24a]/20 flex items-center justify-center mx-auto">
+              <svg className="w-7 h-7 text-[#d0f24a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold">Assignment Already Submitted</h2>
+            <h2 className="text-[15px] font-semibold">Assignment Already Submitted</h2>
             <p className="text-xs text-slate-400">{course.code} · {assignment.title}</p>
           </div>
 
@@ -197,7 +197,7 @@ export const AssignmentSubmit = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold">Submission Received!</h2>
+          <h2 className="text-[15px] font-semibold">Submission Received!</h2>
           <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 text-xs text-left">
             <div className="flex justify-between">
               <span className="text-slate-400">Assignment</span>
@@ -245,7 +245,7 @@ export const AssignmentSubmit = () => {
 
       <div className="max-w-4xl mx-auto p-6 md:p-10 space-y-8">
         <div className="space-y-2">
-          <h1 className="text-xl font-bold">{assignment.title}</h1>
+          <h1 className="text-[15px] font-semibold">{assignment.title}</h1>
           <p className="text-xs text-slate-400 leading-relaxed">{assignment.description}</p>
         </div>
 
@@ -281,7 +281,7 @@ export const AssignmentSubmit = () => {
               rows={16}
               required
               placeholder="Paste your code or assignment text here..."
-              className="w-full bg-[#0c1226] border border-slate-800 rounded-xl text-xs p-4 text-white placeholder-slate-500 resize-none font-mono focus:outline-none focus:border-blue-500 leading-relaxed"
+              className="w-full bg-[#0c1226] border border-slate-800 rounded-xl text-xs p-4 text-white placeholder-slate-500 resize-none font-mono focus:outline-none focus:border-[#d0f24a] leading-relaxed"
             />
           </div>
 

@@ -9,7 +9,7 @@ const CHANNEL_ICONS = {
 };
 
 const CHANNEL_COLORS = {
-  subscriptions: { bg: 'bg-blue-50', text: 'text-blue-600' },
+  subscriptions: { bg: 'bg-[#d0f24a]', text: 'text-[#5b6b12]' },
   payouts: { bg: 'bg-emerald-50', text: 'text-emerald-600' },
   adjustments: { bg: 'bg-amber-50', text: 'text-amber-600' },
 };
@@ -76,13 +76,13 @@ export const RevenuePage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
             Financials
           </span>
-          <h1 className="text-3xl font-black tracking-tight mt-2 text-slate-900">
+          <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
             Revenue
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-[12px] text-slate-500 mt-1">
             Platform revenue overview, monthly trends, and channel breakdown.
           </p>
         </div>
@@ -110,7 +110,7 @@ export const RevenuePage = () => {
                   <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
                     <span className="text-[9px] font-bold text-slate-500">{formatRWF(m.amount || 0)}</span>
                     <div
-                      className="w-full bg-gradient-to-t from-blue-500 to-indigo-400 rounded-t-md transition-all"
+                      className="w-full bg-[#d0f24a] rounded-t-md transition-all"
                       style={{ height: `${Math.max(pct, 2)}%` }}
                     />
                     <span className="text-[9px] font-mono text-slate-400">{m.month || MONTHS[idx] || idx + 1}</span>
