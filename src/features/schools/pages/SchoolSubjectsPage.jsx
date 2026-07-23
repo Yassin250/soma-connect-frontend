@@ -103,18 +103,18 @@ export const SchoolSubjectsPage = () => {
 
   const getSubjectColor = (code) => {
     const colors = {
-      MAT: 'from-blue-500 to-indigo-600',
-      PHY: 'from-purple-500 to-pink-600',
+      MAT: 'from-[#1b1e26] to-[#3a4150]',
+      PHY: 'from-amber-500 to-orange-600',
       KIN: 'from-emerald-500 to-teal-600',
       CHEM: 'from-amber-500 to-orange-600',
       BIO: 'from-lime-500 to-green-600',
-      ICT: 'from-cyan-500 to-blue-600',
+      ICT: 'from-teal-500 to-emerald-600',
       ENG: 'from-rose-500 to-pink-600',
       HIS: 'from-amber-600 to-yellow-700',
-      ENT: 'from-violet-500 to-purple-600',
-      GEO: 'from-sky-500 to-blue-600',
+      ENT: 'from-orange-500 to-amber-600',
+      GEO: 'from-emerald-500 to-teal-600',
     };
-    return colors[code] || 'from-[#5429FF] to-purple-700';
+    return colors[code] || 'from-[#1b1e26] to-[#343b49]';
   };
 
   return (
@@ -122,13 +122,13 @@ export const SchoolSubjectsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded">Academic Management</span>
-          <h1 className="text-2xl font-black tracking-tight mt-2 text-slate-900">Subject Allocation</h1>
-          <p className="text-sm text-slate-500 mt-1">Assign subjects to classes and teachers. Manage weekly hours for each allocation.</p>
+          <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">Academic Management</span>
+          <h1 className="text-[19px] font-medium tracking-tight mt-1.5 text-[#1b1e26]">Subject Allocation</h1>
+          <p className="text-[12px] text-slate-500 mt-1">Assign subjects to classes and teachers. Manage weekly hours for each allocation.</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#5429FF] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-500/20"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#1b1e26] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#1b1e26]/20"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -142,7 +142,7 @@ export const SchoolSubjectsPage = () => {
         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Filter by Class:</span>
         <button
           onClick={() => setFilterClass('')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!filterClass ? 'bg-[#5429FF] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!filterClass ? 'bg-[#1b1e26] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
         >
           All Classes
         </button>
@@ -150,7 +150,7 @@ export const SchoolSubjectsPage = () => {
           <button
             key={cls}
             onClick={() => setFilterClass(cls)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filterClass === cls ? 'bg-[#5429FF] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filterClass === cls ? 'bg-[#1b1e26] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
           >
             {cls}
           </button>
@@ -179,11 +179,11 @@ export const SchoolSubjectsPage = () => {
           filteredAllocations.map((alloc) => (
             <div
               key={alloc.id}
-              className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:border-purple-300"
+              className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:border-[#d0f24a]"
             >
               <div className={`h-28 bg-gradient-to-br ${getSubjectColor(alloc.code)} flex items-center justify-center text-white`}>
                 <div className="text-center">
-                  <p className="text-2xl font-black">{alloc.code}</p>
+                  <p className="text-xl font-semibold">{alloc.code}</p>
                   <p className="text-white/70 text-xs mt-1">{alloc.subject}</p>
                 </div>
               </div>
@@ -204,7 +204,7 @@ export const SchoolSubjectsPage = () => {
                   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-100 tracking-wider">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#d0f24a]/20 text-[#1b1e26] border border-[#d0f24a]/50 tracking-wider">
                     {alloc.hours} hours/week
                   </span>
                 </div>
@@ -226,7 +226,7 @@ export const SchoolSubjectsPage = () => {
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-slate-100">
           <div>
-            <h2 className="text-lg font-black text-slate-900">Allocations</h2>
+            <h2 className="text-[15px] font-semibold text-[#1b1e26]">Allocations</h2>
             <p className="text-xs text-slate-500 mt-1">Managing {filteredAllocations.length} subject allocations</p>
           </div>
         </div>
@@ -251,33 +251,33 @@ export const SchoolSubjectsPage = () => {
           ) : (
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/50">
-                  <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-wider text-slate-400">Subject</th>
-                  <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-wider text-slate-400">Class</th>
-                  <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-wider text-slate-400">Teacher</th>
-                  <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-wider text-slate-400">Hours/Week</th>
-                  <th className="text-right py-3 px-6 text-[10px] font-bold uppercase tracking-wider text-slate-400">Actions</th>
+                <tr className="border-b border-[#1b1e26]/[0.06] bg-[#f4f6f8]">
+                  <th className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Subject</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Class</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Teacher</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Hours/Week</th>
+                  <th className="text-right px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredAllocations.map((alloc) => (
-                  <tr key={alloc.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-6">
+                  <tr key={alloc.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                    <td className="px-4 py-2.5">
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getSubjectColor(alloc.code)} flex items-center justify-center text-white text-[10px] font-black`}>
+                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getSubjectColor(alloc.code)} flex items-center justify-center text-white text-[10px] font-bold`}>
                           {alloc.code}
                         </div>
-                        <span className="text-sm font-bold text-slate-900">{alloc.subject}</span>
+                        <span className="text-[13px] font-bold text-slate-900">{alloc.subject}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-6 text-sm text-slate-600">{alloc.className}</td>
-                    <td className="py-3 px-6 text-sm text-slate-600">{alloc.teacher}</td>
-                    <td className="py-3 px-6">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-100 tracking-wider">
+                    <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{alloc.className}</td>
+                    <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{alloc.teacher}</td>
+                    <td className="px-4 py-2.5">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#d0f24a]/20 text-[#1b1e26] border border-[#d0f24a]/50 tracking-wider">
                         {alloc.hours}h
                       </span>
                     </td>
-                    <td className="py-3 px-6 text-right">
+                    <td className="px-4 py-2.5 text-right">
                       <button
                         onClick={() => handleDeleteAllocation(alloc.id, alloc.subject)}
                         className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all"
@@ -301,7 +301,7 @@ export const SchoolSubjectsPage = () => {
           <div className="bg-white rounded-[28px] shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 p-7 relative">
             <button onClick={() => setShowForm(false)} className="absolute top-5 right-6 text-slate-400 hover:text-slate-600 text-2xl focus:outline-none">&times;</button>
             <div className="text-left mb-6">
-              <h3 className="text-xl font-black text-slate-900 tracking-tight">New Subject Allocation</h3>
+              <h3 className="text-[15px] font-semibold text-[#1b1e26] tracking-tight">New Subject Allocation</h3>
               <p className="text-xs text-slate-400 mt-1">Assign a subject to a class and teacher.</p>
             </div>
             <div className="space-y-4 text-left">
@@ -312,7 +312,7 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., Mathematics"
                   value={newAllocation.subject}
                   onChange={(e) => setNewAllocation({ ...newAllocation, subject: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300"
                 />
               </div>
               <div className="space-y-1.5">
@@ -322,8 +322,13 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., Senior One"
                   value={newAllocation.className}
                   onChange={(e) => setNewAllocation({ ...newAllocation, className: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
-                />
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800"
+                >
+                  <option value="">Select class</option>
+                  {mockClassesList.map((cls) => (
+                    <option key={cls} value={cls}>{cls}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Teacher</label>
@@ -332,8 +337,13 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., Jean Bosco Niyigaba"
                   value={newAllocation.teacher}
                   onChange={(e) => setNewAllocation({ ...newAllocation, teacher: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
-                />
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800"
+                >
+                  <option value="">Select teacher</option>
+                  {mockTeachersList.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Weekly Hours</label>
@@ -344,7 +354,7 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., 6"
                   value={newAllocation.hours || ''}
                   onChange={(e) => setNewAllocation({ ...newAllocation, hours: parseInt(e.target.value) || 0 })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300"
                 />
               </div>
               <div className="space-y-1.5">
@@ -354,21 +364,21 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., MAT"
                   value={newAllocation.code}
                   onChange={(e) => setNewAllocation({ ...newAllocation, code: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-purple-500 text-slate-800 placeholder-slate-300"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300"
                 />
               </div>
               <div className="border-t border-slate-100 pt-5 mt-6 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-5 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-sm"
+                  className="px-5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleAddAllocation}
-                  className="px-5 py-3 bg-[#5429FF] hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md"
+                  className="px-5 py-2 bg-[#1b1e26] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md"
                 >
                   Create Allocation
                 </button>

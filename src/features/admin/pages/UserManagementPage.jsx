@@ -1,135 +1,127 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AddUserModal } from '../components/AddUserModal';
-import { AddRoleModal } from '../components/AddRoleModal';
+import { DataTable } from '../../../components/shared/DataTable';
+import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
-import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
+import { adminService } from '../../../services/api';
 
-/**
- * FloatingMenu Component
- * Handles the contextual dropdown menu for table actions.
- */
-const FloatingMenu = ({ coords, onClose, children }) => {
-  const menuRef = useRef(null);
+// ── Avatar helpers ────────────────────────────────────────────────────────────
+const AVATAR_STYLES = [
+  'bg-[#d0f24a]/20 text-[#5b6b12]', 'bg-rose-100 text-rose-700',
+  'bg-amber-100 text-amber-700',   'bg-emerald-100 text-emerald-700',
+  'bg-[#1b1e26]/[0.06] text-[#1b1e26]/70', 'bg-violet-100 text-violet-700',
+  'bg-fuchsia-100 text-fuchsia-700','bg-teal-100 text-teal-700',
+];
+const initialsOf = (name) =>
+  (name || '?').split(/[\s_.-]+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+const avatarStyle = (seed) => {
+  let h = 0;
+  const s = seed || '?';
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return AVATAR_STYLES[h % AVATAR_STYLES.length];
+};
 
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        onClose();
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [onClose]);
-
-  return createPortal(
-    <div
-      ref={menuRef}
-      style={{ top: coords.top, left: coords.left }}
-      className="absolute w-44 bg-white border border-gray-200 rounded-lg shadow-2xl z-[9999] py-1.5"
-    >
-      {children}
-    </div>,
-    document.body
+// ── Status badge ──────────────────────────────────────────────────────────────
+const STATUS_STYLES = {
+  Active:   { pill: 'bg-emerald-50 text-emerald-700', dot: 'bg-emerald-500' },
+  Inactive: { pill: 'bg-[#1b1e26]/[0.05] text-[#1b1e26]/45', dot: 'bg-[#1b1e26]/30' },
+  Locked:   { pill: 'bg-amber-50 text-amber-700', dot: 'bg-amber-500' },
+};
+const StatusPill = ({ status }) => {
+  const s = STATUS_STYLES[status] || STATUS_STYLES.Inactive;
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${s.pill}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+      {status}
+    </span>
   );
 };
 
-/**
- * UserManagementPage Component
- * Main entry point for managing system users, roles, and permissions.
- * Includes full CRUD operations and filter/search capabilities.
- */
+const resolveUserStatus = (user) => {
+  if (user.accountNonLocked === false) return 'Locked';
+  return user.enabled === false ? 'Inactive' : 'Active';
+};
+
+// ── Shared style constants — compact filter recipe ───────────────────────────
+const filterFieldClass =
+  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-[#d0f24a]/20 focus:border-[#d0f24a] focus:outline-none transition-all';
+const filterSelectClass = `${filterFieldClass} appearance-none pr-8 cursor-pointer`;
+const filterLabelClass = 'text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]';
+
+const SelectChevron = () => (
+  <svg className="w-3.5 h-3.5 text-[#1b1e26]/40 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+    <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// ── Main component ────────────────────────────────────────────────────────────
 export const UserManagementPage = () => {
-  const { logout, token } = useAuth();
-  const navigate = useNavigate();
   const toast = useToast();
+  const { user: currentUser } = useAuth();
 
-  // --- UI STATES ---
-  const [currentView, setCurrentView] = useState('users');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [editingEntity, setEditingEntity] = useState(null);
-  const [dropdownConfig, setDropdownConfig] = useState({
-    visible: false,
-    type: null,
-    id: null,
-    coords: { top: 0, left: 0 },
-  });
+  // Own account is protected — no lock/disable/delete on yourself (backend
+  // rejects it too; hiding the options keeps the UI honest).
+  const isSelf = (u) =>
+    !!currentUser &&
+    (u.id === currentUser.id ||
+      (!!currentUser.username && u.username === currentUser.username));
 
-  // --- FILTER STATES (Users) ---
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Filters
+  const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterLock, setFilterLock] = useState('All');
-  const [filterDate, setFilterDate] = useState('');
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
 
-  // --- FILTER STATES (Roles) ---
-  const [filterRoleStatus, setFilterRoleStatus] = useState('All');
-  const [filterRoleDate, setFilterRoleDate] = useState('');
+  // ── Data fetching ─────────────────────────────────────────────────────────
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await adminService.getUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      toast.error(err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  // --- DATA STATES ---
-  const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [permissions, setPermissions] = useState([]);
-  const [permModalRole, setPermModalRole] = useState(null);
-  const [allPermissions, setAllPermissions] = useState([]);
-  const [selectedPermIds, setSelectedPermIds] = useState(new Set());
+  const fetchRoles = useCallback(async () => {
+    try {
+      const data = await adminService.getRoles();
+      setRoles(Array.isArray(data) ? data : []);
+    } catch {
+      // roles are supplementary (for filter); silently ignore
+    }
+  }, []);
 
-  const [confirmDelete, setConfirmDelete] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  useEffect(() => {
+    fetchUsers();
+    fetchRoles();
+  }, [fetchUsers, fetchRoles]);
 
-  // --- LOADING & ERROR STATES ---
-  const [isLoading, setIsLoading] = useState({
-    users: false,
-    roles: false,
-    permissions: false,
-  });
-  const [error, setError] = useState({
-    users: null,
-    roles: null,
-    permissions: null,
-  });
-
-  // --- API CONFIG ---
-  const API_BASE_URL = 'http://localhost:5050/api/admin';
-
-  /**
-   * Generates Authorization headers for API calls.
-   */
-  const getHeaders = useCallback(() => {
-    return {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    };
-  }, [token]);
-
-  // ==========================================
-  // MEMOIZED FILTERING
-  // ==========================================
-
-  /**
-   * Resolves a human-readable role name for a user, regardless of which
-   * shape the backend happens to return it in: an array of role objects/
-   * strings, a single `role` object or primitive id, a flat `roleName`
-   * string, or just a bare `roleId` that needs to be looked up against the
-   * fetched roles list.
-   */
+  // ── Filtering ─────────────────────────────────────────────────────────────
   const getUserRoleName = useCallback(
     (u) => {
-      if (Array.isArray(u.roles) && u.roles.length > 0) {
+      if (Array.isArray(u.roles) && u.roles.length > 0)
         return u.roles.map((r) => r?.name || r).join(', ');
-      }
       if (typeof u.roles === 'string' && u.roles) return u.roles;
-      if (u.roleName) return u.roleName;
       if (u.role && typeof u.role === 'object') return u.role.name || 'None';
-      if (u.role != null) {
-        const matched = roles.find((r) => String(r.id) === String(u.role));
-        return matched ? matched.name : String(u.role);
-      }
       if (u.roleId != null) {
-        const matched = roles.find((r) => String(r.id) === String(u.roleId));
-        return matched ? matched.name : 'None';
+        const m = roles.find((r) => String(r.id) === String(u.roleId));
+        return m ? m.name : 'None';
       }
       return 'None';
     },
@@ -137,970 +129,358 @@ export const UserManagementPage = () => {
   );
 
   const filteredUsers = useMemo(() => {
+    const q = search.trim().toLowerCase();
     return users.filter((u) => {
-      const matchRole = filterRole === 'All' || getUserRoleName(u) === filterRole;
-      const matchStatus = filterStatus === 'All' || u.status === filterStatus;
-      const matchLock = filterLock === 'All' || u.lockStatus === filterLock;
-      const matchDate = !filterDate || u.createdAt?.startsWith(filterDate);
-      return matchRole && matchStatus && matchLock && matchDate;
+      if (q) {
+        const hit =
+          (u.name || '').toLowerCase().includes(q) ||
+          (u.username || '').toLowerCase().includes(q) ||
+          (u.email || '').toLowerCase().includes(q);
+        if (!hit) return false;
+      }
+      if (filterRole !== 'All' && getUserRoleName(u) !== filterRole) return false;
+      if (filterStatus !== 'All' && resolveUserStatus(u) !== filterStatus) return false;
+      if (filterLock === 'Locked' && u.accountNonLocked !== false) return false;
+      if (filterLock === 'Unlocked' && u.accountNonLocked === false) return false;
+      if (filterDateFrom || filterDateTo) {
+        // ISO yyyy-mm-dd substrings compare correctly as strings
+        const created = u.createdAt ? u.createdAt.slice(0, 10) : '';
+        if (!created) return false;
+        if (filterDateFrom && created < filterDateFrom) return false;
+        if (filterDateTo && created > filterDateTo) return false;
+      }
+      return true;
     });
-  }, [users, filterRole, filterStatus, filterLock, filterDate, getUserRoleName]);
+  }, [users, search, filterRole, filterStatus, filterLock, filterDateFrom, filterDateTo, getUserRoleName]);
 
-  const filteredRoles = useMemo(() => {
-    return roles.filter((r) => {
-      const matchStatus = filterRoleStatus === 'All' || r.status === filterRoleStatus;
-      const matchDate = !filterRoleDate || r.createdAt?.startsWith(filterRoleDate);
-      return matchStatus && matchDate;
-    });
-  }, [roles, filterRoleStatus, filterRoleDate]);
-
-  const resetUserFilters = () => {
+  const resetFilters = () => {
+    setSearch('');
     setFilterRole('All');
     setFilterStatus('All');
     setFilterLock('All');
-    setFilterDate('');
+    setFilterDateFrom('');
+    setFilterDateTo('');
   };
 
-  const resetRoleFilters = () => {
-    setFilterRoleStatus('All');
-    setFilterRoleDate('');
-  };
+  // ── CRUD ──────────────────────────────────────────────────────────────────
+  const handleSaveUser = async (userData) => {
+    const roleIds = Array.isArray(userData.roleIds)
+      ? userData.roleIds.filter(Boolean)
+      : userData.roleId ? [userData.roleId] : [];
 
-  // ==========================================
-  // DATA FETCHING LOGIC
-  // ==========================================
-
-  const fetchUsers = useCallback(async () => {
-    setIsLoading((prev) => ({ ...prev, users: true }));
-    setError((prev) => ({ ...prev, users: null }));
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
-        headers: getHeaders(),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch users: ${response.status} ${errorText}`);
-      }
-      const data = await response.json();
-      setUsers(Array.isArray(data) ? data : data?.data || []);
-    } catch (err) {
-      toast.error(err.message);
-      setUsers([]);
-    } finally {
-      setIsLoading((prev) => ({ ...prev, users: false }));
-    }
-  }, [getHeaders]);
-
-  const fetchRoles = useCallback(async () => {
-    setIsLoading((prev) => ({ ...prev, roles: true }));
-    setError((prev) => ({ ...prev, roles: null }));
-    try {
-      const response = await fetch(`${API_BASE_URL}/roles`, {
-        headers: getHeaders(),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch roles: ${response.status} ${errorText}`);
-      }
-      const data = await response.json();
-      setRoles(Array.isArray(data) ? data : data?.data || []);
-    } catch (err) {
-      toast.error(err.message);
-      setRoles([]);
-    } finally {
-      setIsLoading((prev) => ({ ...prev, roles: false }));
-    }
-  }, [getHeaders]);
-
-  const fetchPermissions = useCallback(async () => {
-    setIsLoading((prev) => ({ ...prev, permissions: true }));
-    setError((prev) => ({ ...prev, permissions: null }));
-    try {
-      const response = await fetch(`${API_BASE_URL}/permissions`, {
-        headers: getHeaders(),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch permissions: ${response.status} ${errorText}`);
-      }
-      const data = await response.json();
-      setPermissions(Array.isArray(data) ? data : data?.data || []);
-    } catch (err) {
-      toast.error(err.message);
-      setPermissions([]);
-    } finally {
-      setIsLoading((prev) => ({ ...prev, permissions: false }));
-    }
-  }, [getHeaders]);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchRoles();
-    fetchPermissions();
-  }, [fetchUsers, fetchRoles, fetchPermissions]);
-
-  // ==========================================
-  // CREATE / UPDATE OPERATIONS
-  // ==========================================
-
-  const handleAddOrUpdateUser = async (userData) => {
-    try {
-      const roleId =
-        userData.roleId !== '' && userData.roleId != null
-          ? userData.roleId
-          : null;
-
-      if (editingEntity) {
-        const updateData = {
+      if (editingUser) {
+        await adminService.updateUser(editingUser.id, {
           name: userData.name,
-          username: userData.username, // trust what the user actually typed/edited
+          username: userData.username,
           email: userData.email,
-          status: userData.status || 'Active',
-          roleId: roleId,
-          ...(userData.password ? { password: userData.password } : {}),
-        };
-        const response = await fetch(`${API_BASE_URL}/users/${editingEntity.id}`, {
-          method: 'PUT',
-          headers: getHeaders(),
-          body: JSON.stringify(updateData),
+          enabled: userData.status !== 'Inactive',
+          roleIds,
         });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to update user: ${response.status} ${errorText}`);
-        }
-        await fetchUsers();
+        toast.success('User updated');
       } else {
-        const payload = {
+        await adminService.createUser({
           name: userData.name,
-          // IMPORTANT: use the username the user actually entered in the form.
-          // Previously this was silently overwritten with an auto-generated
-          // slug of `name`, so the account was created under a different
-          // username than the one shown/communicated to the user, which is
-          // why newly created users could not log in.
           username: userData.username,
           email: userData.email,
           password: userData.password,
-          userType: 'Internal',
-          status: userData.status || 'Active',
-          lockStatus: 'Unlocked',
-          roleId: roleId,
-        };
-        const response = await fetch(`${API_BASE_URL}/users`, {
-          method: 'POST',
-          headers: getHeaders(),
-          body: JSON.stringify(payload),
+          roleIds,
         });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to create user: ${response.status} ${errorText}`);
-        }
-        await fetchUsers();
-      }
-      toast.success(editingEntity ? 'User updated successfully' : 'User created successfully');
-      setIsModalOpen(false);
-      setEditingEntity(null);
-    } catch (err) {
-      console.error('Error saving user:', err);
-      toast.error(err.message);
-    }
-  };
-
-  const handleAddOrUpdateRole = async (roleData) => {
-    try {
-      if (editingEntity) {
-        const response = await fetch(`${API_BASE_URL}/roles/${editingEntity.id}`, {
-          method: 'PUT',
-          headers: getHeaders(),
-          body: JSON.stringify(roleData),
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to update role: ${response.status} ${errorText}`);
-        }
-        await fetchRoles();
-      } else {
-        const payload = {
-          ...roleData,
-          permissions: 'CUSTOM_' + roleData.name.replace(/\s+/g, '_').toUpperCase(),
-          status: 'Active',
-        };
-        const response = await fetch(`${API_BASE_URL}/roles`, {
-          method: 'POST',
-          headers: getHeaders(),
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to create role: ${response.status} ${errorText}`);
-        }
-        await fetchRoles();
-      }
-      toast.success(editingEntity ? 'Role updated successfully' : 'Role created successfully');
-      setIsRoleModalOpen(false);
-      setEditingEntity(null);
-    } catch (err) {
-      console.error('Error saving role:', err);
-      toast.error(err.message);
-    }
-  };
-
-  // ==========================================
-  // QUICK ACTIONS
-  // ==========================================
-
-  const toggleUserStatus = async (id, currentActive) => {
-    const newActive = typeof currentActive === 'boolean' ? !currentActive : false;
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${id}/status`, {
-        method: 'PATCH',
-        headers: getHeaders(),
-        body: JSON.stringify({ enabled: newActive }),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to update user status: ${response.status} ${errorText}`);
+        toast.success('User created');
       }
       await fetchUsers();
-      toast.success('User status updated successfully');
+      setIsUserModalOpen(false);
+      setEditingUser(null);
     } catch (err) {
-      console.error('Error toggling user status:', err);
       toast.error(err.message);
     }
-    closeDropdown();
   };
 
-  const toggleRoleStatus = async (id, currentActive) => {
-    const newActive = typeof currentActive === 'boolean' ? !currentActive : true;
+  const handleToggleStatus = async (user) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/roles/${id}/status`, {
-        method: 'PATCH',
-        headers: getHeaders(),
-        body: JSON.stringify({ active: newActive }),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to update role status: ${response.status} ${errorText}`);
-      }
-      await fetchRoles();
-      toast.success('Role status updated successfully');
-    } catch (err) {
-      console.error('Error toggling role status:', err);
-      toast.error(err.message);
-    }
-    closeDropdown();
-  };
-
-  const unlockUser = async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${id}/unlock`, {
-        method: 'PATCH',
-        headers: getHeaders(),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to unlock user: ${response.status} ${errorText}`);
-      }
+      await adminService.setUserStatus(user.id, user.enabled === false);
       await fetchUsers();
-      toast.success('User unlocked successfully');
+      toast.success('User status updated');
     } catch (err) {
-      console.error('Error unlocking user:', err);
       toast.error(err.message);
     }
-    closeDropdown();
   };
 
-  const promptDelete = (type, id, name) => {
-    closeDropdown();
-    setConfirmDelete({
-      type,
-      id,
-      title: type === 'user' ? 'Delete User' : 'Delete Role',
-      message: type === 'user'
-        ? 'You are about to permanently delete this user. All associated data will be removed.'
-        : 'You are about to permanently delete this role. Users with this role may lose access permissions.',
-      itemName: name,
-    });
-  };
-
-  const executeDelete = async () => {
-    if (!confirmDelete) return;
-    const { type, id } = confirmDelete;
-    setIsDeleting(true);
+  const handleLock = async (user) => {
     try {
-      const endpoint = type === 'user' ? `/users/${id}` : `/roles/${id}`;
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'DELETE',
-        headers: getHeaders(),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to delete ${type}: ${response.status} ${errorText}`);
-      }
-      if (type === 'user') {
-        await fetchUsers();
-        toast.success('User deleted successfully');
-      }
-      if (type === 'role') {
-        await fetchRoles();
-        toast.success('Role deleted successfully');
-      }
-      setConfirmDelete(null);
+      await adminService.lockUser(user.id);
+      await fetchUsers();
+      toast.success('User locked');
     } catch (err) {
-      console.error(`Error deleting ${type}:`, err);
       toast.error(err.message);
     } finally {
       setIsDeleting(false);
     }
   };
 
-  // ==========================================
-  // UI HANDLERS
-  // ==========================================
+  const handleUnlock = async (user) => {
+    try {
+      await adminService.unlockUser(user.id);
+      await fetchUsers();
+      toast.success('User unlocked');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
-  const handleActionClick = (e, type, id) => {
-    e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    setDropdownConfig({
-      visible: true,
-      type,
-      id,
-      coords: {
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
+  const handleDelete = async (user) => {
+    if (!window.confirm(`Delete user "${user.name || user.username}"?`)) return;
+    try {
+      await adminService.deleteUser(user.id);
+      await fetchUsers();
+      toast.success('User deleted');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  // ── Column definitions ────────────────────────────────────────────────────
+  const columns = [
+    {
+      key: 'name', header: 'Name', sortable: true, sortValue: (u) => u.name || u.username || '',
+      render: (u) => {
+        const label = u.name || u.username || '?';
+        return (
+          <div className="flex items-center gap-3">
+            <span className={`w-9 h-9 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0 ${avatarStyle(label)}`}>
+              {initialsOf(label)}
+            </span>
+            <span className="font-medium text-[#1b1e26] whitespace-nowrap">{u.name || '—'}</span>
+            {isSelf(u) && (
+              <span className="px-1.5 py-0.5 rounded-md bg-[#d0f24a] text-[#1b1e26] text-[9px] font-bold uppercase tracking-wide shrink-0">
+                You
+              </span>
+            )}
+          </div>
+        );
       },
-    });
-  };
-
-  const closeDropdown = () =>
-    setDropdownConfig({
-      visible: false,
-      type: null,
-      id: null,
-      coords: { top: 0, left: 0 },
-    });
-
-  const openPermModal = async (role) => {
-    setPermModalRole(role);
-    try {
-      const response = await fetch(`${API_BASE_URL}/permissions`, { headers: getHeaders() });
-      if (!response.ok) throw new Error('Failed to load permissions');
-      const data = await response.json();
-      const perms = Array.isArray(data) ? data : data?.data || [];
-      setAllPermissions(perms);
-      setSelectedPermIds(new Set(role.permissions?.map(p => p.id) || []));
-    } catch (err) {
-      toast.error(err.message);
-      setPermModalRole(null);
-    }
-  };
-
-  const togglePerm = (permId) => {
-    setSelectedPermIds(prev => {
-      const next = new Set(prev);
-      if (next.has(permId)) next.delete(permId);
-      else next.add(permId);
-      return next;
-    });
-  };
-
-  const savePermissions = async () => {
-    if (!permModalRole) return;
-    try {
-      const response = await fetch(`${API_BASE_URL}/roles/${permModalRole.id}/permissions`, {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify({ permissionIds: Array.from(selectedPermIds) }),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to assign permissions: ${response.status} ${errorText}`);
-      }
-      await fetchRoles();
-      toast.success('Permissions updated successfully');
-      setPermModalRole(null);
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
-
-  // --- UI RENDER HELPERS ---
-
-  const renderLoadingOrError = (type) => {
-    if (isLoading[type]) {
-      return (
-        <div className="p-8 text-center text-sm text-gray-500">
-          Loading {type} data from server...
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const resolveUserStatus = (user) => {
-    if (user.status) return user.status;
-    if (user.enabled === true || user.active === true) return 'Active';
-    return 'Inactive';
-  };
-
-  const getStatusBadgeClasses = (status) =>
-    status === 'Active'
-      ? 'bg-green-100 text-green-700 border border-green-300'
-      : 'bg-rose-100 text-rose-700 border border-rose-300';
-
-  const getStatusDotClasses = (status) =>
-    status === 'Active' ? 'bg-green-500' : 'bg-rose-500';
-
-  // ==========================================
-  // MAIN RETURN
-  // ==========================================
-
-  return (
-    <>
-      {/* -------------------- USERS VIEW -------------------- */}
-      {currentView === 'users' && (
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight">
-                Users
-              </h1>
-              <p className="text-xs text-gray-500 mt-0.5">Manage system users</p>
-            </div>
-            <button
-              onClick={() => {
-                setEditingEntity(null);
-                setIsModalOpen(true);
-              }}
-              className="bg-[#1064ff] text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:bg-blue-600 flex items-center space-x-1.5"
-            >
-              <span>+ New User</span>
-            </button>
-          </div>
-
-          {/* Filter Bar */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm items-end">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">
-                Role
-              </label>
-              <select
-                className="w-full text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
-              >
-                <option>All</option>
-                {roles.map((r) => (
-                  <option key={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">
-                Account Status
-              </label>
-              <select
-                className="w-full text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option>All</option>
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">
-                Lock Status
-              </label>
-              <select
-                className="w-full text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={filterLock}
-                onChange={(e) => setFilterLock(e.target.value)}
-              >
-                <option>All</option>
-                <option>Unlocked</option>
-                <option>Locked</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">
-                Date Joined
-              </label>
-              <input
-                type="date"
-                className="w-full text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
-            </div>
-
-            <button
-              onClick={resetUserFilters}
-              className="h-[42px] px-4 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              Reset Filters
-            </button>
-          </div>
-
-          {/* Users Table */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-[#fafafa] border-b border-gray-200 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                    <th className="p-3.5 pl-5 w-20">Actions</th>
-                    <th className="p-3.5">Name</th>
-                    <th className="p-3.5">Username</th>
-                    <th className="p-3.5">Email</th>
-                    <th className="p-3.5">Roles</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5 pr-5">Created At</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-slate-50/70">
-                      <td className="p-3.5 pl-5">
-                        <button
-                          onClick={(e) => handleActionClick(e, 'user', user.id)}
-                          className="text-gray-400 hover:text-blue-600 p-1"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                            />
-                          </svg>
-                        </button>
-                      </td>
-                      <td className="p-3.5 font-semibold text-gray-900">
-                        {user.name}
-                      </td>
-                      <td className="p-3.5 text-gray-500">{user.username}</td>
-                      <td className="p-3.5 text-gray-500">{user.email}</td>
-                      <td className="p-3.5 text-blue-600">
-                        {getUserRoleName(user)}
-                      </td>
-                      <td className="p-3.5">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-md text-[10px] font-extrabold tracking-wider uppercase border ${getStatusBadgeClasses(resolveUserStatus(user))}`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full mr-2 ${getStatusDotClasses(resolveUserStatus(user))}`}
-                          />
-                          {resolveUserStatus(user)}
-                        </span>
-                      </td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
-                        {user.createdAt
-                          ? new Date(user.createdAt).toLocaleDateString()
-                          : 'N/A'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {renderLoadingOrError('users')}
-              {!isLoading.users && !error.users && filteredUsers.length === 0 && (
-                <div className="p-8 text-center text-sm text-gray-500">
-                  {users.length === 0
-                    ? 'No users found.'
-                    : 'No users match the current filters.'}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* -------------------- ROLES VIEW -------------------- */}
-      {currentView === 'roles' && (
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight">
-                Roles
-              </h1>
-              <p className="text-xs text-gray-500 mt-0.5">Manage system roles</p>
-            </div>
-            <button
-              onClick={() => {
-                setEditingEntity(null);
-                setIsRoleModalOpen(true);
-              }}
-              className="bg-[#1064ff] text-white text-xs font-bold px-4 py-2.5 rounded-lg hover:bg-blue-600"
-            >
-              + New Role
-            </button>
-          </div>
-
-          {/* Filter Bar */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm items-end">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">
-                Status
-              </label>
-              <select
-                className="w-full text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={filterRoleStatus}
-                onChange={(e) => setFilterRoleStatus(e.target.value)}
-              >
-                <option>All</option>
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">
-                Date Created
-              </label>
-              <input
-                type="date"
-                className="w-full text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={filterRoleDate}
-                onChange={(e) => setFilterRoleDate(e.target.value)}
-              />
-            </div>
-
-            <button
-              onClick={resetRoleFilters}
-              className="h-[42px] px-4 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors col-start-1 md:col-start-auto"
-            >
-              Reset Filters
-            </button>
-          </div>
-
-          {/* Roles Table */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-[#fafafa] border-b border-gray-200 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                    <th className="p-3.5 pl-5 w-20">Actions</th>
-                    <th className="p-3.5">Name</th>
-                    <th className="p-3.5">Description</th>
-                    <th className="p-3.5">Permissions</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5 pr-5">Created At</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
-                  {filteredRoles.map((role) => (
-                    <tr key={role.id} className="hover:bg-slate-50/70">
-                      <td className="p-3.5 pl-5">
-                        <button
-                          onClick={(e) => handleActionClick(e, 'role', role.id)}
-                          className="text-gray-400 hover:text-blue-600 p-1"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                            />
-                          </svg>
-                        </button>
-                      </td>
-                      <td className="p-3.5 font-semibold text-gray-900">
-                        {role.name}
-                      </td>
-                      <td className="p-3.5 text-gray-500 max-w-xs truncate">
-                        {role.description}
-                      </td>
-                      <td className="p-3.5">
-                      <button
-                        onClick={() => openPermModal(role)}
-                        title="Manage permissions"
-                        className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-500 text-white text-[11px] font-bold shadow-sm hover:bg-blue-600 hover:shadow-md transition-all cursor-pointer"
-                      >
-                        {role.permissions?.length ?? 0}
-                      </button>
-                      </td>
-                      <td className="p-3.5">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-md text-[10px] font-extrabold tracking-wider uppercase border ${getStatusBadgeClasses(role.active != null ? (role.active ? 'Active' : 'Inactive') : role.status)}`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full mr-2 ${getStatusDotClasses(role.active != null ? (role.active ? 'Active' : 'Inactive') : role.status)}`}
-                          />
-                          {role.active != null ? (role.active ? 'Active' : 'Inactive') : role.status}
-                        </span>
-                      </td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
-                        {role.createdAt
-                          ? new Date(role.createdAt).toLocaleDateString()
-                          : 'N/A'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {renderLoadingOrError('roles')}
-              {!isLoading.roles && !error.roles && filteredRoles.length === 0 && (
-                <div className="p-8 text-center text-sm text-gray-500">
-                  {roles.length === 0
-                    ? 'No roles found.'
-                    : 'No roles match the current filters.'}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* -------------------- PERMISSIONS VIEW -------------------- */}
-      {currentView === 'permissions' && (
-        <div className="space-y-6">
-          <div className="text-left">
-            <h1 className="text-2xl font-bold text-[#1e293b] tracking-tight">
-              Permissions
-            </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Manage system Permissions
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-[#fafafa] border-b border-gray-200 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                    <th className="p-3.5 pl-5">Name</th>
-                    <th className="p-3.5">Description</th>
-                    <th className="p-3.5">Category</th>
-                    <th className="p-3.5 pr-5">Created At</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
-                  {permissions.map((perm) => (
-                    <tr key={perm.id} className="hover:bg-slate-50/70">
-                      <td className="p-3.5 pl-5 font-mono text-[11px] text-blue-600 font-bold">
-                        {perm.name}
-                      </td>
-                      <td className="p-3.5 text-gray-500 max-w-sm">
-                        {perm.description}
-                      </td>
-                      <td className="p-3.5">
-                        <span className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[11px] font-semibold">
-                          {perm.category}
-                        </span>
-                      </td>
-                      <td className="p-3.5 pr-5 text-gray-400 font-normal">
-                        {perm.createdAt
-                          ? new Date(perm.createdAt).toLocaleDateString()
-                          : 'N/A'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {renderLoadingOrError('permissions')}
-              {!isLoading.permissions &&
-                !error.permissions &&
-                permissions.length === 0 && (
-                  <div className="p-8 text-center text-sm text-gray-500">
-                    No permissions found.
-                  </div>
-                )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* -------------------- FLOATING ACTIONS MENU -------------------- */}
-      {dropdownConfig.visible && (
-        <FloatingMenu coords={dropdownConfig.coords} onClose={closeDropdown}>
-          <button
-            onClick={() => {
-              if (dropdownConfig.type === 'user') {
-                const match = users.find((u) => u.id === dropdownConfig.id);
-                setEditingEntity(match);
-                setIsModalOpen(true);
-              } else {
-                const match = roles.find((r) => r.id === dropdownConfig.id);
-                setEditingEntity(match);
-                setIsRoleModalOpen(true);
-              }
-              closeDropdown();
-            }}
-            className="w-full px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-slate-50 transition-colors flex items-center space-x-2"
-          >
-            <span>Edit</span>
-          </button>
-          <button
-            onClick={() => {
-              if (dropdownConfig.type === 'user') {
-                const user = users.find((u) => u.id === dropdownConfig.id);
-                if (user) toggleUserStatus(user.id, user.status === 'Active' || user.enabled === true || user.active === true);
-              } else {
-                const role = roles.find((r) => r.id === dropdownConfig.id);
-                if (role) toggleRoleStatus(role.id, role.active != null ? role.active : role.status === 'Active');
-              }
-            }}
-            className="w-full px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-slate-50 transition-colors flex items-center space-x-2"
-          >
-            <span>Toggle Status</span>
-          </button>
-          {dropdownConfig.type === 'user' && (
-            <>
-              <button
-                onClick={() => {
-                  const user = users.find((u) => u.id === dropdownConfig.id);
-                  if (user) unlockUser(user.id);
-                }}
-                className="w-full px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-slate-50 transition-colors flex items-center space-x-2"
-              >
-                <span>Unlock User</span>
-              </button>
-              <button
-                onClick={() => {
-                  const user = users.find((u) => u.id === dropdownConfig.id);
-                  if (user) promptDelete('user', user.id, user.name);
-                }}
-                className="w-full px-4 py-2 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors flex items-center space-x-2"
-              >
-                <span>Delete User</span>
-              </button>
-            </>
-          )}
-          {dropdownConfig.type === 'role' && (
-            <button
-              onClick={() => {
-                const role = roles.find((r) => r.id === dropdownConfig.id);
-                if (role) promptDelete('role', role.id, role.name);
-              }}
-              className="w-full px-4 py-2 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors flex items-center space-x-2"
-            >
-              <span>Delete Role</span>
-            </button>
-          )}
-        </FloatingMenu>
-      )}
-
-      {/* --- MODALS --- */}
-      {isModalOpen && (
-        <AddUserModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingEntity(null);
-          }}
-          onSubmit={handleAddOrUpdateUser}
-          editingUser={editingEntity}
-        />
-      )}
-      {isRoleModalOpen && (
-        <AddRoleModal
-          isOpen={isRoleModalOpen}
-          onClose={() => {
-            setIsRoleModalOpen(false);
-            setEditingEntity(null);
-          }}
-          onSubmit={handleAddOrUpdateRole}
-          editingRole={editingEntity}
-        />
-      )}
-
-      {permModalRole && createPortal(
-        <div className="fixed inset-0 w-full h-full min-h-screen bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[50]">
-          <div className="bg-white rounded-[24px] shadow-xl w-full max-w-lg overflow-hidden border border-gray-200 p-6 relative">
-            <button
-              type="button"
-              onClick={() => setPermModalRole(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors text-lg"
-            >
-              &times;
-            </button>
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 tracking-tight">
-                Manage Permissions — {permModalRole.name}
-              </h3>
-              <p className="text-[11px] text-gray-400 mt-0.5">
-                Select the permissions this role should have. Changes take effect immediately on save.
-              </p>
-            </div>
-            <div className="max-h-72 overflow-y-auto space-y-1.5 mb-6">
-              {allPermissions.map((perm) => (
-                <label
-                  key={perm.id}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+    },
+    {
+      key: 'username', header: 'Username', sortable: true, sortValue: (u) => u.username || '',
+      render: (u) => <span className="text-[13px] text-[#1b1e26]/60">{u.username || '—'}</span>,
+    },
+    {
+      key: 'email', header: 'Email', sortable: true, sortValue: (u) => u.email || '',
+      render: (u) => <span className="text-[#1b1e26]/45">{u.email || '—'}</span>,
+    },
+    {
+      key: 'roles', header: 'Roles', sortable: true, sortValue: getUserRoleName,
+      render: (u) => {
+        const list = Array.isArray(u.roles) && u.roles.length > 0 ? u.roles : null;
+        if (!list) return <span className="text-[11px] text-gray-300">—</span>;
+        return (
+          <div className="flex flex-wrap gap-1.5">
+            {list.map((r) => {
+              const name = r?.name || String(r);
+              return (
+                <span
+                  key={r?.id || name}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/80 border border-[#1b1e26]/10"
                 >
-                  <input
-                    type="checkbox"
-                    checked={selectedPermIds.has(perm.id)}
-                    onChange={() => togglePerm(perm.id)}
-                    className="accent-blue-600 w-4 h-4 rounded border-gray-300"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs font-semibold text-gray-800 block">{perm.name}</span>
-                    {perm.description && (
-                      <span className="text-[10px] text-gray-400 block truncate">{perm.description}</span>
-                    )}
-                  </div>
-                  {perm.category && (
-                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded-full shrink-0">
-                      {perm.category}
-                    </span>
-                  )}
-                </label>
-              ))}
-            </div>
-            <div className="flex justify-end space-x-2.5">
-              <button
-                type="button"
-                onClick={() => setPermModalRole(null)}
-                className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={savePermissions}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                Save Permissions
-              </button>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#d0f24a] ring-1 ring-[#1b1e26]/20 shrink-0" />
+                  {name}
+                </span>
+              );
+            })}
+          </div>
+        );
+      },
+    },
+    {
+      key: 'status', header: 'Status', sortable: true, sortValue: resolveUserStatus,
+      render: (u) => <StatusPill status={resolveUserStatus(u)} />,
+    },
+    {
+      key: 'createdAt', header: 'Created At', sortable: true,
+      sortValue: (u) => (u.createdAt ? new Date(u.createdAt).getTime() : 0),
+      render: (u) => (
+        <span className="text-gray-400">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</span>
+      ),
+    },
+    {
+      key: 'actions', header: 'Actions', width: '132px',
+      render: (u) => (
+        <div className="flex justify-end">
+          <RowActionMenu
+            primary={{
+              label: 'Edit',
+              icon: DockIcons.edit,
+              onClick: () => { setEditingUser(u); setIsUserModalOpen(true); },
+            }}
+            items={
+              isSelf(u)
+                ? [] // own account: only Edit — no self lock/disable/delete
+                : [
+                    u.accountNonLocked !== false
+                      ? { label: 'Lock account', icon: DockIcons.lock, iconTone: 'text-amber-500', onClick: () => handleLock(u) }
+                      : { label: 'Unlock account', icon: DockIcons.unlock, iconTone: 'text-amber-500', onClick: () => handleUnlock(u) },
+                    u.enabled === false
+                      ? { label: 'Enable user', icon: DockIcons.power, iconTone: 'text-emerald-500', onClick: () => handleToggleStatus(u) }
+                      : { label: 'Disable user', icon: DockIcons.power, onClick: () => handleToggleStatus(u) },
+                    'divider',
+                    { label: 'Delete user', icon: DockIcons.trash, danger: true, onClick: () => handleDelete(u) },
+                  ]
+            }
+          />
+        </div>
+      ),
+    },
+  ];
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div>
+          <h1 className="text-[19px] font-medium text-[#1b1e26] tracking-tight">User Management</h1>
+          <p className="text-[12px] text-gray-500 mt-1">Manage platform accounts and their assigned roles.</p>
+        </div>
+        <button
+          onClick={() => { setEditingUser(null); setIsUserModalOpen(true); }}
+          className="bg-[#1b1e26] text-white text-[13px] font-semibold px-5 py-2 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM19 8v6M22 11h-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          New User
+        </button>
+      </div>
+
+      {/* Filter toolbar — compact single-strip */}
+      <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm px-3 py-2.5">
+        <div className="flex flex-wrap items-end gap-2.5">
+          {/* Text search — grows a little, never dominates the strip */}
+          <div className="flex-1 min-w-[200px] max-w-[340px] flex flex-col gap-1">
+            <label className={filterLabelClass}>Search</label>
+            <div className="relative">
+              <svg className="w-4 h-4 text-[#1b1e26]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Name, username or email…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={`${filterFieldClass} pl-9`}
+              />
             </div>
           </div>
-        </div>,
-        document.body
-      )}
+          {/* Role */}
+          <div className="w-[130px] flex flex-col gap-1">
+            <label className={filterLabelClass}>Role</label>
+            <div className="relative">
+              <select className={filterSelectClass} value={filterRole} onChange={(e) => setFilterRole(e.target.value)}>
+                <option value="All">All</option>
+                {roles.map((r) => <option key={r.id} value={r.name}>{r.name}</option>)}
+              </select>
+              <SelectChevron />
+            </div>
+          </div>
+          {/* Status */}
+          <div className="w-[118px] flex flex-col gap-1">
+            <label className={filterLabelClass}>Status</label>
+            <div className="relative">
+              <select className={filterSelectClass} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                <option value="All">All</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Locked">Locked</option>
+              </select>
+              <SelectChevron />
+            </div>
+          </div>
+          {/* Lock state */}
+          <div className="w-[118px] flex flex-col gap-1">
+            <label className={filterLabelClass}>Lock</label>
+            <div className="relative">
+              <select className={filterSelectClass} value={filterLock} onChange={(e) => setFilterLock(e.target.value)}>
+                <option value="All">All</option>
+                <option value="Unlocked">Unlocked</option>
+                <option value="Locked">Locked</option>
+              </select>
+              <SelectChevron />
+            </div>
+          </div>
+          {/* Created date range — labeled From / To with leading calendar icons */}
+          <div className="w-[160px] flex flex-col gap-1">
+            <label className={filterLabelClass}>From</label>
+            <div className="relative">
+              <svg className="w-4 h-4 text-[#1b1e26]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="17" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <input
+                type="date"
+                aria-label="Created from"
+                className={`${filterFieldClass} pl-9`}
+                value={filterDateFrom}
+                onChange={(e) => setFilterDateFrom(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="w-[160px] flex flex-col gap-1">
+            <label className={filterLabelClass}>To</label>
+            <div className="relative">
+              <svg className="w-4 h-4 text-[#1b1e26]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="17" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <input
+                type="date"
+                aria-label="Created to"
+                className={`${filterFieldClass} pl-9`}
+                value={filterDateTo}
+                onChange={(e) => setFilterDateTo(e.target.value)}
+              />
+            </div>
+          </div>
+          {/* Actions — pinned to the right end of the strip */}
+          <button
+            onClick={fetchUsers}
+            className="shrink-0 ml-auto h-[34px] px-5 rounded-full bg-[#d0f24a] text-[#1b1e26] text-[13px] font-semibold hover:bg-[#c4e83a] shadow-sm transition-colors active:scale-[0.98]"
+          >
+            Apply
+          </button>
+          <button
+            onClick={resetFilters}
+            className="shrink-0 h-[34px] px-4 rounded-full border border-red-200 text-red-500 text-[13px] font-semibold hover:bg-red-50 hover:border-red-300 inline-flex items-center gap-1.5 transition-colors active:scale-[0.98]"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+            Clear All
+          </button>
+        </div>
+      </div>
 
-      {confirmDelete && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmDelete(null)}
-          onConfirm={executeDelete}
-          title={confirmDelete.title}
-          message={confirmDelete.message}
-          itemName={confirmDelete.itemName}
-          isLoading={isDeleting}
+      {/* Data table */}
+      <DataTable
+        columns={columns}
+        rows={filteredUsers}
+        keyField="id"
+        loading={loading}
+        error={error}
+        minWidth={1020}
+        skeletonRows={10}
+        pageSize={10}
+        rowLabel="users"
+        emptyTitle={users.length === 0 ? 'No users yet' : 'No matches'}
+        emptyMessage={users.length === 0 ? 'Create your first user to get started.' : 'No users match the current filters.'}
+      />
+
+      {/* User form modal */}
+      {isUserModalOpen && (
+        <AddUserModal
+          isOpen={isUserModalOpen}
+          onClose={() => { setIsUserModalOpen(false); setEditingUser(null); }}
+          onSubmit={handleSaveUser}
+          editingUser={editingUser}
         />
       )}
-    </>
+    </div>
   );
 };

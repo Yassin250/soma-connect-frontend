@@ -69,7 +69,7 @@ export const StudentJoinPortal = () => {
 
   if (errorMsg && !school) {
     return (
-      <div className="min-h-screen bg-[#0a0f1d] text-white flex items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-[#16181f] text-white flex items-center justify-center p-6 text-center">
         <div className="max-w-md bg-slate-900 border border-slate-800 p-8 rounded-xl space-y-4 shadow-2xl">
           <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400 font-bold text-lg">✕</div>
           <h2 className="text-xl font-bold">Registry Verification Error</h2>
@@ -82,19 +82,19 @@ export const StudentJoinPortal = () => {
 
   if (!school) {
     return (
-      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-[#16181f] flex items-center justify-center text-slate-400">
         Locating school registry records...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0f1d] text-white flex items-center justify-center p-6 antialiased">
+    <div className="min-h-screen bg-[#16181f] text-white flex items-center justify-center p-6 antialiased">
       <div className="relative w-full max-w-md bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-2xl shadow-2xl space-y-6">
         
         {/* Header decoration */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-full bg-blue-600/10 border border-blue-500/30 flex items-center justify-center mx-auto text-blue-400 font-bold text-lg uppercase">
+          <div className="w-12 h-12 rounded-full bg-[#d0f24a]/10 border border-[#d0f24a]/30 flex items-center justify-center mx-auto text-[#d0f24a] font-bold text-lg uppercase">
             {school.name.substring(0, 2)}
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">Student Self-Enrollment</h2>
@@ -107,7 +107,7 @@ export const StudentJoinPortal = () => {
             <p className="text-xs text-slate-300 leading-relaxed">{successMsg}</p>
             <button
               onClick={() => navigate('/login')}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold rounded-lg text-white shadow"
+              className="w-full py-2.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-xs font-bold rounded-lg text-[#1b1e26] shadow"
             >
               Sign In to Dashboard
             </button>
@@ -127,7 +127,7 @@ export const StudentJoinPortal = () => {
                 {...register('name', { required: 'Name is required' })}
                 type="text"
                 placeholder="e.g. Ganza Kenny"
-                className="w-full bg-[#141c33] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
               />
               {errors.name && <p className="text-[9px] text-red-400">{errors.name.message}</p>}
             </div>
@@ -144,7 +144,7 @@ export const StudentJoinPortal = () => {
                 })}
                 type="email"
                 placeholder={`e.g. g.kenny@${school.domain}`}
-                className="w-full bg-[#141c33] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
               />
               {errors.email && <p className="text-[9px] text-red-400">{errors.email.message}</p>}
             </div>
@@ -165,14 +165,14 @@ export const StudentJoinPortal = () => {
                 })}
                 type="password"
                 placeholder="••••••••"
-                className="w-full bg-[#141c33] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
               />
               {errors.password && <p className="text-[9px] text-red-400">{errors.password.message}</p>}
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-semibold rounded-lg shadow-md transition-all text-white"
+              className="w-full py-2.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-xs font-semibold rounded-lg shadow-md transition-all text-[#1b1e26]"
             >
               Verify & Complete Registration
             </button>

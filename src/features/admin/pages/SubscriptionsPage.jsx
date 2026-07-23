@@ -4,14 +4,14 @@ import { useToast } from '../../../context/ToastContext';
 
 const PLAN_COLORS = {
   free: 'bg-slate-100 text-slate-600 border-slate-200',
-  basic: 'bg-blue-50 text-blue-700 border-blue-200',
-  premium: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  basic: 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/70 border-[#1b1e26]/10',
+  premium: 'bg-[#d0f24a]/20 text-[#5b6b12] border-[#d0f24a]/50',
   enterprise: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
 const STATUS_COLORS = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  trialing: 'bg-blue-50 text-blue-700 border-blue-200',
+  trialing: 'bg-[#d0f24a]/20 text-[#5b6b12] border-[#d0f24a]/50',
   past_due: 'bg-amber-50 text-amber-700 border-amber-200',
   canceled: 'bg-red-50 text-red-700 border-red-200',
   expired: 'bg-slate-50 text-slate-500 border-slate-200',
@@ -63,13 +63,13 @@ export const SubscriptionsPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
             Billing &amp; Plans
           </span>
-          <h1 className="text-3xl font-black tracking-tight mt-2 text-slate-900">
+          <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
             Subscriptions
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-[12px] text-slate-500 mt-1">
             Manage institution plans, billing cycles, and subscription statuses.
           </p>
         </div>
@@ -86,7 +86,7 @@ export const SubscriptionsPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Subscriptions', value: stats.total, icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z', accent: 'border-l-indigo-500', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
+          { label: 'Total Subscriptions', value: stats.total, icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z', accent: 'border-l-[#d0f24a]', iconBg: 'bg-[#d0f24a]/20', iconColor: 'text-[#5b6b12]' },
           { label: 'Active Plans', value: stats.active, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
           { label: 'Monthly Revenue', value: `RWF${stats.revenue.toLocaleString()}`, icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
         ].map((card, idx) => (
@@ -122,9 +122,9 @@ export const SubscriptionsPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50">
+                <tr className="border-b border-[#1b1e26]/[0.06] bg-[#f4f6f8]">
                   {['Institution', 'Plan', 'Status', 'Amount', 'Billing', 'Next Billing'].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap">
+                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45 whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -132,30 +132,30 @@ export const SubscriptionsPage = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {subscriptions.map((sub) => (
-                  <tr key={sub.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-4">
-                      <p className="text-sm font-semibold text-slate-900">{sub.schoolName || sub.institution}</p>
+                  <tr key={sub.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                    <td className="px-4 py-2.5">
+                      <p className="text-[13px] font-semibold text-slate-900">{sub.schoolName || sub.institution}</p>
                       <p className="text-xs text-slate-400">{sub.email || sub.domain}</p>
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-2.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${PLAN_COLORS[sub.plan] || PLAN_COLORS.free}`}>
                         {sub.plan || 'Free'}
                       </span>
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-2.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${STATUS_COLORS[sub.status] || STATUS_COLORS.active}`}>
                         {sub.status || 'active'}
                       </span>
                     </td>
-                    <td className="px-5 py-4">
-                      <span className="text-sm font-bold text-slate-900">
+                    <td className="px-4 py-2.5">
+                      <span className="text-[13px] font-bold text-slate-900">
                         ${parseFloat(sub.amount || 0).toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-xs text-slate-500 capitalize">
+                    <td className="px-4 py-2.5 text-xs text-slate-500 capitalize">
                       {sub.billingInterval || sub.interval || 'monthly'}
                     </td>
-                    <td className="px-5 py-4 text-xs font-mono text-slate-500">
+                    <td className="px-4 py-2.5 text-xs font-mono text-slate-500">
                       {sub.nextBillingDate || sub.currentPeriodEnd || 'N/A'}
                     </td>
                   </tr>

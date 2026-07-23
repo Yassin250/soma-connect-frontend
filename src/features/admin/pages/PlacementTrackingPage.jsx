@@ -4,7 +4,7 @@ import { useToast } from '../../../context/ToastContext';
 
 const STATUS_STYLE = {
   hired: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  offered: 'bg-blue-50 text-blue-700 border-blue-200',
+  offered: 'bg-[#d0f24a]/20 text-[#5b6b12] border-[#d0f24a]/50',
   interviewing: 'bg-amber-50 text-amber-700 border-amber-200',
   rejected: 'bg-red-50 text-red-700 border-red-200',
   pending: 'bg-slate-50 text-slate-500 border-slate-200',
@@ -67,11 +67,11 @@ export const PlacementTrackingPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
             Career Marketplace
           </span>
-          <h1 className="text-3xl font-black tracking-tight mt-2 text-slate-900">Placement Tracking</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">Placement Tracking</h1>
+          <p className="text-[12px] text-slate-500 mt-1">
             Track student placement outcomes, offers, interviews, and hires.
           </p>
         </div>
@@ -79,7 +79,7 @@ export const PlacementTrackingPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Placements', value: stats.total, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z', accent: 'border-l-indigo-500', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
+          { label: 'Total Placements', value: stats.total, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z', accent: 'border-l-[#d0f24a]', iconBg: 'bg-[#d0f24a]/20', iconColor: 'text-[#5b6b12]' },
           { label: 'Hired', value: stats.hired, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
           { label: 'Interviewing', value: stats.interviewing, icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z', accent: 'border-l-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
         ].map((card, idx) => (
@@ -109,7 +109,7 @@ export const PlacementTrackingPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search placements..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#d0f24a] transition-colors"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -119,7 +119,7 @@ export const PlacementTrackingPage = () => {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all capitalize ${
                 statusFilter === s
-                  ? 'bg-[#1d4ed8] text-white border-[#1d4ed8] shadow-sm'
+                  ? 'bg-[#1b1e26] text-white border-[#1b1e26] shadow-sm'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
             >
@@ -146,31 +146,31 @@ export const PlacementTrackingPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50">
+                <tr className="border-b border-[#1b1e26]/[0.06] bg-[#f4f6f8]">
                   {['Student', 'Employer', 'Position', 'Status', 'Start Date', 'Salary'].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap">{h}</th>
+                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {placements.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-4">
-                      <p className="text-sm font-semibold text-slate-900">{p.student || p.studentName}</p>
+                  <tr key={p.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                    <td className="px-4 py-2.5">
+                      <p className="text-[13px] font-semibold text-slate-900">{p.student || p.studentName}</p>
                       {p.institution && <p className="text-xs text-slate-400 mt-0.5">{p.institution}</p>}
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-700">{p.employer || p.company}</td>
-                    <td className="px-5 py-4">
-                      <p className="text-sm font-medium text-slate-800">{p.position || p.title}</p>
+                    <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{p.employer || p.company}</td>
+                    <td className="px-4 py-2.5">
+                      <p className="text-[13px] font-medium text-slate-800">{p.position || p.title}</p>
                       {p.department && <p className="text-xs text-slate-400 mt-0.5">{p.department}</p>}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-2.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border capitalize ${STATUS_STYLE[p.status] || STATUS_STYLE.pending}`}>
                         {p.status || 'pending'}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-xs font-mono text-slate-400">{p.startDate || p.date || '---'}</td>
-                    <td className="px-5 py-4 text-sm font-bold text-slate-900">{p.salary ? `RWF ${Number(p.salary).toLocaleString()}` : '---'}</td>
+                    <td className="px-4 py-2.5 text-xs font-mono text-slate-400">{p.startDate || p.date || '---'}</td>
+                    <td className="px-4 py-2.5 text-[13px] font-bold text-slate-900">{p.salary ? `RWF ${Number(p.salary).toLocaleString()}` : '---'}</td>
                   </tr>
                 ))}
               </tbody>

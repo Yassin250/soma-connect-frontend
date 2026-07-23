@@ -78,12 +78,12 @@ export const StudentDirectoryPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Student Directory</h1>
-          <p className="text-sm text-slate-400 mt-1">Manage enrolled student profiles.</p>
+          <h1 className="text-[19px] font-medium text-[#1b1e26] tracking-tight">Student Directory</h1>
+          <p className="text-[12px] text-slate-400 mt-1">Manage enrolled student profiles.</p>
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="px-5 py-2.5 bg-[#5429FF] hover:bg-purple-700 text-xs font-bold rounded-xl text-white shadow-md transition-all self-start sm:self-center"
+          className="px-5 py-2 bg-[#1b1e26] hover:bg-black text-xs font-bold rounded-xl text-white shadow-md transition-all self-start sm:self-center"
         >
           {showAddForm ? 'Cancel' : '+ Register Student'}
         </button>
@@ -91,24 +91,24 @@ export const StudentDirectoryPage = () => {
 
       {showAddForm && (
         <form onSubmit={handleAdd} className="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4 max-w-xl">
-          <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">New Student Profile</h4>
+          <h4 className="text-xs font-semibold text-[#1b1e26] uppercase tracking-wider">New Student Profile</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Name</label>
               <input type="text" required value={newName} onChange={(e) => setNewName(e.target.value)}
                 placeholder="e.g. Ganza Kenny"
-                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-[#5429FF]" />
+                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-[#d0f24a]" />
             </div>
             <div>
               <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Email</label>
               <input type="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="e.g. g.kenny@domain.edu"
-                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-[#5429FF]" />
+                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-[#d0f24a]" />
             </div>
           </div>
           <div className="flex gap-2 justify-end pt-2">
             <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 bg-slate-100 text-slate-500 font-bold text-xs rounded-xl">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-[#5429FF] text-white font-bold text-xs rounded-xl shadow-sm">Save Profile</button>
+            <button type="submit" className="px-4 py-2 bg-[#1b1e26] text-white font-bold text-xs rounded-xl shadow-sm">Save Profile</button>
           </div>
         </form>
       )}
@@ -128,21 +128,21 @@ export const StudentDirectoryPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-100 text-slate-400 font-bold">
-                  <th className="px-5 py-3.5">Name</th>
-                  <th className="px-5 py-3.5">Email</th>
-                  <th className="px-5 py-3.5 text-right">Status</th>
+                <tr className="bg-[#f4f6f8] border-b border-[#1b1e26]/[0.06]">
+                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Name</th>
+                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45">Email</th>
+                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {students.map((stud) => (
-                  <tr key={stud.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-4 font-bold text-slate-900">{stud.name}</td>
-                    <td className="px-5 py-4 font-mono text-slate-500">{stud.email}</td>
-                    <td className="px-5 py-4 text-right">
+                  <tr key={stud.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                    <td className="px-4 py-2.5 text-[13px] font-bold text-slate-900">{stud.name}</td>
+                    <td className="px-4 py-2.5 text-[13px] font-mono text-slate-500">{stud.email}</td>
+                    <td className="px-4 py-2.5 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <span className="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2.5 py-1 rounded-lg font-bold tracking-wider uppercase">Verified</span>
-                        <button onClick={() => handleRemove(stud.id)} className="text-slate-400 hover:text-red-500 text-sm px-1 transition-colors" title="Remove">✕</button>
+                        <button onClick={() => handleRemove(stud.id)} className="text-slate-400 hover:text-red-500 text-[13px] px-1 transition-colors" title="Remove">✕</button>
                       </div>
                     </td>
                   </tr>

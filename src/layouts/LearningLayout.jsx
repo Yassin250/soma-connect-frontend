@@ -11,7 +11,7 @@ export const LearningLayout = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <span className="text-xl font-black text-blue-500 tracking-wider">SomaConnect</span>
+              <span className="text-xl font-black text-[#1b1e26] tracking-wider">SomaConnect</span>
               {user && (
                 <span className="px-2 py-0.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded border border-gray-200 uppercase">
                   {user.tenantId || 'School'}

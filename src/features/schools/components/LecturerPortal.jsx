@@ -148,7 +148,7 @@ export const LecturerPortal = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400 text-sm">
+      <div className="min-h-screen bg-[#16181f] flex items-center justify-center text-slate-400 text-sm">
         Loading faculty portal...
       </div>
     );
@@ -156,7 +156,7 @@ export const LecturerPortal = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-red-500 text-sm">
+      <div className="min-h-screen bg-[#16181f] flex items-center justify-center text-red-500 text-sm">
         Error: {error}
       </div>
     );
@@ -164,7 +164,7 @@ export const LecturerPortal = () => {
 
   if (!school) {
     return (
-      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center text-slate-400 text-sm">
+      <div className="min-h-screen bg-[#16181f] flex items-center justify-center text-slate-400 text-sm">
         No school data available.
       </div>
 );
@@ -408,7 +408,7 @@ const handleCreateModule = async (e) => {
             {user.name.split(' ').map(n => n[0]).join('')}
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white leading-snug">{user.name}</h2>
+            <h2 className="text-[15px] font-semibold text-white leading-snug">{user.name}</h2>
             <p className="text-xs text-slate-400">Faculty Instructor · {school.name}</p>
           </div>
         </div>
@@ -421,7 +421,7 @@ const handleCreateModule = async (e) => {
           </button>
           <button
             onClick={() => setActiveTab('assignments')}
-            className="flex-1 sm:flex-none px-4 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-semibold rounded-lg text-white shadow shadow-blue-500/10 transition-all"
+            className="flex-1 sm:flex-none px-4 py-2 bg-[#d0f24a] hover:bg-[#c4e83a] text-xs font-semibold rounded-lg text-[#1b1e26] shadow shadow-[#d0f24a]/10 transition-all"
           >
             + New assignment
           </button>
@@ -442,7 +442,7 @@ const handleCreateModule = async (e) => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center space-x-2.5 px-4 py-2 text-xs font-semibold rounded-lg transition-all shrink-0 border border-transparent ${
               activeTab === tab.id
-                ? 'bg-blue-600/10 text-blue-400 border-blue-500/10'
+                ? 'bg-[#d0f24a]/10 text-[#d0f24a] border-[#d0f24a]/10'
                 : 'text-slate-400 hover:bg-slate-800/30'
             }`}
           >
@@ -463,28 +463,28 @@ const handleCreateModule = async (e) => {
               className="p-5 border border-slate-800/80 rounded-xl cursor-pointer hover:border-slate-600 transition-all space-y-1 bg-slate-900/20"
             >
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Active Courses</p>
-              <p className="text-3xl font-extrabold text-white">{courses.length}</p>
+              <p className="text-xl font-extrabold text-white">{courses.length}</p>
             </div>
             <div
               onClick={() => setActiveTab('students')}
               className="p-5 border border-slate-800/80 rounded-xl cursor-pointer hover:border-slate-600 transition-all space-y-1 bg-slate-900/20"
             >
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Enrolled</p>
-              <p className="text-3xl font-extrabold text-white">{students.length}</p>
+              <p className="text-xl font-extrabold text-white">{students.length}</p>
             </div>
             <div
               onClick={() => setActiveTab('assignments')}
               className="p-5 border border-amber-500/20 rounded-xl cursor-pointer hover:border-amber-500/40 transition-all space-y-1 bg-amber-500/5"
             >
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pending Grading</p>
-              <p className="text-3xl font-extrabold text-amber-500">{pendingGrading.length}</p>
+              <p className="text-xl font-extrabold text-amber-500">{pendingGrading.length}</p>
             </div>
             <div
               onClick={() => setActiveTab('assignments')}
               className="p-5 border border-red-500/20 rounded-xl cursor-pointer hover:border-red-500/40 transition-all space-y-1 bg-red-500/5"
             >
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Plagiarism Flags</p>
-              <p className="text-3xl font-extrabold text-red-500">{plagiarismFlags.length}</p>
+              <p className="text-xl font-extrabold text-red-500">{plagiarismFlags.length}</p>
             </div>
           </div>
 
@@ -568,7 +568,7 @@ const handleCreateModule = async (e) => {
                   const badgeStyle = isOverdue
                     ? 'border-red-500/20 bg-red-500/5 text-red-400'
                     : isDueToday
-                    ? 'border-blue-500/20 bg-blue-500/5 text-blue-400'
+                    ? 'border-[#d0f24a]/20 bg-[#d0f24a]/5 text-[#d0f24a]'
                     : 'border-green-500/20 bg-green-500/5 text-green-400';
                   return (
                     <div
@@ -597,7 +597,7 @@ const handleCreateModule = async (e) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7 space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-white">Course Syllabus Manager</h3>
+              <h3 className="text-[15px] font-semibold text-white">Course Syllabus Manager</h3>
               <p className="text-xs text-slate-400">Manage modules and course structure. Students progress through sequentially.</p>
             </div>
 
@@ -610,7 +610,7 @@ const handleCreateModule = async (e) => {
                 return (
                   <div key={course.id} className="p-5 bg-slate-900/40 border border-slate-800/80 rounded-2xl space-y-3 text-xs">
                     <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-                      <span className="font-extrabold text-blue-400 font-mono">{course.code}</span>
+                      <span className="font-extrabold text-[#d0f24a] font-mono">{course.code}</span>
                       <span className="font-semibold text-white truncate max-w-xs">{course.title}</span>
                     </div>
                     {courseModules.length === 0 ? (
@@ -666,7 +666,7 @@ const handleCreateModule = async (e) => {
                     value={newModuleCourseId}
                     onChange={(e) => setNewModuleCourseId(e.target.value)}
                     required
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
                   >
                     <option value="">-- Select Course --</option>
                     {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
@@ -680,7 +680,7 @@ const handleCreateModule = async (e) => {
                     value={newModuleName}
                     onChange={(e) => setNewModuleName(e.target.value)}
                     placeholder="e.g. Module 3: Polymorphism"
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -688,7 +688,7 @@ const handleCreateModule = async (e) => {
                   <select
                     value={newModuleType}
                     onChange={(e) => setNewModuleType(e.target.value)}
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
                   >
                     <option value="video">Streaming MP4 Video Lecture</option>
                     <option value="pdf">Accredited Reading Module (PDF)</option>
@@ -702,10 +702,10 @@ const handleCreateModule = async (e) => {
                     onChange={(e) => setNewModuleContent(e.target.value)}
                     placeholder="Brief module description..."
                     rows={3}
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#d0f24a] resize-none"
                   />
                 </div>
-                <button type="submit" className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg mt-2">
+                <button type="submit" className="w-full py-2 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] font-bold rounded-lg mt-2">
                   Create Module
                 </button>
               </form>
@@ -726,7 +726,7 @@ const handleCreateModule = async (e) => {
                     value={newQuizCourseId}
                     onChange={(e) => setNewQuizCourseId(e.target.value)}
                     required
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
                   >
                     <option value="">-- Select Course --</option>
                     {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
@@ -737,7 +737,7 @@ const handleCreateModule = async (e) => {
                   <select
                     value={newQuizModuleId}
                     onChange={(e) => setNewQuizModuleId(e.target.value)}
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
                   >
                     <option value="">-- None --</option>
                     {allModules.filter(m => m.courseId === newQuizCourseId).map(m => (
@@ -753,7 +753,7 @@ const handleCreateModule = async (e) => {
                     value={newQuizTitle}
                     onChange={(e) => setNewQuizTitle(e.target.value)}
                     placeholder="e.g. OOP Fundamentals Quiz"
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-[#d0f24a]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -764,7 +764,7 @@ const handleCreateModule = async (e) => {
                     max="120"
                     value={newQuizTimeLimit}
                     onChange={(e) => setNewQuizTimeLimit(Number(e.target.value))}
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-[#d0f24a]"
                   />
                 </div>
 
@@ -789,20 +789,20 @@ const handleCreateModule = async (e) => {
                     value={qPrompt}
                     onChange={(e) => setQPrompt(e.target.value)}
                     placeholder="Question prompt..."
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none"
                   />
                   <div className="grid grid-cols-2 gap-2">
-                    <input type="text" value={qOptA} onChange={(e) => setQOptA(e.target.value)} placeholder="Option A" className="bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
-                    <input type="text" value={qOptB} onChange={(e) => setQOptB(e.target.value)} placeholder="Option B" className="bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
-                    <input type="text" value={qOptC} onChange={(e) => setQOptC(e.target.value)} placeholder="Option C (optional)" className="bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
-                    <input type="text" value={qOptD} onChange={(e) => setQOptD(e.target.value)} placeholder="Option D (optional)" className="bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
+                    <input type="text" value={qOptA} onChange={(e) => setQOptA(e.target.value)} placeholder="Option A" className="bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
+                    <input type="text" value={qOptB} onChange={(e) => setQOptB(e.target.value)} placeholder="Option B" className="bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
+                    <input type="text" value={qOptC} onChange={(e) => setQOptC(e.target.value)} placeholder="Option C (optional)" className="bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
+                    <input type="text" value={qOptD} onChange={(e) => setQOptD(e.target.value)} placeholder="Option D (optional)" className="bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] text-slate-400 font-semibold uppercase">Correct Answer</label>
                     <div className="flex gap-3">
                       {['A', 'B', 'C', 'D'].map((label, i) => (
                         <label key={i} className="flex items-center space-x-1 cursor-pointer">
-                          <input type="radio" checked={qCorrect === i} onChange={() => setQCorrect(i)} className="text-blue-500" />
+                          <input type="radio" checked={qCorrect === i} onChange={() => setQCorrect(i)} className="accent-[#d0f24a]" />
                           <span>{label}</span>
                         </label>
                       ))}
@@ -814,7 +814,7 @@ const handleCreateModule = async (e) => {
                 </div>
 
                 {quizQuestions.length > 0 && (
-                  <button type="submit" className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg">
+                  <button type="submit" className="w-full py-2 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] font-bold rounded-lg">
                     Create Quiz ({quizQuestions.length} questions)
                   </button>
                 )}
@@ -836,7 +836,7 @@ const handleCreateModule = async (e) => {
                     value={newAssignCourseId}
                     onChange={(e) => setNewAssignCourseId(e.target.value)}
                     required
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-slate-300 focus:outline-none"
                   >
                     <option value="">-- Select Course --</option>
                     {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
@@ -850,7 +850,7 @@ const handleCreateModule = async (e) => {
                     value={newAssignTitle}
                     onChange={(e) => setNewAssignTitle(e.target.value)}
                     placeholder="e.g. Assignment 3: Inheritance Lab"
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -860,7 +860,7 @@ const handleCreateModule = async (e) => {
                     onChange={(e) => setNewAssignDesc(e.target.value)}
                     placeholder="Assignment instructions..."
                     rows={3}
-                    className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#d0f24a] resize-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -870,7 +870,7 @@ const handleCreateModule = async (e) => {
                       type="date"
                       value={newAssignDueDate}
                       onChange={(e) => setNewAssignDueDate(e.target.value)}
-                      className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
                     />
                   </div>
                   <div className="space-y-1">
@@ -881,11 +881,11 @@ const handleCreateModule = async (e) => {
                       max="200"
                       value={newAssignMaxScore}
                       onChange={(e) => setNewAssignMaxScore(Number(e.target.value))}
-                      className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
                     />
                   </div>
                 </div>
-                <button type="submit" className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg mt-2">
+                <button type="submit" className="w-full py-2 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] font-bold rounded-lg mt-2">
                   Create Assignment
                 </button>
               </form>
@@ -898,7 +898,7 @@ const handleCreateModule = async (e) => {
       {activeTab === 'assignments' && (
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-bold text-white">Interactive Grading Suite</h3>
+            <h3 className="text-[15px] font-semibold text-white">Interactive Grading Suite</h3>
             <p className="text-xs text-slate-400">Score submissions using custom criteria sliders with auto-grade calculations.</p>
           </div>
 
@@ -916,7 +916,7 @@ const handleCreateModule = async (e) => {
                       onClick={() => handleSelectSubmission(sub)}
                       className={`p-4 border rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
                         selectedSubmission?.id === sub.id
-                          ? 'bg-blue-600/10 border-blue-500 text-white'
+                          ? 'bg-[#d0f24a]/10 border-[#d0f24a] text-white'
                           : 'bg-slate-900/40 border-slate-850 hover:border-slate-700 text-slate-300'
                       }`}
                     >
@@ -961,21 +961,21 @@ const handleCreateModule = async (e) => {
                             <span className="text-slate-400">Code Quality (40%)</span>
                             <span className="text-white font-mono">{gradeQuality}/100</span>
                           </div>
-                          <input type="range" min="0" max="100" value={gradeQuality} onChange={(e) => setGradeQuality(Number(e.target.value))} className="w-full accent-blue-500" />
+                          <input type="range" min="0" max="100" value={gradeQuality} onChange={(e) => setGradeQuality(Number(e.target.value))} className="w-full accent-[#d0f24a]" />
                         </div>
                         <div className="space-y-1.5">
                           <div className="flex justify-between font-semibold">
                             <span className="text-slate-400">Logical Execution (40%)</span>
                             <span className="text-white font-mono">{gradeLogic}/100</span>
                           </div>
-                          <input type="range" min="0" max="100" value={gradeLogic} onChange={(e) => setGradeLogic(Number(e.target.value))} className="w-full accent-blue-500" />
+                          <input type="range" min="0" max="100" value={gradeLogic} onChange={(e) => setGradeLogic(Number(e.target.value))} className="w-full accent-[#d0f24a]" />
                         </div>
                         <div className="space-y-1.5">
                           <div className="flex justify-between font-semibold">
                             <span className="text-slate-400">Documentation (20%)</span>
                             <span className="text-white font-mono">{gradeDoc}/100</span>
                           </div>
-                          <input type="range" min="0" max="100" value={gradeDoc} onChange={(e) => setGradeDoc(Number(e.target.value))} className="w-full accent-blue-500" />
+                          <input type="range" min="0" max="100" value={gradeDoc} onChange={(e) => setGradeDoc(Number(e.target.value))} className="w-full accent-[#d0f24a]" />
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-[10px] text-slate-400 font-semibold uppercase">Feedback</label>
@@ -984,19 +984,19 @@ const handleCreateModule = async (e) => {
                             onChange={(e) => setGradeFeedback(e.target.value)}
                             rows={3}
                             placeholder="Optional feedback for student..."
-                            className="w-full bg-[#141c33] border border-slate-800 rounded-lg p-2 text-white focus:outline-none resize-none"
+                            className="w-full bg-[#20242e] border border-slate-800 rounded-lg p-2 text-white focus:outline-none resize-none"
                           />
                         </div>
                         <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
                           <div>
                             <p className="text-[10px] text-slate-500 uppercase font-bold">Weighted Total:</p>
-                            <p className="text-2xl font-black text-white font-mono">
+                            <p className="text-xl font-semibold text-white font-mono">
                               {Math.round((gradeQuality * 0.4) + (gradeLogic * 0.4) + (gradeDoc * 0.2))}%
                             </p>
                           </div>
                           <button
                             onClick={handleSubmitGrade}
-                            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow transition-all"
+                            className="px-5 py-2 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] font-bold rounded-lg shadow transition-all"
                           >
                             Submit Grade
                           </button>
@@ -1008,7 +1008,7 @@ const handleCreateModule = async (e) => {
                   {/* Code preview */}
                   <div className="space-y-2">
                     <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Submission Code Preview</h4>
-                    <div className="border border-slate-850 bg-slate-950 p-4 rounded-xl font-mono text-[10px] text-slate-400 overflow-x-auto whitespace-pre leading-relaxed h-80 overflow-y-auto border-l-4 border-l-blue-500">
+                    <div className="border border-slate-850 bg-slate-950 p-4 rounded-xl font-mono text-[10px] text-slate-400 overflow-x-auto whitespace-pre leading-relaxed h-80 overflow-y-auto border-l-4 border-l-[#d0f24a]">
                       {selectedSubmission.content || '// No code submitted'}
                     </div>
                   </div>
@@ -1028,7 +1028,7 @@ const handleCreateModule = async (e) => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 className="text-lg font-bold text-white">Enrolled Students</h3>
+              <h3 className="text-[15px] font-semibold text-white">Enrolled Students</h3>
               <p className="text-xs text-slate-400">Search student grades, activity logs, and dispatch notifications.</p>
             </div>
             <input
@@ -1036,7 +1036,7 @@ const handleCreateModule = async (e) => {
               placeholder="Search students by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full sm:w-64 bg-[#141c33] border border-slate-800 rounded-lg text-xs px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full sm:w-64 bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#d0f24a]"
             />
           </div>
 
@@ -1084,7 +1084,7 @@ const handleCreateModule = async (e) => {
       {activeTab === 'analytics' && (
         <div className="space-y-8">
           <div>
-            <h3 className="text-lg font-bold text-white">Aggregated Performance Metrics</h3>
+            <h3 className="text-[15px] font-semibold text-white">Aggregated Performance Metrics</h3>
             <p className="text-xs text-slate-400">Compare average scores per course and submission grades.</p>
           </div>
 
@@ -1114,8 +1114,8 @@ const handleCreateModule = async (e) => {
                     const barH = avg * 1.35;
                     return (
                       <g key={course.id}>
-                        <rect x={barX} y={20} width="36" height="135" rx="3" fill="#020617" opacity="0.3" />
-                        <rect x={barX} y={155 - barH + 20} width="36" height={barH} rx="3" fill="#1064ff" opacity="0.85" />
+                        <rect x={barX} y={20} width="36" height="135" rx="3" fill="#101217" opacity="0.3" />
+                        <rect x={barX} y={155 - barH + 20} width="36" height={barH} rx="3" fill="#d0f24a" opacity="0.85" />
                         <text x={barX + 18} y="175" fill="#64748b" textAnchor="middle" className="text-[8px] font-mono">{course.code}</text>
                       </g>
                     );
@@ -1172,13 +1172,13 @@ const handleCreateModule = async (e) => {
       {selectedFlag && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setSelectedFlag(null)} />
-          <div className="relative w-full max-w-4xl bg-[#0c1226] border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl z-10 space-y-6">
+          <div className="relative w-full max-w-4xl bg-[#181b22] border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl z-10 space-y-6">
             <div className="flex justify-between items-start border-b border-slate-800 pb-4">
               <div>
                 <span className="text-[10px] font-bold text-red-400 bg-red-400/10 px-2.5 py-1 rounded">
                   AI Plagiarism Comparison
                 </span>
-                <h3 className="text-xl font-bold text-white mt-2">Similarity Scan: {getStudentName(selectedFlag.studentId)}</h3>
+                <h3 className="text-[15px] font-semibold text-white mt-2">Similarity Scan: {getStudentName(selectedFlag.studentId)}</h3>
                 <p className="text-xs text-slate-400">{getCourseForAssignment(selectedFlag.assignmentId)} · {getAssignmentTitle(selectedFlag.assignmentId)} (Match Score: {selectedFlag.similarity}%)</p>
               </div>
               <button onClick={() => setSelectedFlag(null)} className="text-slate-400 hover:text-white p-1">✕</button>
@@ -1213,9 +1213,9 @@ const handleCreateModule = async (e) => {
       {nudgedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setNudgedStudent(null)} />
-          <div className="relative w-full max-w-md bg-[#0c1226] border border-slate-800 rounded-2xl p-6 shadow-2xl z-10 space-y-4">
+          <div className="relative w-full max-w-md bg-[#181b22] border border-slate-800 rounded-2xl p-6 shadow-2xl z-10 space-y-4">
             <div>
-              <h3 className="text-lg font-bold text-white">Send Academic Nudge</h3>
+              <h3 className="text-[15px] font-semibold text-white">Send Academic Nudge</h3>
               <p className="text-xs text-slate-400">Prompt {nudgedStudent.name} about outstanding module components.</p>
             </div>
             <div className="space-y-1">
@@ -1224,7 +1224,7 @@ const handleCreateModule = async (e) => {
                 value={nudgeMessage}
                 onChange={(e) => setNudgeMessage(e.target.value)}
                 rows={6}
-                className="w-full bg-[#141c33] border border-slate-800 rounded-lg text-xs p-3 text-white placeholder-slate-500 resize-none font-sans focus:outline-none"
+                className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs p-3 text-white placeholder-slate-500 resize-none font-sans focus:outline-none"
               />
             </div>
             <div className="flex justify-end space-x-2 pt-2 border-t border-slate-800">
