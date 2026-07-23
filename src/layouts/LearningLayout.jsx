@@ -59,75 +59,15 @@ export const LearningLayout = () => {
   }, [logout, navigate]);
 
   return (
-    <div className="h-screen w-full flex bg-[#f7f8fa] text-[#1b1e26] antialiased overflow-hidden">
-      {/* Mobile backdrop */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* ── Sidebar ── */}
-      <aside
-        className={`bg-gradient-to-b from-[#20242e] via-[#181b22] to-[#101217] flex flex-col fixed top-[72px] bottom-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        } ${collapsed ? 'lg:w-[84px]' : 'lg:w-[335px]'} w-[335px]`}
-      >
-        <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-[#d0f24a]/10 blur-[90px] pointer-events-none" />
-        <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#39435a]/30 blur-[90px] pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col h-full">
-          {/* Brand */}
-          <div className="relative px-5 pt-10 lg:pt-6 pb-4 shrink-0">
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="lg:hidden absolute top-8 right-4 text-white/50 hover:text-white"
-              aria-label="Close menu"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
-            </button>
-            <BrandLockup hideText={collapsed} size={36} />
-            {!collapsed && (
-              <p className="mt-2 ml-[48px] text-[9px] font-black text-[#d0f24a] uppercase tracking-[0.25em]">Learning Portal</p>
-            )}
-          </div>
-
-          {/* Nav */}
-          <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-1.5 learner-scroll">
-            {NAV.map((item) => {
-              const active = location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to));
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
-                    collapsed ? 'lg:justify-center' : ''
-                  } ${
-                    active
-                      ? 'bg-[#d0f24a] text-[#1b1e26] shadow-lg shadow-[#d0f24a]/20'
-                      : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
-                  }`}
-                >
-                  <svg className="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={item.icon} />
-                  </svg>
-                  {!collapsed && <span className="truncate text-[15px] font-bold">{item.label}</span>}
-                </NavLink>
-              );
-            })}
-          </nav>
-
-          {/* User footer */}
-          {!collapsed && (
-            <div className="relative z-10 border-t border-white/10 mx-3 pt-4 pb-5">
-              <div className="flex items-center gap-3 px-2">
-                <span className="w-9 h-9 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-xs font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#d0f24a]/20">
-                  {initials}
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+      <nav className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <span className="text-xl font-black text-[#1b1e26] tracking-wider">SomaConnect</span>
+              {user && (
+                <span className="px-2 py-0.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded border border-gray-200 uppercase">
+                  {user.tenantId || 'School'}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-white truncate">{user?.name || 'Learner'}</p>

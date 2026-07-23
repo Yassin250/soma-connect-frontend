@@ -45,12 +45,12 @@ const FEATURES = [
   },
   {
     title: 'Personalized Paths',
-    desc: 'Adaptive learning that meets you where you are and moves at your pace. No two journeys look the same.',
+    desc: 'Adaptive learning that meets you where you are and moves at your pace — no two journeys look the same.',
     icon: 'M3 12h4l3 8 4-16 3 8h4',
   },
   {
     title: 'Verified Portfolio',
-    desc: 'A shareable, tamper-proof record of the real work you have done. Your proof of skill, not just a grade.',
+    desc: 'A shareable, tamper-proof record of the real work you have done — your proof of skill, not just a grade.',
     icon: 'M4 4h16v12H4zM4 20h16M9 16v4M15 16v4',
   },
   {
@@ -110,18 +110,18 @@ const nameInitials = (n) => (n || '?').split(' ').map((w) => w[0]).join('').slic
 const STEPS = [
   { n: '01', title: 'Enroll', desc: 'Pick a program and set your goal. Your path adapts from day one.' },
   { n: '02', title: 'Learn & practice', desc: 'Video lessons, hands-on projects, and quizzes that build real skill.' },
-  { n: '03', title: 'Get AI-verified', desc: 'Submit your work. Our AI confirms it is original and mastered.' },
+  { n: '03', title: 'Get AI-verified', desc: 'Submit your work — our AI confirms it is original and mastered.' },
   { n: '04', title: 'Get hired', desc: 'Share your verified portfolio and get matched with employers.' },
 ];
 
 const TESTIMONIALS = [
   { quote: 'The AI verification gave my portfolio real credibility. I landed my first internship two weeks after finishing.', name: 'Aline U.', role: 'Data Analyst, Kigali' },
   { quote: 'As a lecturer, Soma Connect lets me focus on teaching while the platform handles verification and tracking.', name: 'Jean-Paul M.', role: 'Lecturer' },
-  { quote: 'We onboarded our whole school in a week. Attendance, courses and reports all in one place.', name: 'Grace K.', role: 'School Administrator' },
+  { quote: 'We onboarded our whole school in a week. Attendance, courses and reports — finally in one place.', name: 'Grace K.', role: 'School Administrator' },
 ];
 
 const PLANS = [
-  { name: 'Learner', price: 'Free', tagline: 'Start your journey', features: ['Access to free courses', 'AI verified submissions', 'Basic portfolio'], cta: 'Get started', featured: false },
+  { name: 'Learner', price: 'Free', tagline: 'Start your journey', features: ['Access to free courses', 'AI-verified submissions', 'Basic portfolio'], cta: 'Get started', featured: false },
   { name: 'Pro', price: '$9', per: '/mo', tagline: 'Go further, faster', features: ['All 300+ courses', 'Verified certificates', 'Employer matching', 'Priority support'], cta: 'Start Pro', featured: true },
   { name: 'Institution', price: 'Custom', tagline: 'For schools & teams', features: ['School dashboard', 'Bulk enrollment', 'Analytics & reports', 'Dedicated success manager'], cta: 'Talk to us', featured: false },
 ];
@@ -222,7 +222,7 @@ export const LandingPage = () => {
             )}
           </div>
 
-          <button onClick={() => setMenuOpen((o) => !o)} className="lg:hidden text-white p-1" aria-label={menuOpen ? 'Close menu' : 'Menu'}>
+          <button onClick={() => setMenuOpen((o) => !o)} className="lg:hidden text-white p-1" aria-label="Menu">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d={menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
           </button>
         </div>
@@ -260,7 +260,7 @@ export const LandingPage = () => {
               className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#d0f24a] bg-[#d0f24a]/10 border border-[#d0f24a]/20 px-3 py-1.5 rounded-full"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#d0f24a] animate-pulse" />
-              AI-Verified Learning · Rwanda to Global
+              AI-Verified Learning · Rwanda → Global
             </motion.span>
 
             <motion.h1
@@ -283,7 +283,7 @@ export const LandingPage = () => {
               className="mt-9 flex flex-wrap items-center gap-4"
             >
               <Link to="/register" className="px-7 py-3.5 rounded-2xl bg-[#d0f24a] text-[#1b1e26] text-sm font-bold hover:bg-[#c4e83a] transition-all active:scale-[0.98] shadow-lg shadow-[#d0f24a]/20">
-                Get Started. It's free
+                Get Started — it's free
               </Link>
               <a href="#programs" className="px-7 py-3.5 rounded-2xl border border-white/15 text-white text-sm font-semibold hover:bg-white/5 transition-colors">
                 Explore Programs
@@ -378,7 +378,7 @@ export const LandingPage = () => {
           <Reveal className="max-w-2xl mx-auto text-center mb-16">
             <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1b1e26]/50 bg-[#d0f24a]/40 px-3 py-1.5 rounded-full">Why Soma Connect</span>
             <h2 className="mt-5 text-4xl sm:text-[2.75rem] font-semibold tracking-tight leading-tight">Learning that actually gets you hired</h2>
-            <p className="mt-4 text-gray-500 text-lg">We built the whole loop of learning, proving, and getting discovered around one idea: integrity you can verify.</p>
+            <p className="mt-4 text-gray-500 text-lg">We built the whole loop — learn, prove, and get discovered — around one idea: integrity you can verify.</p>
           </Reveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -417,7 +417,7 @@ export const LandingPage = () => {
                 </span>
               </h2>
               <p className="mt-5 text-gray-500 text-lg leading-relaxed">
-                Industry built, AI-verified programs that help you learn the skill, prove it with real work, and get discovered by employers.
+                Industry-built, AI-verified programs — learn the skill, prove it with real work, and get discovered by employers.
               </p>
             </Reveal>
 
@@ -615,7 +615,7 @@ export const LandingPage = () => {
                   <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#d0f24a]">For institutions</span>
                   <h2 className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">Bring Soma Connect to your school</h2>
                   <p className="mt-4 text-white/60 leading-relaxed max-w-lg">
-                    Classes, attendance, courses, plagiarism checks and financial reports in one dashboard for your whole institution,
+                    Classes, attendance, courses, plagiarism checks and financial reports — one dashboard for your whole institution,
                     with verified outcomes you can show parents and partners.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-3">
@@ -624,7 +624,7 @@ export const LandingPage = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {['Unified school dashboard', 'Bulk student & staff onboarding', 'Attendance & performance analytics', 'AI-plagiarism & originality checks'].map((t) => (
+                  {['Unified school dashboard', 'Bulk student & staff onboarding', 'Attendance & performance analytics', 'AI plagiarism & originality checks'].map((t) => (
                     <div key={t} className="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/5 px-4 py-3.5">
                       <span className="w-7 h-7 rounded-lg bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center shrink-0">
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -694,15 +694,9 @@ export const LandingPage = () => {
                       </li>
                     ))}
                   </ul>
-                  {p.name === 'Institution' ? (
-                    <a href="https://wa.me/250794219712?text=Hello%20Soma%20Connect%2C%20I%27m%20interested%20in%20the%20Institution%20plan" target="_blank" rel="noopener noreferrer" className="block mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors bg-[#1b1e26] text-white hover:bg-black">
-                      {p.cta}
-                    </a>
-                  ) : (
-                    <Link to="/register" className={`block mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors ${p.featured ? 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a]' : 'bg-[#1b1e26] text-white hover:bg-black'}`}>
-                      {p.cta}
-                    </Link>
-                  )}
+                  <Link to="/register" className={`mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors ${p.featured ? 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a]' : 'bg-[#1b1e26] text-white hover:bg-black'}`}>
+                    {p.cta}
+                  </Link>
                 </div>
               </Reveal>
             ))}
@@ -737,7 +731,7 @@ export const LandingPage = () => {
             <div className="lg:col-span-2">
               <BrandLockup />
               <p className="mt-4 text-sm text-white/50 leading-relaxed max-w-xs">
-                Bridging Rwandan classrooms and the global job market through AI verified excellence.
+                Bridging Rwandan classrooms and the global job market through AI-verified excellence.
               </p>
               <div className="mt-5 flex gap-3">
                 {['M22 12a10 10 0 10-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z', 'M23 4.9c-.8.4-1.7.6-2.6.8a4.5 4.5 0 002-2.5c-.9.5-1.9.9-2.9 1.1a4.5 4.5 0 00-7.7 4.1A12.8 12.8 0 013 3.6a4.5 4.5 0 001.4 6 4.5 4.5 0 01-2-.6v.1a4.5 4.5 0 003.6 4.4 4.5 4.5 0 01-2 .1 4.5 4.5 0 004.2 3.1A9 9 0 012 19.5a12.7 12.7 0 006.9 2c8.3 0 12.8-6.9 12.8-12.8v-.6c.9-.6 1.6-1.4 2.3-2.2z', 'M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zM8.5 17.5v-7H6v7h2.5zM7.2 9.3a1.4 1.4 0 100-2.8 1.4 1.4 0 000 2.8zM18 17.5v-4c0-2.1-1.1-3.1-2.6-3.1-1.2 0-1.7.7-2 1.1v-1H11v7h2.5v-3.9c0-.9.6-1.3 1.2-1.3.6 0 1.1.4 1.1 1.3v3.9H18z'].map((d, i) => (

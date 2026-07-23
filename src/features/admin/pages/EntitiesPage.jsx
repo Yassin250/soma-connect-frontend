@@ -4,7 +4,6 @@ import { platformEntityService } from '../../../services/api';
 import { useToast } from '../../../context/ToastContext';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
-import { createPortal } from 'react-dom';
 
 const filterFieldClass =
   'w-full text-[12.5px] px-3 py-1.5 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] focus:outline-none transition-all';
@@ -33,9 +32,6 @@ export const EntitiesPage = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ type: 'UNIVERSITY', name: '', code: '', address: '', contactPersonPhone: '', contactPersonEmail: '', website: '' });
-  const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -63,22 +59,6 @@ export const EntitiesPage = () => {
       toast.success(`Entity ${next ? 'activated' : 'suspended'}`);
       await load();
     } catch (err) { toast.error(err.message); }
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      await platformEntityService.create(form);
-      toast.success('Entity created successfully');
-      setShowModal(false);
-      setForm({ type: 'UNIVERSITY', name: '', code: '', address: '', contactPersonPhone: '', contactPersonEmail: '', website: '' });
-      await load();
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const typeOptions = useMemo(
@@ -162,20 +142,12 @@ export const EntitiesPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">Institutions</span>
-          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#1b1e26]">Registered Entities</h1>
-          <p className="text-[12px] text-gray-500 mt-0.5">
-            Every school and institution registered on the platform{entities.length ? ` — ${entities.length} total` : ''}.
-          </p>
-        </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="shrink-0 px-4 py-2 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors"
-        >
-          Create Entity
-        </button>
+      <div>
+        <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">Institutions</span>
+        <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#1b1e26]">Registered Entities</h1>
+        <p className="text-[12px] text-gray-500 mt-0.5">
+          Every school and institution registered on the platform{entities.length ? ` — ${entities.length} total` : ''}.
+        </p>
       </div>
 
       {/* Filter Toolbar */}
@@ -244,121 +216,6 @@ export const EntitiesPage = () => {
             : 'No entities match the current filters.'
         }
       />
-
-      {/* Create Entity Modal */}
-      {showModal && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => !submitting && setShowModal(false)} />
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-xl p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-[#1b1e26]">Create Entity</h2>
-              <button onClick={() => !submitting && setShowModal(false)} className="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1b1e26] flex items-center justify-center transition-colors">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
-            </div>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Type</label>
-                  <select
-                    value={form.type}
-                    onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
-                    className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                    required
-                  >
-                    <option value="PRIMARY" className="text-[#1b1e26]">Primary</option>
-                    <option value="SECONDARY" className="text-[#1b1e26]">Secondary</option>
-                    <option value="UNIVERSITY" className="text-[#1b1e26]">University</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Code</label>
-                  <input
-                    type="text"
-                    value={form.code}
-                    onChange={(e) => setForm((p) => ({ ...p, code: e.target.value }))}
-                    className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                    placeholder="e.g. SOMA-U"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Name</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                  className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                  placeholder="Institution name"
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Contact Person Email</label>
-                <input
-                  type="email"
-                  value={form.contactPersonEmail}
-                  onChange={(e) => setForm((p) => ({ ...p, contactPersonEmail: e.target.value }))}
-                  className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                  placeholder="admin@institution.edu"
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Contact Person Phone</label>
-                <input
-                  type="text"
-                  value={form.contactPersonPhone}
-                  onChange={(e) => setForm((p) => ({ ...p, contactPersonPhone: e.target.value }))}
-                  className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                  placeholder="+1234567890"
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Address</label>
-                <input
-                  type="text"
-                  value={form.address}
-                  onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
-                  className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                  placeholder="Street, city, country"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-[#1b1e26]/60 uppercase tracking-[0.1em]">Website</label>
-                <input
-                  type="text"
-                  value={form.website}
-                  onChange={(e) => setForm((p) => ({ ...p, website: e.target.value }))}
-                  className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#1b1e26] focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] outline-none transition-all"
-                  placeholder="https://institution.edu"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  disabled={submitting}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50"
-                >
-                  {submitting ? 'Creating…' : 'Create Entity'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   );
 };

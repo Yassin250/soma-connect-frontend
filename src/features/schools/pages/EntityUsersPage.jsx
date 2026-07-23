@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { entityUserService, entityRoleService } from '../../../services/api';
 import { AddUserModal } from '../../admin/components/AddUserModal';
-import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
 import { useAuth } from '../../../context/AuthContext';
@@ -101,7 +100,6 @@ export const EntityUsersPage = () => {
   const [notice, setNotice] = useState('');
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const rolesById = useMemo(
     () => new Map(roles.map((role) => [String(role.id), role])),
@@ -347,7 +345,7 @@ export const EntityUsersPage = () => {
                       label: 'Delete user',
                       icon: DockIcons.trash,
                       danger: true,
-                      onClick: () => setDeleteTarget(user),
+                      onClick: () => runAction(() => entityUserService.remove(user.id), `Delete ${user.name}? This cannot be undone.`),
                     },
                   ]
             }
@@ -412,26 +410,6 @@ export const EntityUsersPage = () => {
           fetchRoles={entityRoleService.list}
         />
       )}
-
-      {/* Delete confirmation modal */}
-      <ConfirmDeleteModal
-        open={deleteTarget !== null}
-        title="Delete user"
-        message={`Are you sure you want to delete "${deleteTarget?.name || deleteTarget?.username || ''}"? This action cannot be undone.`}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={async () => {
-          if (!deleteTarget) return;
-          try {
-            await entityUserService.remove(deleteTarget.id);
-            await fetchUsers();
-          } catch (err) {
-            setError(err.message || 'Delete failed');
-            setTimeout(() => setError(''), 4000);
-          } finally {
-            setDeleteTarget(null);
-          }
-        }}
-      />
     </div>
   );
 };

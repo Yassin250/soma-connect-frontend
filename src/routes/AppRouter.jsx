@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { dashboardPathForRoles } from '../utils/dashboardPath';
 import { LoginPage } from '../features/auth/pages/LoginPage';
@@ -7,7 +7,7 @@ import { UserManagementPage } from '../features/admin/pages/UserManagementPage';
 import { RolesPage } from '../features/admin/pages/RolesPage';
 import { PermissionsPage } from '../features/admin/pages/PermissionsPage';
 import { SystemParametersPage } from '../features/admin/pages/SystemParametersPage';
-
+import { SchoolApprovalsPage } from '../features/admin/pages/SchoolApprovalsPage';
 import { AdminCommandCenter } from '../features/admin/pages/AdminCommandCenter';
 import { AdminAccountPage } from '../features/admin/pages/AdminAccountPage';
 import { SystemHealthPage } from '../features/admin/pages/SystemHealthPage';
@@ -34,7 +34,6 @@ import { AdminModuleLessonsPage } from '../features/admin/pages/AdminModuleLesso
 import { AdminAllModulesPage } from '../features/admin/pages/AdminAllModulesPage';
 import { AdminAllLessonsPage } from '../features/admin/pages/AdminAllLessonsPage';
 import { AdminEntityUsersPage } from '../features/admin/pages/AdminEntityUsersPage';
-import { UnassignedUsersPage } from '../features/admin/pages/UnassignedUsersPage';
 import { CourseCategoriesPage } from '../features/admin/pages/CourseCategoriesPage';
 import { SchoolAccountPage } from '../features/schools/pages/SchoolAccountPage';
 import { SchoolProfilePage } from '../features/schools/pages/SchoolProfilePage';
@@ -69,9 +68,6 @@ import { LandingPage } from '../features/marketing/pages/LandingPage';
 import { CourseLearningPage } from '../features/learning/pages/CourseLearningPage';
 import { StudentDashboard } from '../features/learning/pages/StudentDashboard';
 import { LearnerDashboard } from '../features/learning/pages/LearnerDashboard';
-import { CourseCatalogPage } from '../features/courses/pages/CourseCatalogPage';
-import { LearnerNotificationsPage } from '../features/learning/pages/LearnerNotificationsPage';
-import { LearnerAccountPage } from '../features/learning/pages/LearnerAccountPage';
 
 // Platform-console permissions. The backend guards /api/admin/** with these exact
 // authorities, so the UI must gate on them too (not on role names) or a user can
@@ -174,9 +170,8 @@ export const AppRouter = () => {
           <Route path="/admin/roles" element={<AdminRoute><RolesPage /></AdminRoute>} />
           <Route path="/admin/permissions" element={<AdminRoute><PermissionsPage /></AdminRoute>} />
           <Route path="/admin/system-parameters" element={<AdminRoute><SystemParametersPage /></AdminRoute>} />
-
+          <Route path="/admin/approvals" element={<AdminRoute><SchoolApprovalsPage /></AdminRoute>} />
           <Route path="/admin/entities/:id/users" element={<AdminRoute><AdminEntityUsersPage /></AdminRoute>} />
-          <Route path="/admin/entities/unassigned" element={<AdminRoute><UnassignedUsersPage /></AdminRoute>} />
           <Route path="/admin/entities" element={<AdminRoute><EntitiesPage /></AdminRoute>} />
           <Route path="/admin/employers" element={<AdminRoute><EmployersPage /></AdminRoute>} />
           <Route path="/admin/jobs" element={<AdminRoute><JobBoardPage /></AdminRoute>} />
@@ -212,14 +207,12 @@ export const AppRouter = () => {
           <Route path="/school/alumni" element={<SchoolRoute><SchoolAlumniPage /></SchoolRoute>} />
         </Route>
 
-        {/* School-specific student dashboard — keeps its own sidebar */}
+        {/* Both dashboards are fully self-contained (their own sidebar/top bar),
+            so they render standalone rather than inside LearningLayout's chrome. */}
         <Route path="/student/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+        <Route path="/learning/dashboard" element={<ProtectedRoute><LearnerDashboard /></ProtectedRoute>} />
 
         <Route element={<ProtectedRoute><LearningLayout /></ProtectedRoute>}>
-          <Route path="/learning/dashboard" element={<LearnerDashboard />} />
-          <Route path="/learning/notifications" element={<LearnerNotificationsPage />} />
-          <Route path="/learner/account" element={<LearnerAccountPage />} />
-          <Route path="/courses" element={<CourseCatalogPage />} />
           <Route path="/lecturer/dashboard" element={<div>Lecturer Dashboard</div>} />
         </Route>
 

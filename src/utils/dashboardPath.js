@@ -12,7 +12,7 @@ export const dashboardPathForRoles = (user) => {
     case 'SCHOOL_ADMIN':
       return '/school/dashboard';
     case 'STUDENT':
-      return '/learning/dashboard';
+      return user?.schoolId ? '/student/dashboard' : '/learning/dashboard';
     case 'LECTURER':
       return '/lecturer/dashboard';
     default:

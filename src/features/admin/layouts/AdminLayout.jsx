@@ -117,7 +117,7 @@ const NAV = [
     icon: 'employers',
     items: [
       { label: 'Entities', to: '/admin/entities', icon: 'employers' },
-
+      { label: 'Approvals', to: '/admin/approvals', icon: 'approvals' },
       { label: 'Subscriptions', to: '/admin/subscriptions', icon: 'subscriptions' },
     ],
   },
@@ -257,20 +257,15 @@ export const AdminLayout = () => {
         } ${collapsed ? 'lg:w-[84px]' : 'lg:w-72'} w-72`}
       >
         {/* Brand */}
-        <div className="px-5 pt-5 pb-3 shrink-0">
-          <div className="flex items-center justify-between">
-            <BrandLockup hideText={collapsed} size={36} />
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="lg:hidden text-white/50 hover:text-white p-1"
-              aria-label="Close menu"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
-            </button>
-          </div>
-          {!collapsed && (
-            <p className="mt-2 ml-[48px] text-[9px] font-black text-[#d0f24a] uppercase tracking-[0.25em]">Super Admin Portal</p>
-          )}
+        <div className="h-[72px] flex items-center justify-between px-5 shrink-0">
+          <BrandLockup hideText={collapsed} size={36} />
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="lg:hidden text-white/50 hover:text-white p-1"
+            aria-label="Close menu"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
+          </button>
         </div>
 
         {/* Nav — Overview link + collapsible groups (mirrors the school sidebar) */}

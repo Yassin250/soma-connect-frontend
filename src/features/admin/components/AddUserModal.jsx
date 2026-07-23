@@ -146,7 +146,7 @@ const RoleMultiSelect = ({ options, value, onChange }) => {
   );
 };
 
-export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRoles, fetchEntities }) => {
+export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRoles }) => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -154,16 +154,8 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
   const [status, setStatus] = useState('Active');
   const [roleIds, setRoleIds] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [entityId, setEntityId] = useState('');
-  const [entities, setEntities] = useState([]);
 
   const isEditMode = !!editingUser;
-
-  const entityRoles = ['ENTITY_ADMIN', 'STUDENT'];
-  const showEntitySelect = roleIds.some((rid) => {
-    const r = roles.find((rr) => String(rr.id) === rid);
-    return r && entityRoles.includes(r.name);
-  });
 
   // Resolve the editingUser's current role ids to an array of strings, regardless
   // of the shape the backend returned roles in.
@@ -205,22 +197,6 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
     return () => { cancelled = true; };
   }, [isOpen, editingUser, fetchRoles]);
 
-  // Load entities when the modal opens.
-  useEffect(() => {
-    if (!isOpen) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await (fetchEntities ? fetchEntities() : []);
-        if (cancelled) return;
-        setEntities(Array.isArray(data) ? data : []);
-      } catch (err) {
-        if (!cancelled) console.error('Error fetching entities:', err);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [isOpen, fetchEntities]);
-
   // Populate / reset fields when opening.
   useEffect(() => {
     if (!isOpen) return;
@@ -238,7 +214,6 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
       setPassword('');
       setStatus('Active'); // new users are always created Active
       setRoleIds([]);
-      setEntityId('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingUser, isOpen]);
@@ -293,7 +268,7 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onSubmit({ name, username, email, password, status, roleIds, entityId: entityId || undefined });
+            onSubmit({ name, username, email, password, status, roleIds });
           }}
           className="space-y-4"
         >
@@ -335,25 +310,6 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
             <label className={labelClass}>Roles</label>
             <RoleMultiSelect options={roles} value={roleIds} onChange={setRoleIds} />
           </div>
-
-          {showEntitySelect && (
-            <div>
-              <label className={labelClass}>Entity</label>
-              <select
-                value={entityId}
-                onChange={(e) => setEntityId(e.target.value)}
-                className={`${inputClass} cursor-pointer`}
-                required
-              >
-                <option value="">Select an entity…</option>
-                {entities.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name} ({e.type})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
 
           {/* Actions */}
           <div className="pt-4 flex justify-end gap-2.5">

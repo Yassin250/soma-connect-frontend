@@ -94,8 +94,6 @@ export const RolesPage = () => {
       toast.success('Role status updated');
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setIsDeleting(false);
     }
   };
 

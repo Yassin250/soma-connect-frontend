@@ -571,16 +571,15 @@ export const CourseBuilderPage = () => {
                 <div key={mi} className="rounded-2xl border border-[#1b1e26]/[0.08] overflow-hidden">
                   {/* Module header */}
                   <div className="bg-[#fafbfc] px-4 py-3.5 space-y-3">
-                    <p className="text-[10px] font-bold text-[#1b1e26]/40 uppercase tracking-[0.12em]">Module {mi + 1}</p>
                     {/* Title + type stay on ONE row — the input shrinks instead of the select wrapping */}
                     <div className="flex items-center gap-3">
                       <span className="w-8 h-8 rounded-lg bg-[#1b1e26] text-[#d0f24a] text-[12px] font-bold flex items-center justify-center shrink-0">
                         {mi + 1}
                       </span>
                       <input
-                        type="text" value={m.title} placeholder={`Module ${mi + 1} title (required)`}
+                        type="text" value={m.title} placeholder={`Module ${mi + 1} title — e.g. Start with the Right Problem`}
                         onChange={(e) => setModules((p) => p.map((x, xi) => (xi === mi ? { ...x, title: e.target.value } : x)))}
-                        className={`${fieldClass} bg-white flex-1 min-w-[160px] text-sm border-[#1b1e26]/20`}
+                        className={`${fieldClass} bg-white flex-1 min-w-0`}
                       />
                       <select
                         value={m.moduleType}
@@ -623,7 +622,6 @@ export const CourseBuilderPage = () => {
 
                   {/* Items */}
                   <div className="p-4 space-y-2.5">
-                    <p className="text-[10px] font-bold text-[#1b1e26]/40 uppercase tracking-[0.12em]">Lesson items</p>
                     {m.items.filter((i) => i.title.trim()).length === 0 && (
                       <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold">
                         <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -642,9 +640,9 @@ export const CourseBuilderPage = () => {
                           <div className="flex items-center gap-2.5">
                             <span className="w-6 h-6 rounded-md bg-[#f3f4f6] text-[#1b1e26]/40 text-[11px] font-bold flex items-center justify-center shrink-0">{ii + 1}</span>
                             <input
-                              type="text" value={item.title} placeholder="Item title (required)"
+                              type="text" value={item.title} placeholder="Item title (required) — e.g. Introduction video"
                               onChange={(e) => setItem({ title: e.target.value })}
-                              className={`${fieldClass} bg-white flex-1 min-w-[160px] border-[#1b1e26]/20 ${missingTitle ? 'border-amber-400 focus:border-amber-400 focus:ring-amber-200/60' : ''}`}
+                              className={`${fieldClass} bg-white flex-1 min-w-0 ${missingTitle ? 'border-amber-400 focus:border-amber-400 focus:ring-amber-200/60' : ''}`}
                             />
                             <select
                               value={item.itemType}

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AddUserModal } from '../components/AddUserModal';
-import { ConfirmDeleteModal } from '../components/CurriculumModals';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
-import { adminService, platformEntityService } from '../../../services/api';
+import { adminService } from '../../../services/api';
 
 // ── Avatar helpers ────────────────────────────────────────────────────────────
 const AVATAR_STYLES = [
@@ -70,7 +69,6 @@ export const UserManagementPage = () => {
 
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -106,14 +104,6 @@ export const UserManagementPage = () => {
       setRoles(Array.isArray(data) ? data : []);
     } catch {
       // roles are supplementary (for filter); silently ignore
-    }
-  }, []);
-
-  const fetchEntities = useCallback(async () => {
-    try {
-      return await platformEntityService.listAll();
-    } catch {
-      return [];
     }
   }, []);
 
@@ -189,15 +179,13 @@ export const UserManagementPage = () => {
         });
         toast.success('User updated');
       } else {
-        const payload = {
+        await adminService.createUser({
           name: userData.name,
           username: userData.username,
           email: userData.email,
           password: userData.password,
           roleIds,
-        };
-        if (userData.entityId) payload.entityId = userData.entityId;
-        await adminService.createUser(payload);
+        });
         toast.success('User created');
       }
       await fetchUsers();
@@ -241,19 +229,13 @@ export const UserManagementPage = () => {
   };
 
   const handleDelete = async (user) => {
-    setDeleteTarget(user);
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteTarget) return;
+    if (!window.confirm(`Delete user "${user.name || user.username}"?`)) return;
     try {
-      await adminService.deleteUser(deleteTarget.id);
+      await adminService.deleteUser(user.id);
       await fetchUsers();
       toast.success('User deleted');
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setDeleteTarget(null);
     }
   };
 
@@ -497,18 +479,8 @@ export const UserManagementPage = () => {
           onClose={() => { setIsUserModalOpen(false); setEditingUser(null); }}
           onSubmit={handleSaveUser}
           editingUser={editingUser}
-          fetchEntities={fetchEntities}
         />
       )}
-
-      {/* Delete confirmation modal */}
-      <ConfirmDeleteModal
-        open={deleteTarget !== null}
-        title="Delete user"
-        message={`Are you sure you want to delete "${deleteTarget?.name || deleteTarget?.username || ''}"? This action cannot be undone.`}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={confirmDelete}
-      />
     </div>
   );
 };

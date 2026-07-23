@@ -571,50 +571,6 @@ export const platformCourseService = {
 };
 
 // ---- Public: course catalog for landing page (no auth required) ----
-export const notificationService = {
-  list: async (params = {}) => {
-    try {
-      return unwrapApiResult(await apiClient.get('/api/notifications', { params }));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to load notifications'));
-    }
-  },
-  unreadCount: async () => {
-    try {
-      const result = unwrapApiResult(await apiClient.get('/api/notifications/unread-count'));
-      return result?.count || 0;
-    } catch { return 0; }
-  },
-  markRead: async (id) => {
-    try {
-      return unwrapApiResult(await apiClient.post(`/api/notifications/${id}/read`));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to mark as read'));
-    }
-  },
-  markAllRead: async () => {
-    try {
-      return unwrapApiResult(await apiClient.post('/api/notifications/mark-all-read'));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to mark all as read'));
-    }
-  },
-  archive: async (id) => {
-    try {
-      return unwrapApiResult(await apiClient.post(`/api/notifications/${id}/archive`));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to archive'));
-    }
-  },
-  delete: async (id) => {
-    try {
-      return unwrapApiResult(await apiClient.delete(`/api/notifications/${id}`));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to delete'));
-    }
-  },
-};
-
 export const publicCourseService = {
   list: async ({ search, category, level } = {}) => {
     try {
@@ -749,24 +705,10 @@ export const entityProfileService = {
       throw new Error(getApiErrorMessage(error, 'Failed to update profile'));
     }
   },
-  getDashboard: async () => {
-    try {
-      return unwrapApiResult(await apiClient.get('/api/entity/profile/dashboard'));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to load dashboard'));
-    }
-  },
 };
 
 // ---- Super-admin: directory of all registered entities ----
 export const platformEntityService = {
-  listAll: async () => {
-    try {
-      return unwrapApiResult(await apiClient.get('/api/admin/entities/all'));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to load entities'));
-    }
-  },
   list: async ({ page = 0, size = 10, search = '' } = {}) => {
     try {
       const params = { page, size };
@@ -795,27 +737,6 @@ export const platformEntityService = {
       return unwrapApiResult(await apiClient.patch(`/api/admin/entities/${id}/status`, { active }));
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to update entity status'));
-    }
-  },
-  create: async (data) => {
-    try {
-      return unwrapApiResult(await apiClient.post('/api/admin/entities', data));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to create entity'));
-    }
-  },
-  listUnassignedUsers: async () => {
-    try {
-      return unwrapApiResult(await apiClient.get('/api/admin/entities/unassigned-users'));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to load unassigned users'));
-    }
-  },
-  assignUsers: async (entityId, userIds) => {
-    try {
-      return unwrapApiResult(await apiClient.post(`/api/admin/entities/${entityId}/assign-users`, { userIds }));
-    } catch (error) {
-      throw new Error(getApiErrorMessage(error, 'Failed to assign users'));
     }
   },
 };

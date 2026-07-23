@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { entityProfileService } from '../../../services/api';
 
+// Stat cards — values are placeholders until the metrics endpoints ship.
 const STATS = [
   {
-    key: 'totalUsers',
-    label: 'Total Members',
-    hint: 'Staff & students',
+    label: 'Total Students',
+    value: '—',
+    hint: 'Enrolled this term',
     icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
     featured: true,
   },
   {
-    key: 'activeStudents',
-    label: 'Active Students',
-    hint: 'Currently enrolled',
+    label: 'Active Staff',
+    value: '—',
+    hint: 'Teachers & administrators',
     icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
   },
   {
-    key: 'pendingCount',
-    label: 'Pending Invites',
-    hint: 'Awaiting activation',
+    label: "Today's Attendance",
+    value: '—',
+    hint: 'Across all classes',
     icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z',
   },
   {
-    key: 'courseCount',
-    label: 'Courses',
-    hint: 'Active programs',
+    label: 'Pending Fees',
+    value: '—',
+    hint: 'Awaiting collection',
     icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
   },
 ];
@@ -69,22 +69,6 @@ export const SchoolOverviewPage = () => {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    entityProfileService.getDashboard()
-      .then((data) => setStats(data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  const statValue = (key) => {
-    if (loading) return '…';
-    if (!stats) return '—';
-    return stats[key] ?? '—';
-  };
-
   return (
     <div className="space-y-6">
       {/* Greeting header */}
@@ -121,7 +105,7 @@ export const SchoolOverviewPage = () => {
               </span>
             </div>
             <p className={`text-3xl font-semibold tracking-tight mt-4 ${s.featured ? 'text-white' : 'text-[#1b1e26]'}`}>
-              {statValue(s.key)}
+              {s.value}
             </p>
             <p className={`text-[13px] font-semibold mt-1 ${s.featured ? 'text-white/80' : 'text-[#1b1e26]/70'}`}>
               {s.label}

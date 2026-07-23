@@ -197,7 +197,6 @@ export const RegisterPage = () => {
       // Trigger error shake animation
       setOtpStatus('error');
       setErrorMessage(error.message || 'Could not verify OTP');
-      setTimeLeft(0);
 
       // Reset status after shake completes
       setTimeout(() => {
@@ -515,7 +514,6 @@ export const RegisterPage = () => {
                       value={startForm.password}
                       onChange={(event) => setStartForm({ ...startForm, password: event.target.value })}
                       className={inputClass}
-                      placeholder="At least 8 characters"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -531,7 +529,6 @@ export const RegisterPage = () => {
                             ? 'border-green-300 focus:border-green-300 focus:ring-green-100'
                             : ''
                       }`}
-                      placeholder="Repeat your password"
                     />
                   </div>
                 </div>
