@@ -189,7 +189,7 @@ export const UserManagementPage = () => {
         });
         toast.success('User updated');
       } else {
-        await adminService.createUser({
+        const payload = {
           name: userData.name,
           username: userData.username,
           email: userData.email,
