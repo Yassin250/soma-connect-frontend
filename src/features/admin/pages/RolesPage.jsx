@@ -25,6 +25,8 @@ export const RolesPage = () => {
   const [selectedPermIds, setSelectedPermIds] = useState(new Set());
   const [permSaving, setPermSaving] = useState(false);
   const [permSearch, setPermSearch] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredRoles = useMemo(() => {
     return roles.filter((r) => {

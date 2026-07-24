@@ -12,7 +12,6 @@ import { AdminCommandCenter } from '../features/admin/pages/AdminCommandCenter';
 import { AdminAccountPage } from '../features/admin/pages/AdminAccountPage';
 import { SystemHealthPage } from '../features/admin/pages/SystemHealthPage';
 import { AuditLogsPage } from '../features/admin/pages/AuditLogsPage';
-import { SubscriptionsPage } from '../features/admin/pages/SubscriptionsPage';
 import { CoursesPage } from '../features/admin/pages/CoursesPage';
 import { PlagiarismPage } from '../features/admin/pages/PlagiarismPage';
 import { RevenuePage } from '../features/admin/pages/RevenuePage';
@@ -155,7 +154,7 @@ export const AppRouter = () => {
           <Route path="/admin/account" element={<AdminRoute><AdminAccountPage /></AdminRoute>} />
           <Route path="/admin/system-health" element={<AdminRoute><SystemHealthPage /></AdminRoute>} />
           <Route path="/admin/audit-logs" element={<AdminRoute><AuditLogsPage /></AdminRoute>} />
-          <Route path="/admin/subscriptions" element={<AdminRoute><SubscriptionsPage /></AdminRoute>} />
+
           <Route path="/admin/courses" element={<AdminRoute><CoursesPage /></AdminRoute>} />
           <Route path="/admin/courses/new" element={<AdminRoute><CourseBuilderPage /></AdminRoute>} />
           <Route path="/admin/courses/:id/modules/:moduleId/lessons" element={<AdminRoute><AdminModuleLessonsPage /></AdminRoute>} />
