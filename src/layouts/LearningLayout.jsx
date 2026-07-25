@@ -9,10 +9,19 @@ import { notificationService } from '../services/api';
 const initialsOf = (name) =>
   (name || 'User').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-const NAV = [
-  { label: 'Dashboard', to: '/learning/dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4-1a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
-  { label: 'Grades', to: '/learning/grades', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-  { label: 'Catalog', to: '/courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
+const NAV_SECTIONS = [
+  {
+    items: [
+      { label: 'Dashboard', to: '/learning/dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4-1a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
+      { label: 'Catalog', to: '/courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
+    ],
+  },
+  {
+    label: 'My Activity',
+    items: [
+      { label: 'Grades', to: '/learning/grades', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+    ],
+  },
 ];
 
 const PAGE_TITLES = {
@@ -99,29 +108,38 @@ export const LearningLayout = () => {
           </div>
 
           {/* Nav */}
-          <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-1.5 learner-scroll">
-            {NAV.map((item) => {
-              const active = location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to));
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
-                    collapsed ? 'lg:justify-center' : ''
-                  } ${
-                    active
-                      ? 'bg-[#d0f24a] text-[#1b1e26] shadow-lg shadow-[#d0f24a]/20'
-                      : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
-                  }`}
-                >
-                  <svg className="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={item.icon} />
-                  </svg>
-                  {!collapsed && <span className="truncate text-[15px] font-bold">{item.label}</span>}
-                </NavLink>
-              );
-            })}
+          <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-4 learner-scroll">
+            {NAV_SECTIONS.map((section, si) => (
+              <div key={si} className="space-y-1">
+                {section.label && !collapsed && (
+                  <p className="px-3.5 pt-1 pb-0.5 text-[10px] font-black text-white/30 uppercase tracking-[0.18em]">
+                    {section.label}
+                  </p>
+                )}
+                {section.items.map((item) => {
+                  const active = location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to));
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
+                        collapsed ? 'lg:justify-center' : ''
+                      } ${
+                        active
+                          ? 'bg-[#d0f24a] text-[#1b1e26] shadow-lg shadow-[#d0f24a]/20'
+                          : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
+                      }`}
+                    >
+                      <svg className="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={item.icon} />
+                      </svg>
+                      {!collapsed && <span className="truncate text-[15px] font-bold">{item.label}</span>}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
 
           {/* User footer */}
