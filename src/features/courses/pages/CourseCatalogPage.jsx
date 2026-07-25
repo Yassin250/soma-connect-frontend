@@ -228,9 +228,9 @@ export const CourseCatalogPage = () => {
         </div>
 
         {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-64 rounded-2xl bg-white border border-gray-100 animate-pulse" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="h-44 rounded-xl bg-white border border-gray-100 animate-pulse" />
             ))}
           </div>
         ) : error ? (
@@ -245,7 +245,7 @@ export const CourseCatalogPage = () => {
             <p className="text-gray-500 text-sm">No courses match your criteria.</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {filtered.map((course) => (
               <motion.div
                 key={course.id}
@@ -254,63 +254,63 @@ export const CourseCatalogPage = () => {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleExplore(course); }}
-                className="group cursor-pointer flex flex-col h-full rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden hover:shadow-[0_16px_44px_rgba(27,30,38,0.13)] hover:-translate-y-1 transition-all duration-300"
+                className="group cursor-pointer flex flex-col rounded-xl bg-white border border-gray-100 shadow-sm overflow-hidden hover:shadow-[0_8px_24px_rgba(27,30,38,0.1)] hover:-translate-y-0.5 transition-all duration-200"
               >
-                <div className={`relative h-32 bg-gradient-to-br ${gradFor(course.title)}`}>
+                <div className={`relative h-[68px] bg-gradient-to-br ${gradFor(course.title)}`}>
                   {course.coverImageUrl && (
                     <>
                       <img src={course.coverImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     </>
                   )}
-                  <div className="absolute inset-0 p-4 flex items-start justify-between">
+                  <div className="absolute inset-0 p-2 flex items-start justify-between">
                     {course.category && (
-                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-black/25 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                      <span className="text-[9px] font-bold uppercase tracking-wide text-white bg-black/25 backdrop-blur-sm px-2 py-0.5 rounded-full">
                         {course.category}
                       </span>
                     )}
                     {course.certificateEnabled && (
-                      <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-bold text-[#1b5e20] bg-[#d0f24a]/90 px-2 py-0.5 rounded-full">
-                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      <span className="ml-auto inline-flex items-center gap-0.5 text-[9px] font-bold text-[#1b5e20] bg-[#d0f24a]/90 px-1.5 py-0.5 rounded-full">
+                        <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         Certificate
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="p-5 flex flex-col flex-1">
-                  <h3 className="text-sm font-bold text-[#1b1e26] leading-snug line-clamp-2">
+                <div className="p-3 flex flex-col flex-1">
+                  <h3 className="text-[12px] font-bold text-[#1b1e26] leading-snug line-clamp-2">
                     {course.title}
                     {course.enrollmentCode && (
-                      <span className="ml-2 inline-block text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full align-middle">Code</span>
+                      <span className="ml-1.5 inline-block text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-full align-middle">Code</span>
                     )}
                   </h3>
                   {course.summary && (
-                    <p className="mt-1.5 text-xs text-gray-500 leading-relaxed line-clamp-2">{course.summary}</p>
+                    <p className="mt-1 text-[10px] text-gray-500 leading-relaxed line-clamp-2">{course.summary}</p>
                   )}
 
-                  <div className="mt-auto pt-4">
+                  <div className="mt-auto pt-2.5">
                     {course.instructorName && (
-                      <p className="text-xs text-gray-400 mb-2 truncate">by {course.instructorName}</p>
+                      <p className="text-[10px] text-gray-400 mb-1.5 truncate">by {course.instructorName}</p>
                     )}
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-2">
                       {course.moduleCount > 0 && (
                         <span className="inline-flex items-center gap-1">
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" strokeLinecap="round" strokeLinejoin="round" /><path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                          {course.moduleCount} {course.moduleCount === 1 ? 'module' : 'modules'}
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" strokeLinecap="round" strokeLinejoin="round" /><path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                          {course.moduleCount}m
                         </span>
                       )}
                       {course.estimatedHours > 0 && (
                         <span className="inline-flex items-center gap-1">
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                           {course.estimatedHours}h
                         </span>
                       )}
                     </div>
 
-                    <div className="w-full py-2.5 rounded-xl bg-[#1b1e26] text-white text-xs font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1.5">
+                    <div className="w-full py-2 rounded-lg bg-[#1b1e26] text-white text-[10px] font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1">
                       Enroll now
-                      <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </div>
                   </div>
                 </div>

@@ -114,39 +114,39 @@ export const LearnerDashboard = () => {
     <motion.div
       {...fadeUp}
       onClick={() => navigate(`/learning/course/${course.courseId}`)}
-      className="group cursor-pointer bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-[0_16px_44px_rgba(27,30,38,0.13)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+      className="group cursor-pointer bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-[0_8px_24px_rgba(27,30,38,0.1)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
     >
-      <Cover course={course} className="h-28">
-        <div className="absolute inset-0 p-3.5 flex items-start justify-between">
+      <Cover course={course} className="h-[68px]">
+        <div className="absolute inset-0 p-2 flex items-start justify-between">
           {course.category && (
-            <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-black/25 backdrop-blur-sm px-2.5 py-1 rounded-full">{course.category}</span>
+            <span className="text-[9px] font-bold uppercase tracking-wide text-white bg-black/25 backdrop-blur-sm px-2 py-0.5 rounded-full">{course.category}</span>
           )}
           {course.status === 'COMPLETED' && (
-            <span className="ml-auto text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-500 text-white inline-flex items-center gap-1">
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500 text-white inline-flex items-center gap-0.5">
+              <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" /></svg>
               Done
             </span>
           )}
         </div>
       </Cover>
 
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="text-sm font-bold text-[#1b1e26] leading-snug line-clamp-2">{course.courseTitle}</h3>
-        <p className="text-xs text-gray-500 mt-1 truncate">{[LEVEL_LABEL[course.level], course.instructorName || course.entityName].filter(Boolean).join(' · ')}</p>
-        {course.summary && <p className="text-xs text-gray-400 mt-1.5 leading-relaxed line-clamp-2">{course.summary}</p>}
+      <div className="p-3 flex flex-col flex-1">
+        <h3 className="text-[12px] font-bold text-[#1b1e26] leading-snug line-clamp-2">{course.courseTitle}</h3>
+        <p className="text-[10px] text-gray-500 mt-0.5 truncate">{[LEVEL_LABEL[course.level], course.instructorName || course.entityName].filter(Boolean).join(' · ')}</p>
+        {course.summary && <p className="text-[10px] text-gray-400 mt-1 leading-relaxed line-clamp-2">{course.summary}</p>}
 
-        <div className="mt-auto pt-4">
-          <div className="flex justify-between mb-1.5">
-            <span className="text-[11px] text-gray-500">{course.completedItems}/{course.totalItems} lessons</span>
-            <span className="text-[11px] font-bold text-[#1b1e26]">{course.overallProgressPercent}%</span>
+        <div className="mt-auto pt-2.5">
+          <div className="flex justify-between mb-1">
+            <span className="text-[10px] text-gray-500">{course.completedItems}/{course.totalItems} lessons</span>
+            <span className="text-[10px] font-bold text-[#1b1e26]">{course.overallProgressPercent}%</span>
           </div>
-          <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-3.5">
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2.5">
             <motion.div initial={{ width: 0 }} animate={{ width: `${course.overallProgressPercent}%` }} transition={{ duration: 0.8 }}
               className={`h-full rounded-full ${course.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-gradient-to-r from-[#d0f24a] to-[#b6da2f]'}`} />
           </div>
-          <div className="w-full py-2.5 rounded-xl bg-[#1b1e26] text-white text-xs font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1.5">
+          <div className="w-full py-2 rounded-lg bg-[#1b1e26] text-white text-[10px] font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1">
             {ctaLabel(course)}
-            <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
         </div>
       </div>
@@ -155,11 +155,11 @@ export const LearnerDashboard = () => {
 
   const Section = ({ title, list }) => list.length > 0 && (
     <div>
-      <div className="flex items-center gap-2 mb-3.5">
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{title}</p>
-        <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{list.length}</span>
+      <div className="flex items-center gap-2 mb-2.5">
+        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{title}</p>
+        <span className="text-[9px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">{list.length}</span>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         {list.map((c) => <CourseCard key={c.enrollmentId} course={c} />)}
       </div>
     </div>
@@ -283,9 +283,9 @@ export const LearnerDashboard = () => {
 
         {/* ── COURSES ── */}
         {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-64 rounded-2xl bg-white border border-gray-100 animate-pulse" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-44 rounded-xl bg-white border border-gray-100 animate-pulse" />
             ))}
           </div>
         ) : error ? (
