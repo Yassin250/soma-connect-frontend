@@ -20,7 +20,7 @@ const ModalShell = ({ title, subtitle, icon, onClose, children, maxW = '480px' }
   }, [onClose]);
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
       <div
         className="relative w-full bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] p-6 sm:p-7 animate-in zoom-in-95 fade-in duration-200"
         style={{ maxWidth: maxW }}
@@ -267,7 +267,7 @@ export const ConfirmDeleteModal = ({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
       <div
         className="relative w-full max-w-sm bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] p-5 animate-in zoom-in-95 fade-in duration-200"
         onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true"

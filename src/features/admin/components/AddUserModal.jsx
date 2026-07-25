@@ -256,7 +256,7 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
   return createPortal(
     // Backdrop — clicking outside the card closes the modal.
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
       role="presentation"
     >

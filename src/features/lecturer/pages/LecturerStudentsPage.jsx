@@ -42,7 +42,7 @@ const SelectChevron = () => (
 const CoursesModal = ({ student, onClose }) => {
   if (!student) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] w-full max-w-lg max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-150" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#1b1e26]/[0.06]">
           <h3 className="text-[15px] font-semibold text-[#1b1e26]">{student.studentName} — Enrolled Courses</h3>
