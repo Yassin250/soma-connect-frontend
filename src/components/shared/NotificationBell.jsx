@@ -54,7 +54,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
   const [tab, setTab] = useState('unread');
   const [items, setItems] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [dropdownTop, setDropdownTop] = useState(0);
+  const [dropdownStyle, setDropdownStyle] = useState({});
   const buttonRef = useRef(null);
 
   const fetchNotifications = useCallback(async () => {
@@ -127,12 +127,30 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
   };
 
   return (
-    <div className="ml-auto md:ml-0" ref={ref}>
+    <div className="relative ml-auto md:ml-0" ref={ref}>
       <button
         ref={buttonRef}
         onClick={() => {
           if (!open && buttonRef.current) {
-            setDropdownTop(buttonRef.current.getBoundingClientRect().bottom + 8);
+            const rect = buttonRef.current.getBoundingClientRect();
+            if (window.innerWidth < 640) {
+              setDropdownStyle({
+                position: 'fixed',
+                top: rect.bottom + 8,
+                left: 16,
+                right: 16,
+                maxWidth: 360,
+                zIndex: 9999,
+              });
+            } else {
+              setDropdownStyle({
+                position: 'absolute',
+                top: rect.height + 8,
+                right: 0,
+                width: 360,
+                zIndex: 9999,
+              });
+            }
           }
           setOpen((o) => !o);
         }}
@@ -157,8 +175,8 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
       </button>
 
       {open && (
-        <div style={{ position: 'fixed', top: dropdownTop, zIndex: 9999 }}
-             className="left-4 right-4 max-w-[360px] bg-white rounded-2xl shadow-xl border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-150 overflow-hidden">
+        <div style={dropdownStyle}
+             className="bg-white rounded-2xl shadow-xl border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-150 overflow-hidden">
           {/* Header */}
           <div className="flex items-center gap-1 px-4 pt-4 pb-3">
             <h3 className="text-sm font-semibold text-[#1b1e26] mr-auto">Notifications</h3>
