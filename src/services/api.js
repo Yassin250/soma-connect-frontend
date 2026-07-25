@@ -901,6 +901,13 @@ export const entityProfileService = {
       throw new Error(getApiErrorMessage(error, 'Failed to load dashboard'));
     }
   },
+  listStudents: async () => {
+    try {
+      return unwrapApiResult(await apiClient.get('/api/entity/profile/students'));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load students'));
+    }
+  },
 };
 
 // ---- Super-admin: directory of all registered entities ----
