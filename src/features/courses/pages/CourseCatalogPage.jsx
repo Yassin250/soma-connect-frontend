@@ -90,7 +90,7 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
 
         {error && <p className="text-sm text-red-500 mb-4 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
 
-        <div className="flex items-center justify-center gap-3 mb-6" onPaste={handlePaste}>
+        <div className="flex items-center justify-center gap-2 mb-6" onPaste={handlePaste}>
           {digits.map((d, i) => (
             <input
               key={i}
@@ -102,7 +102,7 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
               onKeyDown={(e) => handleKeyDown(i, e)}
               onPaste={handlePaste}
               autoFocus={i === 0}
-              className="w-14 h-14 text-center text-xl font-bold font-mono tracking-wider text-[#1b1e26] bg-[#f7f8fa] border-2 border-[#1b1e26]/10 rounded-xl focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all uppercase"
+              className="w-12 h-12 text-center text-xl font-bold font-mono tracking-wider text-[#1b1e26] bg-[#f7f8fa] border-2 border-[#1b1e26]/10 rounded-xl focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all uppercase"
             />
           ))}
         </div>
