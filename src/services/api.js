@@ -462,6 +462,13 @@ export const platformCourseService = {
       throw new Error(getApiErrorMessage(error, 'Failed to load course'));
     }
   },
+  deleteCourse: async (id) => {
+    try {
+      return unwrapApiResult(await apiClient.delete(`/api/admin/courses/${id}`));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to delete course'));
+    }
+  },
 
   // ── Curriculum: granular module CRUD (admin oversight) ──────────────────
   // Module payload: { title, description, moduleType, lockedAfterPrevious, sortOrder? }

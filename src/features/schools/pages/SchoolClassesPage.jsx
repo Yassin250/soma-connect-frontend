@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
-import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
+import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
 
 const API_BASE_URL = 'http://localhost:5050/api/school';
 
@@ -409,17 +409,15 @@ export const SchoolClassesPage = () => {
         </div>
       )}
 
-      {confirmDelete && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmDelete(null)}
-          onConfirm={confirmDelete.onConfirm}
-          title={confirmDelete.title}
-          message={confirmDelete.message}
-          itemName={confirmDelete.itemName}
-          isLoading={isDeleting}
-        />
-      )}
+      <ConfirmDeleteModal
+        open={confirmDelete !== null}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={confirmDelete?.onConfirm}
+        title={confirmDelete?.title}
+        message={confirmDelete?.message}
+        itemName={confirmDelete?.itemName}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

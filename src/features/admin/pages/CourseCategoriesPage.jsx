@@ -5,6 +5,7 @@ import { courseCategoryService } from '../../../services/api';
 import { useToast } from '../../../context/ToastContext';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
+import { ConfirmDeleteModal } from '../components/CurriculumModals';
 
 const inputClass =
   'w-full rounded-xl bg-[#f7f8fa] border border-[#1b1e26]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:bg-white focus:border-[#d0f24a] focus:ring-4 focus:ring-[#d0f24a]/20 focus:outline-none transition-all';
@@ -196,6 +197,7 @@ export const CourseCategoriesPage = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -235,14 +237,12 @@ export const CourseCategoriesPage = () => {
     } catch (err) { toast.error(err.message); }
   };
 
-  const remove = async (c) => {
-    const msg = c.courseCount > 0
-      ? `Delete "${c.name}"? ${c.courseCount} course${c.courseCount === 1 ? '' : 's'} will become uncategorized.`
-      : `Delete "${c.name}"?`;
-    if (!window.confirm(msg)) return;
+  const remove = async () => {
+    if (!deleteTarget) return;
     try {
-      await courseCategoryService.remove(c.id);
+      await courseCategoryService.remove(deleteTarget.id);
       toast.success('Category deleted');
+      setDeleteTarget(null);
       await load();
     } catch (err) { toast.error(err.message); }
   };
@@ -295,7 +295,7 @@ export const CourseCategoriesPage = () => {
                 ? { label: 'Deactivate', icon: DockIcons.power, onClick: () => toggleStatus(c) }
                 : { label: 'Activate', icon: DockIcons.power, iconTone: 'text-emerald-500', onClick: () => toggleStatus(c) },
               'divider',
-              { label: 'Delete', icon: DockIcons.trash, danger: true, onClick: () => remove(c) },
+              { label: 'Delete', icon: DockIcons.trash, danger: true, onClick: () => setDeleteTarget(c) },
             ]}
           />
         </div>
@@ -433,6 +433,16 @@ export const CourseCategoriesPage = () => {
 
       <CategoryModal open={modalOpen} editing={editing} onClose={() => { setModalOpen(false); setEditing(null); }} onSubmit={save} />
       <StatusToggleModal category={statusModalCategory} onClose={() => setStatusModalCategory(null)} onConfirm={toggleStatus} />
+
+      <ConfirmDeleteModal
+        open={deleteTarget !== null}
+        title="Delete category"
+        message={deleteTarget?.courseCount > 0
+          ? `Delete "${deleteTarget.name}"? ${deleteTarget.courseCount} course${deleteTarget.courseCount === 1 ? '' : 's'} will become uncategorized.`
+          : `Delete "${deleteTarget?.name || ''}"? This action cannot be undone.`}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={remove}
+      />
     </div>
   );
 };

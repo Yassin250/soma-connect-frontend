@@ -160,7 +160,7 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
   const isEditMode = !!editingUser;
 
   const entityRoles = ['ENTITY_ADMIN', 'STUDENT'];
-  const showEntitySelect = roleIds.some((rid) => {
+  const showEntitySelect = fetchEntities && roleIds.some((rid) => {
     const r = roles.find((rr) => String(rr.id) === rid);
     return r && entityRoles.includes(r.name);
   });

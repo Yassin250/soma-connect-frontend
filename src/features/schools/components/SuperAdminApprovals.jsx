@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
-import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
+import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
 
 const API_BASE_URL = 'http://localhost:5050/api/admin';
 const SCHOOL_API_BASE_URL = 'http://localhost:5050/api/school';
@@ -404,8 +404,8 @@ export const SuperAdminApprovals = () => {
         </div>
       )}
 
-      <ConfirmDialog
-        isOpen={isDeleteModalOpen}
+      <ConfirmDeleteModal
+        open={isDeleteModalOpen}
         onClose={() => { setIsDeleteModalOpen(false); setSchoolToDelete(null); }}
         onConfirm={handleDeleteConfirm}
         title="Delete School"

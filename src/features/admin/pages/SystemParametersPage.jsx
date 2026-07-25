@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
+import { ConfirmDeleteModal } from '../components/CurriculumModals';
 import { useToast } from '../../../context/ToastContext';
 import { adminService } from '../../../services/api';
 import { AddSystemParameterModal } from '../components/AddSystemParameterModal';
@@ -30,6 +31,7 @@ export const SystemParametersPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingParameter, setEditingParameter] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const fetchParameters = useCallback(async () => {
     setLoading(true);
@@ -85,12 +87,13 @@ export const SystemParametersPage = () => {
     }
   };
 
-  const handleDelete = async (parameter) => {
-    if (!window.confirm(`Delete parameter "${parameter.name}"?`)) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await adminService.deleteSystemParameter(parameter.id);
+      await adminService.deleteSystemParameter(deleteTarget.id);
       await fetchParameters();
       toast.success('System parameter deleted');
+      setDeleteTarget(null);
     } catch (err) {
       toast.error(err.message || 'Delete failed');
     }
@@ -181,7 +184,7 @@ export const SystemParametersPage = () => {
                 label: 'Delete',
                 icon: DockIcons.trash,
                 danger: true,
-                onClick: () => handleDelete(parameter),
+                onClick: () => setDeleteTarget(parameter),
               },
             ]}
           />
@@ -269,6 +272,14 @@ export const SystemParametersPage = () => {
           editingParameter={editingParameter}
         />
       )}
+
+      <ConfirmDeleteModal
+        open={deleteTarget !== null}
+        title="Delete parameter"
+        message={`Are you sure you want to delete the parameter "${deleteTarget?.name || ''}"? This action cannot be undone.`}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

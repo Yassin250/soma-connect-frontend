@@ -4,6 +4,7 @@ import { platformCourseService, platformEntityService } from '../../../services/
 import { useToast } from '../../../context/ToastContext';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
+import { ConfirmDeleteModal } from '../components/CurriculumModals';
 import { CourseStatusPill, humanize } from '../../courses/CourseDetailView';
 
 const filterFieldClass =
@@ -36,6 +37,7 @@ export const CoursesPage = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
   // Category filter is URL-driven so the Categories page can deep-link into a
   // pre-filtered view (…/admin/courses?category=AI%20Development).
   const categoryFilter = searchParams.get('category') || '';
@@ -60,6 +62,18 @@ export const CoursesPage = () => {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  const handleDeleteCourse = async () => {
+    if (!deleteTarget) return;
+    try {
+      await platformCourseService.deleteCourse(deleteTarget.id);
+      toast.success('Course deleted');
+      setDeleteTarget(null);
+      await load();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   // Institution dropdown options — the entity directory (paged endpoint).
   useEffect(() => {
@@ -160,6 +174,7 @@ export const CoursesPage = () => {
             items={[
               { label: 'Edit course', icon: EDIT_ICON, iconTone: 'text-[#1b1e26]/60', onClick: () => navigate(`/admin/courses/${c.id}/edit`) },
               { label: 'Modules', icon: MODULES_ICON, iconTone: 'text-[#1b1e26]/60', onClick: () => navigate(`/admin/courses/${c.id}/modules`) },
+              { label: 'Delete', icon: DockIcons.trash, danger: true, onClick: () => setDeleteTarget(c) },
             ]}
           />
         </div>
@@ -296,6 +311,14 @@ export const CoursesPage = () => {
             ? 'Courses appear here as institutions create them.'
             : 'No courses match the current filters.'
         }
+      />
+
+      <ConfirmDeleteModal
+        open={deleteTarget !== null}
+        title="Delete course"
+        message={`Are you sure you want to delete "${deleteTarget?.title || ''}"? This action cannot be undone.`}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteCourse}
       />
     </div>
   );

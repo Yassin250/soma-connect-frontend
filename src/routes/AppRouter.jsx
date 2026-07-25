@@ -71,6 +71,10 @@ import { LearnerDashboard } from '../features/learning/pages/LearnerDashboard';
 import { CourseCatalogPage } from '../features/courses/pages/CourseCatalogPage';
 import { LearnerNotificationsPage } from '../features/learning/pages/LearnerNotificationsPage';
 import { LearnerAccountPage } from '../features/learning/pages/LearnerAccountPage';
+import { LecturerDashboardPage } from '../features/lecturer/pages/LecturerDashboardPage';
+import { LecturerAccountPage } from '../features/lecturer/pages/LecturerAccountPage';
+import { LecturerNotificationsPage } from '../features/lecturer/pages/LecturerNotificationsPage';
+import { LecturerLayout } from '../features/lecturer/layouts/LecturerLayout';
 
 // Platform-console permissions. The backend guards /api/admin/** with these exact
 // authorities, so the UI must gate on them too (not on role names) or a user can
@@ -219,7 +223,24 @@ export const AppRouter = () => {
           <Route path="/learning/notifications" element={<LearnerNotificationsPage />} />
           <Route path="/learner/account" element={<LearnerAccountPage />} />
           <Route path="/courses" element={<CourseCatalogPage />} />
-          <Route path="/lecturer/dashboard" element={<div>Lecturer Dashboard</div>} />
+        </Route>
+
+        <Route element={<ProtectedRoute><LecturerLayout /></ProtectedRoute>}>
+          <Route path="/lecturer/dashboard" element={<LecturerDashboardPage />} />
+          <Route path="/lecturer/courses" element={
+            <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Courses — Under Development</div>
+          } />
+          <Route path="/lecturer/students" element={
+            <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Students — Under Development</div>
+          } />
+          <Route path="/lecturer/assignments" element={
+            <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Assignments — Under Development</div>
+          } />
+          <Route path="/lecturer/timetable" element={
+            <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Timetable — Under Development</div>
+          } />
+          <Route path="/lecturer/account" element={<LecturerAccountPage />} />
+          <Route path="/lecturer/notifications" element={<LecturerNotificationsPage />} />
         </Route>
 
         {/* The public landing page is the front door of the app */}

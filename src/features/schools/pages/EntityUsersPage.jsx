@@ -82,8 +82,6 @@ const normalizeUserRoles = (user, rolesByName) => {
   return [...uniqueByKey.values()];
 };
 
-const prettyPermission = (permissionName) => permissionName.replace(/_/g, ' ');
-
 export const EntityUsersPage = () => {
   const { user: currentUser } = useAuth();
 
@@ -103,10 +101,6 @@ export const EntityUsersPage = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const rolesById = useMemo(
-    () => new Map(roles.map((role) => [String(role.id), role])),
-    [roles]
-  );
   const rolesByName = useMemo(
     () => new Map(roles.map((role) => [String(role.name || '').toLowerCase(), role])),
     [roles]
@@ -149,29 +143,6 @@ export const EntityUsersPage = () => {
       ? userRoles.map((role) => role.name || String(role.id)).join(', ')
       : 'None';
   }, [rolesByName]);
-
-  const permissionNamesForUser = (user) => {
-    const roleItems = normalizeUserRoles(user, rolesByName);
-    const permissions = new Set();
-    roleItems.forEach((role) => {
-      if (Array.isArray(role.permissions)) {
-        role.permissions.forEach((permission) => {
-          const permissionName = permission?.name || permission;
-          if (permissionName) permissions.add(String(permissionName));
-        });
-      }
-      const catalogRole = role.id != null
-        ? rolesById.get(String(role.id))
-        : rolesByName.get(String(role.name || '').toLowerCase());
-      if (catalogRole?.permissions) {
-        catalogRole.permissions.forEach((permission) => {
-          const permissionName = permission?.name || permission;
-          if (permissionName) permissions.add(String(permissionName));
-        });
-      }
-    });
-    return [...permissions];
-  };
 
   const handleSaveUser = async (userData) => {
     const roleIds = Array.isArray(userData.roleIds)
@@ -265,26 +236,6 @@ export const EntityUsersPage = () => {
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#d0f24a] ring-1 ring-[#1b1e26]/20 shrink-0" />
                 {role.name}
-              </span>
-            ))}
-          </div>
-        );
-      },
-    },
-    {
-      key: 'permissions',
-      header: 'Permissions',
-      render: (user) => {
-        const userPermissions = permissionNamesForUser(user);
-        if (userPermissions.length === 0) return <span className="text-[11px] text-gray-300">—</span>;
-        return (
-          <div className="flex flex-wrap gap-1.5">
-            {userPermissions.map((permissionName) => (
-              <span
-                key={permissionName}
-                className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200"
-              >
-                {prettyPermission(permissionName)}
               </span>
             ))}
           </div>

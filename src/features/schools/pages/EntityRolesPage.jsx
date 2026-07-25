@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { entityRoleService } from '../../../services/api';
-import { AddRoleModal } from '../../admin/components/AddRoleModal';
+import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
 
@@ -14,11 +14,10 @@ export const EntityRolesPage = () => {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
 
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState(null);
   const [permModalRole, setPermModalRole] = useState(null);
   const [selectedPermIds, setSelectedPermIds] = useState(new Set());
   const [permSaving, setPermSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const fetchRoles = useCallback(async () => {
     setLoading(true);
@@ -51,35 +50,13 @@ export const EntityRolesPage = () => {
     setTimeout(() => setNotice(''), 3000);
   };
 
-  const handleAddOrUpdateRole = async (roleData) => {
+  const remove = async () => {
+    if (!deleteTarget) return;
     try {
-      if (editingRole) {
-        await entityRoleService.update(editingRole.id, {
-          name: roleData.name,
-          description: roleData.description,
-        });
-        flash('Role updated.');
-      } else {
-        await entityRoleService.create({
-          name: roleData.name,
-          description: roleData.description,
-        });
-        flash('Role created.');
-      }
-      await fetchRoles();
-      setIsRoleModalOpen(false);
-      setEditingRole(null);
-    } catch (err) {
-      setError(err.message || 'Save failed');
-    }
-  };
-
-  const remove = async (role) => {
-    if (!window.confirm(`Delete role "${role.name}"?`)) return;
-    try {
-      await entityRoleService.remove(role.id);
+      await entityRoleService.remove(deleteTarget.id);
       await fetchRoles();
       flash('Role deleted.');
+      setDeleteTarget(null);
     } catch (err) {
       setError(err.message || 'Delete failed');
       setTimeout(() => setError(''), 4000);
@@ -140,15 +117,23 @@ export const EntityRolesPage = () => {
     {
       key: 'permissions',
       header: 'Permissions',
-      render: (role) => (
-        <button
-          onClick={() => openPermModal(role)}
-          title="Manage permissions"
-          className="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full bg-[#d0f24a] text-[#1b1e26] text-[11px] font-bold shadow-sm hover:bg-[#c4e83a] transition-all"
-        >
-          {role.permissions?.length ?? 0}
-        </button>
-      ),
+      render: (role) => {
+        const isPlatform = !role.ownerEntityId;
+        return (
+          <button
+            onClick={() => !isPlatform && openPermModal(role)}
+            disabled={isPlatform}
+            title={isPlatform ? 'Predefined permissions' : 'Manage permissions'}
+            className={`inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full text-[11px] font-bold shadow-sm transition-all ${
+              isPlatform
+                ? 'bg-gray-200 text-gray-500 cursor-default'
+                : 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] cursor-pointer'
+            }`}
+          >
+            {role.permissions?.length ?? 0}
+          </button>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -165,31 +150,27 @@ export const EntityRolesPage = () => {
       width: '132px',
       render: (role) => (
         <div className="flex justify-end">
-          <RowActionMenu
-            primary={{
-              label: 'Edit',
-              icon: DockIcons.edit,
-              onClick: () => {
-                setEditingRole(role);
-                setIsRoleModalOpen(true);
-              },
-            }}
-            items={[
-              {
-                label: 'Permissions',
-                icon: DockIcons.shield,
-                iconTone: 'text-[#1b1e26]/60',
-                onClick: () => openPermModal(role),
-              },
-              'divider',
-              {
-                label: 'Delete role',
-                icon: DockIcons.trash,
-                danger: true,
-                onClick: () => remove(role),
-              },
-            ]}
-          />
+          {role.ownerEntityId ? (
+            <RowActionMenu
+              items={[
+                {
+                  label: 'Permissions',
+                  icon: DockIcons.shield,
+                  iconTone: 'text-[#1b1e26]/60',
+                  onClick: () => openPermModal(role),
+                },
+                'divider',
+                {
+                  label: 'Delete role',
+                  icon: DockIcons.trash,
+                  danger: true,
+                  onClick: () => setDeleteTarget(role),
+                },
+              ]}
+            />
+          ) : (
+            <span className="text-[11px] text-gray-400 italic">Predefined</span>
+          )}
         </div>
       ),
     },
@@ -203,19 +184,6 @@ export const EntityRolesPage = () => {
           <h1 className="text-[19px] font-medium tracking-tight mt-1.5 text-[#1b1e26]">Roles &amp; Permissions</h1>
           <p className="text-[12px] text-slate-500 mt-1">Define roles for your institution and choose which permissions they grant.</p>
         </div>
-        <button
-          onClick={() => {
-            setEditingRole(null);
-            setIsRoleModalOpen(true);
-          }}
-          className="bg-[#1b1e26] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M12 8v6M9 11h6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          New Role
-        </button>
       </div>
 
       {notice && <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">{notice}</div>}
@@ -235,17 +203,6 @@ export const EntityRolesPage = () => {
         emptyMessage="Create your first role to get started."
       />
 
-      {isRoleModalOpen && (
-        <AddRoleModal
-          isOpen={isRoleModalOpen}
-          onClose={() => {
-            setIsRoleModalOpen(false);
-            setEditingRole(null);
-          }}
-          onSubmit={handleAddOrUpdateRole}
-          editingRole={editingRole}
-        />
-      )}
 
       {permModalRole && createPortal(
         <div
@@ -335,6 +292,14 @@ export const EntityRolesPage = () => {
         </div>,
         document.body
       )}
+
+      <ConfirmDeleteModal
+        open={deleteTarget !== null}
+        title="Delete role"
+        message={`Are you sure you want to delete the role "${deleteTarget?.name || ''}"? This action cannot be undone.`}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={remove}
+      />
     </div>
   );
 };

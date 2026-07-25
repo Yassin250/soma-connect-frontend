@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { AddRoleModal } from '../components/AddRoleModal';
+import { ConfirmDeleteModal } from '../components/CurriculumModals';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
 import { useToast } from '../../../context/ToastContext';
 import { adminService } from '../../../services/api';
@@ -96,19 +97,21 @@ export const RolesPage = () => {
       toast.success('Role status updated');
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setIsDeleting(false);
     }
   };
 
-  const handleDelete = async (role) => {
-    if (!window.confirm(`Delete role "${role.name}"?`)) return;
+  const executeDelete = async () => {
+    if (!confirmDelete) return;
+    setIsDeleting(true);
     try {
-      await adminService.deleteRole(role.id);
+      await adminService.deleteRole(confirmDelete.id);
       await fetchRoles();
       toast.success('Role deleted');
+      setConfirmDelete(null);
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -302,7 +305,7 @@ export const RolesPage = () => {
                               ? { label: 'Activate role', icon: DockIcons.power, iconTone: 'text-emerald-500', onClick: () => handleToggleStatus(role) }
                               : { label: 'Deactivate role', icon: DockIcons.power, onClick: () => handleToggleStatus(role) },
                             'divider',
-                            { label: 'Delete role', icon: DockIcons.trash, danger: true, onClick: () => handleDelete(role) },
+                            { label: 'Delete role', icon: DockIcons.trash, danger: true, onClick: () => setConfirmDelete(role) },
                           ]}
                         />
                       </div>
@@ -471,17 +474,15 @@ export const RolesPage = () => {
         document.body
       )}
 
-      {confirmDelete && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmDelete(null)}
-          onConfirm={executeDelete}
-          title={confirmDelete.title}
-          message={confirmDelete.message}
-          itemName={confirmDelete.itemName}
-          isLoading={isDeleting}
-        />
-      )}
+      <ConfirmDeleteModal
+        open={confirmDelete !== null}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={executeDelete}
+        title="Delete role"
+        message="Are you sure you want to delete the role "
+        itemName={confirmDelete?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

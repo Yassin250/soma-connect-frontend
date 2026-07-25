@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { entityCourseService } from '../../../services/api';
 import { useToast } from '../../../context/ToastContext';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
+import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
 import { CourseStatusPill, humanize } from '../../courses/CourseDetailView';
 
 const FILTERS = [
@@ -19,6 +20,7 @@ export const SchoolCoursesPage = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -56,11 +58,12 @@ export const SchoolCoursesPage = () => {
     }
   };
 
-  const remove = async (course) => {
-    if (!window.confirm(`Delete "${course.title}"? This removes its whole curriculum and cannot be undone.`)) return;
+  const remove = async () => {
+    if (!deleteTarget) return;
     try {
-      await entityCourseService.remove(course.id);
+      await entityCourseService.remove(deleteTarget.id);
       toast.success('Course deleted');
+      setDeleteTarget(null);
       await load();
     } catch (err) {
       toast.error(err.message);
@@ -205,7 +208,7 @@ export const SchoolCoursesPage = () => {
                       { label: 'Edit course', icon: DockIcons.edit, onClick: () => navigate(`/school/courses/${c.id}/edit`) },
                       statusAction(c),
                       'divider',
-                      { label: 'Delete course', icon: DockIcons.trash, danger: true, onClick: () => remove(c) },
+                      { label: 'Delete course', icon: DockIcons.trash, danger: true, onClick: () => setDeleteTarget(c) },
                     ]}
                   />
                 </div>
@@ -214,6 +217,14 @@ export const SchoolCoursesPage = () => {
           ))}
         </div>
       )}
+
+      <ConfirmDeleteModal
+        open={deleteTarget !== null}
+        title="Delete course"
+        message={`Are you sure you want to delete "${deleteTarget?.title || ''}"? This removes its whole curriculum and cannot be undone.`}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={remove}
+      />
     </div>
   );
 };
