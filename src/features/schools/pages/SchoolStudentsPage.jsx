@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { entityProfileService, entityUserService } from '../../../services/api';
 import { DataTable } from '../../../components/shared/DataTable';
 import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
@@ -63,7 +64,7 @@ const SelectChevron = () => (
 
 const CoursesModal = ({ student, onClose }) => {
   if (!student) return null;
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] w-full max-w-lg max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-150" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#1b1e26]/[0.06]">
@@ -94,7 +95,8 @@ const CoursesModal = ({ student, onClose }) => {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

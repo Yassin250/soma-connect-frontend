@@ -1,9 +1,10 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 export const Modal = ({ isOpen, onClose, title, children, footer, className = '' }) => {
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div 
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
@@ -31,6 +32,7 @@ export const Modal = ({ isOpen, onClose, title, children, footer, className = ''
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
