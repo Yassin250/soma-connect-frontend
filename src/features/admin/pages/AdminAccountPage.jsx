@@ -140,6 +140,7 @@ export const AdminAccountPage = () => {
               <DetailCard label="Full Name" value={user?.name} />
               <DetailCard label="Email Address" value={user?.email} />
               <DetailCard label="Username" value={user?.username} />
+              {user?.entityName && <DetailCard label="Institution" value={user?.entityName} />}
               <DetailCard label="Roles" value={roles.join(', ')} />
             </div>
           </div>
