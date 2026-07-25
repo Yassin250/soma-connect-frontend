@@ -661,11 +661,19 @@ export const learnerCourseService = {
       throw new Error(getApiErrorMessage(error, 'Failed to load course'));
     }
   },
-  completeItem: async (courseId, itemId) => {
+  completeItem: async (courseId, itemId, score) => {
     try {
-      return unwrapApiResult(await apiClient.post(`/api/learner/courses/${courseId}/items/${itemId}/complete`));
+      return unwrapApiResult(await apiClient.post(`/api/learner/courses/${courseId}/items/${itemId}/complete`,
+        score !== undefined ? { score } : undefined));
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to save your progress'));
+    }
+  },
+  getGrades: async () => {
+    try {
+      return unwrapApiResult(await apiClient.get('/api/learner/grades'));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load grades'));
     }
   },
 };

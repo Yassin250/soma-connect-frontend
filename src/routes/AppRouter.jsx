@@ -71,6 +71,7 @@ import { LearnerDashboard } from '../features/learning/pages/LearnerDashboard';
 import { CourseCatalogPage } from '../features/courses/pages/CourseCatalogPage';
 import { LearnerNotificationsPage } from '../features/learning/pages/LearnerNotificationsPage';
 import { LearnerAccountPage } from '../features/learning/pages/LearnerAccountPage';
+import GradesPage from '../features/learning/pages/GradesPage';
 import { LecturerDashboardPage } from '../features/lecturer/pages/LecturerDashboardPage';
 import { LecturerAccountPage } from '../features/lecturer/pages/LecturerAccountPage';
 import { LecturerNotificationsPage } from '../features/lecturer/pages/LecturerNotificationsPage';
@@ -220,6 +221,7 @@ export const AppRouter = () => {
 
         <Route element={<ProtectedRoute><LearningLayout /></ProtectedRoute>}>
           <Route path="/learning/dashboard" element={<LearnerDashboard />} />
+          <Route path="/learning/grades" element={<GradesPage />} />
           <Route path="/learning/notifications" element={<LearnerNotificationsPage />} />
           <Route path="/learner/account" element={<LearnerAccountPage />} />
           <Route path="/courses" element={<CourseCatalogPage />} />
