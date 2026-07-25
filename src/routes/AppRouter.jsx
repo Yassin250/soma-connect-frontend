@@ -72,6 +72,7 @@ import { CourseCatalogPage } from '../features/courses/pages/CourseCatalogPage';
 import { LearnerNotificationsPage } from '../features/learning/pages/LearnerNotificationsPage';
 import { LearnerAccountPage } from '../features/learning/pages/LearnerAccountPage';
 import GradesPage from '../features/learning/pages/GradesPage';
+import MyCoursesPage from '../features/learning/pages/MyCoursesPage';
 import { LecturerDashboardPage } from '../features/lecturer/pages/LecturerDashboardPage';
 import { LecturerAccountPage } from '../features/lecturer/pages/LecturerAccountPage';
 import { LecturerNotificationsPage } from '../features/lecturer/pages/LecturerNotificationsPage';
@@ -222,6 +223,7 @@ export const AppRouter = () => {
         <Route element={<ProtectedRoute><LearningLayout /></ProtectedRoute>}>
           <Route path="/learning/dashboard" element={<LearnerDashboard />} />
           <Route path="/learning/grades" element={<GradesPage />} />
+          <Route path="/learning/my-courses" element={<MyCoursesPage />} />
           <Route path="/learning/assignments" element={
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <span className="w-16 h-16 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mb-4">
