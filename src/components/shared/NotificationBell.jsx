@@ -149,7 +149,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-[360px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100 z-[100] animate-in fade-in slide-in-from-top-1 duration-150 overflow-hidden">
+        <div className="absolute right-0 sm:right-0 mt-2 w-[90vw] sm:w-[360px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[100] animate-in fade-in slide-in-from-top-1 duration-150 overflow-hidden">
           {/* Header */}
           <div className="flex items-center gap-1 px-4 pt-4 pb-3">
             <h3 className="text-sm font-semibold text-[#1b1e26] mr-auto">Notifications</h3>
