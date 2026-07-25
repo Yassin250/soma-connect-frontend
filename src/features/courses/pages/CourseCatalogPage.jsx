@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { publicCourseService } from '../../../services/api';
+import { useAuth } from '../../../context/AuthContext';
+import { publicCourseService, learnerCourseService } from '../../../services/api';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
@@ -20,20 +21,118 @@ const GRADIENTS = [
 const gradFor = (str = '') =>
   GRADIENTS[[...String(str)].reduce((a, ch) => a + ch.charCodeAt(0), 0) % GRADIENTS.length];
 
+const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
+  const [digits, setDigits] = useState(Array(6).fill(''));
+  const [error, setError] = useState('');
+  const refs = Array.from({ length: 6 }, () => React.useRef());
+
+  if (!open) return null;
+
+  const focusNext = (idx) => { if (idx < 5) refs[idx + 1].current?.focus(); };
+  const focusPrev = (idx) => { if (idx > 0) refs[idx - 1].current?.focus(); };
+
+  const handleChange = (idx, value) => {
+    setError('');
+    const c = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 1);
+    const next = [...digits];
+    next[idx] = c;
+    setDigits(next);
+    if (c) focusNext(idx);
+
+    const full = next.join('');
+    if (full.length === 6) {
+      onSubmit(full);
+      setDigits(Array(6).fill(''));
+    }
+  };
+
+  const handleKeyDown = (idx, e) => {
+    if (e.key === 'Backspace' && !digits[idx]) focusPrev(idx);
+    if (e.key === 'Enter') {
+      const full = digits.join('');
+      if (full.length === 6) {
+        onSubmit(full);
+        setDigits(Array(6).fill(''));
+      } else {
+        setError('Please enter all 6 characters of the enrollment code');
+      }
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    const next = Array(6).fill('');
+    for (let i = 0; i < pasted.length; i++) next[i] = pasted[i];
+    setDigits(next);
+    setError('');
+    if (pasted.length === 6) {
+      onSubmit(pasted);
+      setDigits(Array(6).fill(''));
+    } else if (pasted.length > 0) {
+      refs[pasted.length].current?.focus();
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
+        className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 sm:p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-lg font-bold text-[#1b1e26] mb-1">Enrollment Code Required</h2>
+        <p className="text-sm text-gray-400 mb-6">Enter the 6-character code to enroll in <strong className="text-[#1b1e26]">{courseTitle}</strong></p>
+
+        {error && <p className="text-sm text-red-500 mb-4 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+
+        <div className="flex items-center justify-center gap-2.5 mb-6" onPaste={handlePaste}>
+          {digits.map((d, i) => (
+            <input
+              key={i}
+              ref={refs[i]}
+              type="text"
+              maxLength={1}
+              value={d}
+              onChange={(e) => handleChange(i, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(i, e)}
+              autoFocus={i === 0}
+              className="w-11 h-12 text-center text-lg font-bold font-mono tracking-wider text-[#1b1e26] bg-[#f7f8fa] border-2 border-[#1b1e26]/10 rounded-xl focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all uppercase"
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <button onClick={() => { setDigits(Array(6).fill('')); setError(''); onClose(); }} className="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-400 hover:text-[#1b1e26] hover:bg-gray-100 transition-all">Cancel</button>
+          <button onClick={() => { const full = digits.join(''); if (full.length === 6) { onSubmit(full); setDigits(Array(6).fill('')); } else setError('Please enter all 6 characters'); }} className="px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-all">Enroll</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export const CourseCatalogPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [codeModalCourse, setCodeModalCourse] = useState(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const data = await publicCourseService.list();
+        const data = user
+          ? await learnerCourseService.listCatalog()
+          : await publicCourseService.list();
         setCourses(Array.isArray(data) ? data : []);
       } catch (err) {
         setError(err.message || 'Failed to load courses');
@@ -42,7 +141,7 @@ export const CourseCatalogPage = () => {
       }
     };
     fetchCourses();
-  }, []);
+  }, [user]);
 
   const categories = ['All', ...new Set(courses.map((c) => c.category || 'Uncategorized').filter(Boolean))];
 
@@ -52,11 +151,28 @@ export const CourseCatalogPage = () => {
     return matchSearch && matchCat;
   });
 
-  const handleExplore = (courseId) => {
-    navigate(`/learning/course/${courseId}`);
+  const handleExplore = (course) => {
+    if (user && course.enrollmentCode) {
+      setCodeModalCourse(course);
+    } else {
+      navigate(`/learning/course/${course.id}`);
+    }
+  };
+
+  const handleEnrollWithCode = async (code) => {
+    if (!codeModalCourse) return;
+    try {
+      await learnerCourseService.enrollWithCode(codeModalCourse.id, code);
+      navigate(`/learning/course/${codeModalCourse.id}`);
+    } catch (err) {
+      // error will be shown by the course learning page if enrollment fails
+      navigate(`/learning/course/${codeModalCourse.id}`);
+    }
+    setCodeModalCourse(null);
   };
 
   return (
+    <>
     <div>
         <motion.div {...fadeUp} className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Course Catalog</h1>
@@ -114,10 +230,10 @@ export const CourseCatalogPage = () => {
               <motion.div
                 key={course.id}
                 {...fadeUp}
-                onClick={() => handleExplore(course.id)}
+                onClick={() => handleExplore(course)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleExplore(course.id); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleExplore(course); }}
                 className="group cursor-pointer flex flex-col h-full rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden hover:shadow-[0_16px_44px_rgba(27,30,38,0.13)] hover:-translate-y-1 transition-all duration-300"
               >
                 <div className={`relative h-32 bg-gradient-to-br ${gradFor(course.title)}`}>
@@ -143,7 +259,12 @@ export const CourseCatalogPage = () => {
                 </div>
 
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="text-sm font-bold text-[#1b1e26] leading-snug line-clamp-2">{course.title}</h3>
+                  <h3 className="text-sm font-bold text-[#1b1e26] leading-snug line-clamp-2">
+                    {course.title}
+                    {course.enrollmentCode && (
+                      <span className="ml-2 inline-block text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full align-middle">Code</span>
+                    )}
+                  </h3>
                   {course.summary && (
                     <p className="mt-1.5 text-xs text-gray-500 leading-relaxed line-clamp-2">{course.summary}</p>
                   )}
@@ -175,6 +296,14 @@ export const CourseCatalogPage = () => {
           </div>
         )}
       </div>
+
+      <EnrollCodeModal
+        open={!!codeModalCourse}
+        courseTitle={codeModalCourse?.title}
+        onSubmit={handleEnrollWithCode}
+        onClose={() => setCodeModalCourse(null)}
+      />
+    </>
   );
 };
 

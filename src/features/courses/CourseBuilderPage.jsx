@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { entityCourseService, entityUserService, courseCategoryService, fileService, platformCourseService, platformEntityService } from '../../services/api';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { entityCourseService, entityUserService, courseCategoryService, fileService, platformCourseService, platformEntityService, lecturerCourseService } from '../../services/api';
 import { CoverImageDropzone, AttachmentDropzone } from '../../components/shared/UploadDropzone';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
@@ -32,7 +32,7 @@ const EMPTY_BASICS = {
   entityId: '', title: '', code: '', summary: '', description: '', coverImageUrl: '', categoryId: '',
   level: '', deliveryMode: 'SELF_PACED', enrollmentPolicy: 'OPEN', enrollmentLimit: '',
   startDate: '', endDate: '', estimatedHours: '', passingScore: '',
-  certificateEnabled: false, instructorId: '',
+  certificateEnabled: false, instructorId: '', enrollmentCode: '',
 };
 
 const newObjective = () => ({ code: '', description: '' });
@@ -77,18 +77,20 @@ const GroupDivider = ({ label }) => (
 
 export const CourseBuilderPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
   const { id } = useParams();
   const { user } = useAuth();
   const isEdit = !!id;
+  const isLecturer = location.pathname.startsWith('/lecturer/');
   // Platform admins have no entity of their own — they author on an
   // institution's behalf and must pick which one. Entity admins are scoped to
   // their own entity, so the picker is hidden and the backend forces the scope.
-  const isPlatformAuthor = !user?.entityId;
+  const isPlatformAuthor = !isLecturer && !user?.entityId;
 
   // Where "leave the builder" goes — platform admins live under /admin,
-  // entity admins under /school. Used by the back arrow AND Cancel.
-  const exitTo = isPlatformAuthor ? '/admin/courses' : '/school/courses';
+  // entity admins under /school, lecturers under /lecturer.
+  const exitTo = isPlatformAuthor ? '/admin/courses' : isLecturer ? '/lecturer/courses' : '/school/courses';
 
   const [step, setStep] = useState(0);
   const [basics, setBasics] = useState(EMPTY_BASICS);
@@ -100,6 +102,16 @@ export const CourseBuilderPage = () => {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [stepError, setStepError] = useState('');
+
+  // Create mode for lecturers: auto-generate enrollment code.
+  useEffect(() => {
+    if (isLecturer && !isEdit) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      setBasics((p) => ({ ...p, enrollmentCode: code }));
+    }
+  }, [isLecturer, isEdit]);
 
   // The layout's <main> owns the scrollbar. When the step changes, bring the
   // wizard back to the top so each step starts at its heading.
@@ -129,11 +141,12 @@ export const CourseBuilderPage = () => {
 
   // Edit mode: hydrate the wizard from the existing course. Platform authors
   // load through the admin (cross-entity) endpoint; entity authors through
-  // their own scoped one.
+  // their own scoped one; lecturers through their own endpoint.
   useEffect(() => {
     if (!isEdit) return;
     let cancelled = false;
-    (isPlatformAuthor ? platformCourseService.getOne(id) : entityCourseService.getOne(id))
+    const api = isPlatformAuthor ? platformCourseService : isLecturer ? lecturerCourseService : entityCourseService;
+    api.getOne(id)
       .then((c) => {
         if (cancelled) return;
         setBasics({
@@ -147,6 +160,7 @@ export const CourseBuilderPage = () => {
           endDate: c.endDate || '', estimatedHours: c.estimatedHours ?? '',
           passingScore: c.passingScore ?? '', certificateEnabled: !!c.certificateEnabled,
           instructorId: c.instructorId || '',
+          enrollmentCode: c.enrollmentCode || '',
         });
         setObjectives(
           (c.objectives || []).length > 0
@@ -229,6 +243,7 @@ export const CourseBuilderPage = () => {
     deliveryMode: basics.deliveryMode,
     enrollmentPolicy: basics.enrollmentPolicy,
     enrollmentLimit: basics.enrollmentLimit === '' ? null : Number(basics.enrollmentLimit),
+    enrollmentCode: basics.enrollmentCode.trim() || null,
     startDate: basics.startDate || null,
     endDate: basics.endDate || null,
     estimatedHours: basics.estimatedHours === '' ? null : Number(basics.estimatedHours),
@@ -277,11 +292,12 @@ export const CourseBuilderPage = () => {
 
     setSaving(true);
     try {
+      const api = isPlatformAuthor ? platformCourseService : isLecturer ? lecturerCourseService : entityCourseService;
       const saved = isEdit
-        ? await entityCourseService.update(id, payload)
-        : await entityCourseService.create(payload);
+        ? await api.update(id, payload)
+        : await api.create(payload);
       toast.success(publish ? 'Course published' : isEdit ? 'Course updated' : 'Course saved as draft');
-      navigate(isPlatformAuthor ? `/admin/courses/${saved.id}` : `/school/courses/${saved.id}`);
+      navigate(`${exitTo}/${saved.id}`);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -448,6 +464,10 @@ export const CourseBuilderPage = () => {
                 <input type="number" min="1" value={basics.enrollmentLimit} onChange={setB('enrollmentLimit')} placeholder="Unlimited" className={fieldClass} />
               </div>
               <div>
+                <label className={labelClass}>Enrollment code</label>
+                <input type="text" maxLength="6" value={basics.enrollmentCode} onChange={setB('enrollmentCode')} placeholder="Optional — 6 chars" className={fieldClass + ' font-mono'} />
+              </div>
+              <div>
                 <label className={labelClass}>Estimated hours</label>
                 <input type="number" min="1" value={basics.estimatedHours} onChange={setB('estimatedHours')} placeholder="e.g. 40" className={fieldClass} />
               </div>
@@ -467,13 +487,19 @@ export const CourseBuilderPage = () => {
               </div>
               {/* Instructor comes from the institution's own staff — only entity
                   authors can assign one; the school can set it later otherwise. */}
-              {!isPlatformAuthor && (
+              {!isPlatformAuthor && !isLecturer && (
                 <div className="col-span-2 sm:col-span-1">
                   <label className={labelClass}>Instructor</label>
                   <select value={basics.instructorId} onChange={setB('instructorId')} className={selectClass}>
                     <option value="">Not assigned</option>
                     {staff.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
                   </select>
+                </div>
+              )}
+              {isLecturer && (
+                <div className="col-span-2 sm:col-span-1">
+                  <label className={labelClass}>Instructor</label>
+                  <div className="text-sm font-semibold text-[#1b1e26] px-3 py-2 rounded-lg bg-[#f7f8fa] border border-[#1b1e26]/10">{user?.name}</div>
                 </div>
               )}
             </div>
@@ -804,7 +830,7 @@ export const CourseBuilderPage = () => {
               </div>
               {[
                 ['Code', basics.code], ['Category', categories.find((c) => c.id === basics.categoryId)?.name], ['Level', humanize(basics.level) === '—' ? '' : humanize(basics.level)],
-                ['Enrollment', humanize(basics.enrollmentPolicy)], ['Instructor', staff.find((u) => u.id === basics.instructorId)?.name],
+                ['Enrollment', humanize(basics.enrollmentPolicy)], ['Enrollment code', basics.enrollmentCode || '—'], ['Instructor', staff.find((u) => u.id === basics.instructorId)?.name],
                 ['Certificate', basics.certificateEnabled ? 'Yes' : 'No'],
               ].filter(([, v]) => v).map(([label, value]) => (
                 <div key={label} className="px-5 py-3.5 flex items-center justify-between gap-3">

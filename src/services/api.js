@@ -653,12 +653,28 @@ export const learnerCourseService = {
       throw new Error(getApiErrorMessage(error, 'Failed to load your courses'));
     }
   },
+  // Courses from the learner's institution only.
+  listCatalog: async () => {
+    try {
+      return unwrapApiResult(await apiClient.get('/api/learner/courses/catalog'));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load course catalog'));
+    }
+  },
   // Full curriculum + this learner's completion state. Auto-enrolls on first call.
   getMyCourse: async (courseId) => {
     try {
       return unwrapApiResult(await apiClient.get(`/api/learner/courses/${courseId}`));
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to load course'));
+    }
+  },
+  // Enroll with an enrollment code.
+  enrollWithCode: async (courseId, enrollmentCode) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/learner/courses/${courseId}/enroll`, { enrollmentCode }));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to enroll in course'));
     }
   },
   completeItem: async (courseId, itemId, score) => {
@@ -674,6 +690,52 @@ export const learnerCourseService = {
       return unwrapApiResult(await apiClient.get('/api/learner/grades'));
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to load grades'));
+    }
+  },
+};
+
+// ---- Lecturer: courses where I'm the instructor ----
+export const lecturerCourseService = {
+  list: async () => {
+    try {
+      return unwrapApiResult(await apiClient.get('/api/lecturer/courses'));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load your courses'));
+    }
+  },
+  getOne: async (id) => {
+    try {
+      return unwrapApiResult(await apiClient.get(`/api/lecturer/courses/${id}`));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load course'));
+    }
+  },
+  create: async (payload) => {
+    try {
+      return unwrapApiResult(await apiClient.post('/api/lecturer/courses', payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to create course'));
+    }
+  },
+  update: async (id, payload) => {
+    try {
+      return unwrapApiResult(await apiClient.put(`/api/lecturer/courses/${id}`, payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update course'));
+    }
+  },
+  setStatus: async (id, status) => {
+    try {
+      return unwrapApiResult(await apiClient.patch(`/api/lecturer/courses/${id}/status`, { status }));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update course status'));
+    }
+  },
+  remove: async (id) => {
+    try {
+      return unwrapApiResult(await apiClient.delete(`/api/lecturer/courses/${id}`));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to delete course'));
     }
   },
 };
