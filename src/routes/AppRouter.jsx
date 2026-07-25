@@ -78,6 +78,7 @@ import { LecturerAccountPage } from '../features/lecturer/pages/LecturerAccountP
 import { LecturerNotificationsPage } from '../features/lecturer/pages/LecturerNotificationsPage';
 import LecturerCoursesPage from '../features/lecturer/pages/LecturerCoursesPage';
 import LecturerSubmissionsPage from '../features/lecturer/pages/LecturerSubmissionsPage';
+import LecturerStudentsPage from '../features/lecturer/pages/LecturerStudentsPage';
 import QuizQuestionManagerPage from '../features/lecturer/pages/QuizQuestionManagerPage';
 import { LecturerLayout } from '../features/lecturer/layouts/LecturerLayout';
 
@@ -246,9 +247,7 @@ export const AppRouter = () => {
           <Route path="/lecturer/courses/new" element={<CourseBuilderPage />} />
           <Route path="/lecturer/courses/:id/edit" element={<CourseBuilderPage />} />
           <Route path="/lecturer/courses" element={<LecturerCoursesPage />} />
-          <Route path="/lecturer/students" element={
-            <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Students — Under Development</div>
-          } />
+          <Route path="/lecturer/students" element={<LecturerStudentsPage />} />
           <Route path="/lecturer/assignments" element={<LecturerSubmissionsPage />} />
           <Route path="/lecturer/items/:itemId/questions" element={<QuizQuestionManagerPage />} />
           <Route path="/lecturer/timetable" element={
