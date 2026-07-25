@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { notificationService } from '../../services/api';
 
 const TYPE_CONFIG = {
   enrollment:  { category: 'Course',   icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
@@ -40,12 +41,6 @@ export const mapNotification = (n) => {
   };
 };
 
-/**
- * Topbar notification bell with a tabbed, scrollable dropdown inbox.
- *
- * Pass raw API items via `seed`; they will be mapped automatically.
- * Each seed item: { id, title, body, createdAt, type, read, archived, link }
- */
 const TABS = [
   { id: 'all', label: 'All' },
   { id: 'unread', label: 'Unread' },
@@ -58,13 +53,35 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState('unread');
   const [items, setItems] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Auto-map raw API items on mount / seed change.
-  useEffect(() => {
-    if (!seed || seed.length === 0) { setItems([]); return; }
-    const needsMap = seed[0]?.createdAt || seed[0]?.type;
-    setItems(needsMap ? seed.map(mapNotification) : seed);
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const data = await notificationService.list({ archived: true });
+      if (Array.isArray(data) && data.length > 0) {
+        setItems(data.map(mapNotification));
+      } else {
+        setItems(seed.length > 0 ? seed.map(mapNotification) : []);
+      }
+    } catch {
+      if (seed.length > 0) setItems(seed.map(mapNotification));
+    }
   }, [seed]);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const result = await notificationService.unreadCount();
+      setUnreadCount(result?.count ?? 0);
+    } catch {
+      const local = items.filter((n) => n.unread && !n.archived).length;
+      setUnreadCount(local);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+    fetchUnreadCount();
+  }, []);
   const ref = useRef(null);
 
   // Close on outside click + on route change
@@ -77,7 +94,6 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
   }, []);
   useEffect(() => { setOpen(false); }, [location.pathname, location.search]);
 
-  const unreadCount = items.filter((n) => n.unread && !n.archived).length;
   const counts = {
     all: items.filter((n) => !n.archived).length,
     unread: unreadCount,
@@ -87,8 +103,15 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
     tab === 'archived' ? n.archived : tab === 'unread' ? n.unread && !n.archived : !n.archived
   );
 
-  const markAllRead = () => setItems((prev) => prev.map((n) => ({ ...n, unread: false })));
-  const markRead = (id) => setItems((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
+  const markAllRead = async () => {
+    try { await notificationService.markAllRead(); } catch {}
+    setItems((prev) => prev.map((n) => ({ ...n, unread: false })));
+    setUnreadCount(0);
+  };
+  const markRead = async (id) => {
+    try { await notificationService.markRead(id); } catch {}
+    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
+  };
 
   const openAction = (n) => {
     markRead(n.id);

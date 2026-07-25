@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
 import { useToast } from '../../../context/ToastContext';
+import { notificationService } from '../../../services/api';
 
 const TYPE_CONFIG = {
   alert: { dot: 'bg-red-500', badge: 'bg-red-50 text-red-700 border-red-200', label: 'Alert' },
@@ -11,39 +11,26 @@ const TYPE_CONFIG = {
 };
 
 export const NotificationsPage = () => {
-  const { token } = useAuth();
-  const API_BASE_URL = 'http://localhost:5050/api/admin';
-
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
   const toast = useToast();
 
-  const getHeaders = useCallback(() => ({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  }), [token]);
-
-  const loadNotifications = useCallback(async () => {
+  const loadNotifications = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications`, {
-        headers: getHeaders(),
-      });
-      if (!response.ok) throw new Error(`Failed to fetch notifications: ${response.status}`);
-      const data = await response.json();
-      const items = Array.isArray(data) ? data : data.data || [];
-      setNotifications(items);
+      const data = await notificationService.list({ archived: true });
+      setNotifications(Array.isArray(data) ? data : []);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || 'Failed to load notifications');
     } finally {
       setIsLoading(false);
     }
-  }, [getHeaders]);
+  };
 
   useEffect(() => {
     loadNotifications();
-  }, [loadNotifications]);
+  }, []);
 
   const getType = (n) => TYPE_CONFIG[n.type] || TYPE_CONFIG.info;
 
@@ -51,12 +38,18 @@ export const NotificationsPage = () => {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const markAllRead = async () => {
+    try {
+      await notificationService.markAllRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch {}
   };
 
-  const toggleRead = (id) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: !n.read } : n)));
+  const toggleRead = async (id, currentRead) => {
+    try {
+      if (!currentRead) await notificationService.markRead(id);
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: !n.read } : n)));
+    } catch {}
   };
 
   const TYPES = ['ALL', 'alert', 'update', 'reminder', 'achievement', 'info'];
@@ -131,7 +124,7 @@ export const NotificationsPage = () => {
               return (
                 <div
                   key={n.id}
-                  onClick={() => toggleRead(n.id)}
+                  onClick={() => toggleRead(n.id, n.read)}
                   className={`p-5 flex items-start gap-4 cursor-pointer transition-all hover:bg-slate-50 ${
                     !n.read ? 'bg-[#d0f24a]/10 border-l-2 border-l-[#d0f24a]' : ''
                   }`}
