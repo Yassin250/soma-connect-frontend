@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { entityCourseService, entityUserService, courseCategoryService, fileService, platformCourseService, platformEntityService, lecturerCourseService } from '../../services/api';
+import { entityCourseService, entityUserService, courseCategoryService, fileService, platformCourseService, platformEntityService, lecturerCourseService, quizService } from '../../services/api';
 import { CoverImageDropzone, AttachmentDropzone } from '../../components/shared/UploadDropzone';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';

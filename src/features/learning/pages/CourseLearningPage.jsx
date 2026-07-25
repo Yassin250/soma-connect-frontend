@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { learnerCourseService } from '../../../services/api';
+import { learnerCourseService, quizService, assignmentService, notificationService } from '../../../services/api';
+import QuizEngine from '../components/QuizEngine';
 import { BrandLockup } from '../../../components/shared/Brand';
 import { useAuth } from '../../../context/AuthContext';
 import { NotificationBell } from '../../../components/shared/NotificationBell';
-import { notificationService } from '../../../services/api';
 
 /* ─────────────────────────── helpers ─────────────────────────── */
 
@@ -274,7 +274,87 @@ const readingMinutes = (text) => Math.max(1, Math.round(String(text).split(/\s+/
 
 /* ─────────────────────── item renderers ─────────────────────── */
 
-const ItemStage = ({ item }) => {
+const AssignmentSubmit = ({ courseId, itemId, onDone }) => {
+  const [content, setContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submission, setSubmission] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    assignmentService.mySubmission(courseId, itemId).then((s) => {
+      if (s) setSubmission(s);
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, [courseId, itemId]);
+
+  if (loading) return <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-8 text-center text-sm text-gray-400">Loading submission…</div>;
+
+  if (submission) {
+    return (
+      <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-8">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-[#1b1e26]">Assignment submitted</p>
+            <p className="text-xs text-gray-400">{new Date(submission.submittedAt).toLocaleString()}</p>
+          </div>
+        </div>
+        {submission.content && (
+          <div className="mb-4 rounded-xl bg-gray-50 p-4 text-sm text-gray-700 whitespace-pre-wrap">{submission.content}</div>
+        )}
+        {submission.score != null ? (
+          <div className="rounded-xl bg-green-50 border border-green-200 p-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-green-700">Graded</p>
+              {submission.feedback && <p className="text-xs text-gray-600 mt-1">{submission.feedback}</p>}
+            </div>
+            <span className="text-2xl font-black text-green-700">{submission.score}/100</span>
+          </div>
+        ) : (
+          <p className="text-xs text-gray-400 italic">Awaiting grade from instructor.</p>
+        )}
+        {submission.score != null && (
+          <button onClick={onDone} className="mt-4 px-5 py-2 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-sm font-bold">Mark complete and continue</button>
+        )}
+      </div>
+    );
+  }
+
+  const handleSubmit = async () => {
+    if (!content.trim()) return;
+    setSubmitting(true);
+    try {
+      const s = await assignmentService.submit(courseId, itemId, { content: content.trim() });
+      setSubmission(s);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-8">
+      <p className="text-sm font-semibold text-[#1b1e26] mb-1">Submit your work</p>
+      <p className="text-xs text-gray-400 mb-4">Write or paste your assignment below. You can only submit once.</p>
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows={8}
+        className="w-full rounded-xl border border-gray-200 p-4 text-sm text-[#1b1e26] outline-none focus:border-[#1b1e26]/30 focus:ring-2 focus:ring-[#1b1e26]/5 transition-all resize-y"
+        placeholder="Type your assignment here…"
+      />
+      <div className="mt-4 flex justify-end">
+        <button onClick={handleSubmit} disabled={!content.trim() || submitting} className="px-6 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50">
+          {submitting ? 'Submitting…' : 'Submit assignment'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const ItemStage = ({ item, courseId, onQuizPassed }) => {
   // Prefer the instructor's linked URL; fall back to an uploaded attachment
   // (e.g. an .mp4 uploaded in the course builder plays right in the stage).
   const resourceUrl = item.contentUrl || item.attachmentUrl;
@@ -337,27 +417,11 @@ const ItemStage = ({ item }) => {
   }
 
   if (item.itemType === 'QUIZ') {
-    return (
-      <StagePlaceholder
-        icon={ITEM_META.QUIZ.icon}
-        title="Knowledge check"
-        sub="A short quiz to confirm you've got it. Mark complete once you've passed."
-        tone="quiz"
-      />
-    );
+    return <QuizEngine courseId={courseId} itemId={item.id} onComplete={onQuizPassed} />;
   }
 
   if (item.itemType === 'ASSIGNMENT') {
-    return (
-      <StagePlaceholder
-        icon={ITEM_META.ASSIGNMENT.icon}
-        title="Assignment"
-        sub={resourceUrl ? 'Open the brief, do the work, then mark complete.' : 'Follow the instructions and submit your work.'}
-        actionUrl={resourceUrl}
-        actionLabel="Open brief"
-        tone="assignment"
-      />
-    );
+    return <AssignmentSubmit courseId={courseId} itemId={item.id} onDone={onQuizPassed} />;
   }
 
   // FILE / LINK
@@ -828,7 +892,7 @@ export const CourseLearningPage = () => {
                   <h1 className="text-2xl sm:text-3xl font-semibold text-[#1b1e26] tracking-tight mb-6">{active.title}</h1>
 
                   {/* Stage */}
-                  <ItemStage item={active} />
+                  <ItemStage item={active} courseId={courseId} onQuizPassed={() => markComplete()} />
 
                   {/* Uploaded notes/slides — always downloadable, even when the
                       stage already plays the attachment as a video */}

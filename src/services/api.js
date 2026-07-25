@@ -694,6 +694,74 @@ export const learnerCourseService = {
   },
 };
 
+// ---- Assignments: submission (learner) + grading (lecturer) ----
+export const assignmentService = {
+  submit: async (courseId, itemId, payload) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/learner/courses/${courseId}/items/${itemId}/submit-assignment`, payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to submit assignment'));
+    }
+  },
+  mySubmission: async (courseId, itemId) => {
+    try {
+      return unwrapApiResult(await apiClient.get(`/api/learner/courses/${courseId}/items/${itemId}/submission`));
+    } catch (_) { return null; }
+  },
+  // Lecturer only
+  listSubmissions: async (courseId, itemId) => {
+    try {
+      return unwrapApiResult(await apiClient.get(`/api/lecturer/courses/${courseId}/items/${itemId}/submissions`));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load submissions'));
+    }
+  },
+  grade: async (courseId, itemId, submissionId, payload) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/lecturer/courses/${courseId}/items/${itemId}/submissions/${submissionId}/grade`, payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to grade submission'));
+    }
+  },
+};
+
+// ---- Quiz questions: CRUD (lecturer) + submit (learner) ----
+export const quizService = {
+  getQuestions: async (itemId) => {
+    try {
+      return unwrapApiResult(await apiClient.get(`/api/lecturer/items/${itemId}/questions`));
+    } catch (_) { return []; }
+  },
+  addQuestion: async (itemId, payload) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/lecturer/items/${itemId}/questions`, payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to add question'));
+    }
+  },
+  updateQuestion: async (itemId, questionId, payload) => {
+    try {
+      return unwrapApiResult(await apiClient.put(`/api/lecturer/items/${itemId}/questions/${questionId}`, payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update question'));
+    }
+  },
+  deleteQuestion: async (itemId, questionId) => {
+    try {
+      return unwrapApiResult(await apiClient.delete(`/api/lecturer/items/${itemId}/questions/${questionId}`));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to delete question'));
+    }
+  },
+  submitQuiz: async (courseId, itemId, payload) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/learner/courses/${courseId}/items/${itemId}/submit-quiz`, payload));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to submit quiz'));
+    }
+  },
+};
+
 // ---- Lecturer: courses where I'm the instructor ----
 export const lecturerCourseService = {
   list: async () => {
