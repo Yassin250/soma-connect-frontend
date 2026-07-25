@@ -297,7 +297,7 @@ export const CourseBuilderPage = () => {
         ? await api.update(id, payload)
         : await api.create(payload);
       toast.success(publish ? 'Course published' : isEdit ? 'Course updated' : 'Course saved as draft');
-      navigate(`${exitTo}/${saved.id}`);
+      navigate(isLecturer ? `${exitTo}/${saved.id}/edit` : `${exitTo}/${saved.id}`);
     } catch (err) {
       toast.error(err.message);
     } finally {

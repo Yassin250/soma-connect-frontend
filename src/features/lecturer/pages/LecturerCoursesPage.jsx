@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
 import { lecturerCourseService } from '../../../services/api';
 
 const STATUS_BADGE = {
@@ -13,6 +14,8 @@ const LecturerCoursesPage = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -36,11 +39,12 @@ const LecturerCoursesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this course? This cannot be undone.')) return;
+    setIsDeleting(true);
     try {
       await lecturerCourseService.remove(id);
       setCourses((prev) => prev.filter((c) => c.id !== id));
     } catch { /* ignore */ }
+    finally { setConfirmDelete(null); setIsDeleting(false); }
   };
 
   return (
@@ -103,12 +107,22 @@ const LecturerCoursesPage = () => {
                 {course.status === 'PUBLISHED' && (
                   <span className="text-xs text-green-600 font-semibold">Students can enroll with code</span>
                 )}
-                <button onClick={() => handleDelete(course.id)} className="ml-auto px-3 py-1.5 rounded-lg text-gray-400 text-xs font-semibold hover:text-red-500 hover:bg-red-50 transition-all">Delete</button>
+                <button onClick={() => setConfirmDelete(course)} className="ml-auto px-3 py-1.5 rounded-lg text-gray-400 text-xs font-semibold hover:text-red-500 hover:bg-red-50 transition-all">Delete</button>
               </div>
             </motion.div>
           ))}
         </div>
       )}
+      <ConfirmDeleteModal
+        open={confirmDelete !== null}
+        title="Delete Course"
+        message="Are you sure you want to delete "
+        itemName={confirmDelete?.title}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={() => handleDelete(confirmDelete.id)}
+      />
     </div>
   );
 };
