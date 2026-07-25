@@ -77,6 +77,8 @@ import { LecturerDashboardPage } from '../features/lecturer/pages/LecturerDashbo
 import { LecturerAccountPage } from '../features/lecturer/pages/LecturerAccountPage';
 import { LecturerNotificationsPage } from '../features/lecturer/pages/LecturerNotificationsPage';
 import LecturerCoursesPage from '../features/lecturer/pages/LecturerCoursesPage';
+import LecturerSubmissionsPage from '../features/lecturer/pages/LecturerSubmissionsPage';
+import QuizQuestionManagerPage from '../features/lecturer/pages/QuizQuestionManagerPage';
 import { LecturerLayout } from '../features/lecturer/layouts/LecturerLayout';
 
 // Platform-console permissions. The backend guards /api/admin/** with these exact
@@ -247,9 +249,8 @@ export const AppRouter = () => {
           <Route path="/lecturer/students" element={
             <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Students — Under Development</div>
           } />
-          <Route path="/lecturer/assignments" element={
-            <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Assignments — Under Development</div>
-          } />
+          <Route path="/lecturer/assignments" element={<LecturerSubmissionsPage />} />
+          <Route path="/lecturer/items/:itemId/questions" element={<QuizQuestionManagerPage />} />
           <Route path="/lecturer/timetable" element={
             <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Timetable — Under Development</div>
           } />
