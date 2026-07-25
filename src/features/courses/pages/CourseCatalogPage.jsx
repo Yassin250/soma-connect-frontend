@@ -100,8 +100,9 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
               value={d}
               onChange={(e) => handleChange(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
+              onPaste={handlePaste}
               autoFocus={i === 0}
-              className="w-11 h-12 text-center text-lg font-bold font-mono tracking-wider text-[#1b1e26] bg-[#f7f8fa] border-2 border-[#1b1e26]/10 rounded-xl focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all uppercase"
+              className="w-12 h-13 text-center text-xl font-bold font-mono tracking-wider text-[#1b1e26] bg-[#f7f8fa] border-2 border-[#1b1e26]/10 rounded-xl focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all uppercase"
             />
           ))}
         </div>
