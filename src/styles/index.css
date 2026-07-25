@@ -6,6 +6,8 @@
   html,
   body {
     font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   /* Global density: render the whole app at 90% — what 90% browser zoom used

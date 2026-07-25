@@ -54,6 +54,8 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
   const [tab, setTab] = useState('unread');
   const [items, setItems] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [dropdownTop, setDropdownTop] = useState(0);
+  const buttonRef = useRef(null);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -125,9 +127,15 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
   };
 
   return (
-    <div className="relative ml-auto md:ml-0" ref={ref}>
+    <div className="ml-auto md:ml-0" ref={ref}>
       <button
-        onClick={() => setOpen((o) => !o)}
+        ref={buttonRef}
+        onClick={() => {
+          if (!open && buttonRef.current) {
+            setDropdownTop(buttonRef.current.getBoundingClientRect().bottom + 8);
+          }
+          setOpen((o) => !o);
+        }}
         className="relative w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-[#1b1e26] transition-colors"
         aria-label="Notifications"
       >
@@ -149,7 +157,8 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 sm:right-0 mt-2 w-[90vw] sm:w-[360px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[100] animate-in fade-in slide-in-from-top-1 duration-150 overflow-hidden">
+        <div style={{ position: 'fixed', top: dropdownTop, zIndex: 9999 }}
+             className="left-4 right-4 max-w-[360px] bg-white rounded-2xl shadow-xl border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-150 overflow-hidden">
           {/* Header */}
           <div className="flex items-center gap-1 px-4 pt-4 pb-3">
             <h3 className="text-sm font-semibold text-[#1b1e26] mr-auto">Notifications</h3>
