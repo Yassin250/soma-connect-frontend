@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { lecturerCourseService } from '../../../services/api';
+import { useToast } from '../../../context/ToastContext';
+import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions';
+import { ConfirmDeleteModal } from '../../admin/components/CurriculumModals';
+import { CourseStatusPill, humanize } from '../../courses/CourseDetailView';
 
-const STATUS_BADGE = {
-  DRAFT: 'bg-gray-100 text-gray-500',
-  PUBLISHED: 'bg-green-100 text-green-700',
-  ARCHIVED: 'bg-red-100 text-red-600',
-};
+const FILTERS = [
+  { id: 'ALL', label: 'All' },
+  { id: 'DRAFT', label: 'Drafts' },
+  { id: 'PUBLISHED', label: 'Published' },
+  { id: 'ARCHIVED', label: 'Archived' },
+];
 
 const LecturerCoursesPage = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [confirmDelete, setConfirmDelete] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [filter, setFilter] = useState('ALL');
+  const toast = useToast();
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const fetchCourses = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await lecturerCourseService.list();
@@ -27,101 +31,189 @@ const LecturerCoursesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { fetchCourses(); }, []);
+  useEffect(() => { load(); }, [load]);
 
-  const handlePublish = async (id) => {
+  const visible = useMemo(
+    () => (filter === 'ALL' ? courses : courses.filter((c) => c.status === filter)),
+    [courses, filter]
+  );
+
+  const counts = useMemo(() => {
+    const map = { ALL: courses.length, DRAFT: 0, PUBLISHED: 0, ARCHIVED: 0 };
+    courses.forEach((c) => { map[c.status] = (map[c.status] || 0) + 1; });
+    return map;
+  }, [courses]);
+
+  const setStatus = async (course, status, verb) => {
     try {
-      const updated = await lecturerCourseService.setStatus(id, 'PUBLISHED');
-      setCourses((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'PUBLISHED', ...updated } : c)));
-    } catch { /* ignore */ }
+      await lecturerCourseService.setStatus(course.id, status);
+      toast.addToast(`Course ${verb}`, 'success');
+      await load();
+    } catch {
+      toast.addToast('Failed to update status', 'error');
+    }
   };
 
-  const handleDelete = async (id) => {
-    setIsDeleting(true);
+  const remove = async () => {
+    if (!deleteTarget) return;
     try {
-      await lecturerCourseService.remove(id);
-      setCourses((prev) => prev.filter((c) => c.id !== id));
-    } catch { /* ignore */ }
-    finally { setConfirmDelete(null); setIsDeleting(false); }
+      await lecturerCourseService.remove(deleteTarget.id);
+      toast.addToast('Course deleted', 'success');
+      setDeleteTarget(null);
+      await load();
+    } catch {
+      toast.addToast('Failed to delete course', 'error');
+    }
   };
+
+  const statusAction = (c) =>
+    c.status === 'PUBLISHED'
+      ? { label: 'Archive course', icon: DockIcons.power, onClick: () => setStatus(c, 'ARCHIVED', 'archived') }
+      : { label: c.status === 'ARCHIVED' ? 'Republish course' : 'Publish course', icon: DockIcons.power, iconTone: 'text-emerald-500', onClick: () => setStatus(c, 'PUBLISHED', 'published') };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#1b1e26]">My Courses</h1>
-          <p className="text-sm text-gray-400 mt-1">{courses.length} course{courses.length !== 1 ? 's' : ''}</p>
+          <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">Teaching</span>
+          <h1 className="text-[19px] font-medium tracking-tight mt-1.5 text-[#1b1e26]">My Courses</h1>
+          <p className="text-[12px] text-slate-500 mt-1">Manage your courses, set enrollment codes, and publish when ready.</p>
         </div>
-        <button onClick={() => navigate('/lecturer/courses/new')} className="px-4 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-all">+ New Course</button>
+        <button
+          onClick={() => navigate('/lecturer/courses/new')}
+          className="bg-[#1b1e26] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98]"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+          </svg>
+          Create Course
+        </button>
+      </div>
+
+      <div className="inline-flex rounded-xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-1 gap-1">
+        {FILTERS.map((f) => {
+          const active = filter === f.id;
+          return (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-150 ${
+                active ? 'bg-[#1b1e26] text-white shadow-sm' : 'text-gray-400 hover:text-[#1b1e26] hover:bg-[#f7f8fa]'
+              }`}
+            >
+              {f.label}
+              <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center ${
+                active ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
+              }`}>
+                {counts[f.id] || 0}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 animate-pulse">
+          {[0, 1, 2].map((i) => <div key={i} className="h-64 bg-gray-200/70 rounded-2xl" />)}
         </div>
-      ) : courses.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <span className="w-16 h-16 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mb-4">
-            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+      ) : visible.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-dashed border-[#1b1e26]/15 p-14 text-center">
+          <span className="w-14 h-14 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
           </span>
-          <h2 className="text-lg font-semibold text-[#1b1e26]">No courses yet</h2>
-          <p className="text-sm text-gray-400 mt-1">Create your first course to get started.</p>
-          <button onClick={() => navigate('/lecturer/courses/new')} className="mt-4 px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors">Create Course</button>
+          <p className="text-base font-semibold text-[#1b1e26]">
+            {courses.length === 0 ? 'No courses yet' : 'Nothing in this filter'}
+          </p>
+          <p className="text-sm text-gray-400 mt-1 mb-5">
+            {courses.length === 0
+              ? 'Create your first course — basics, objectives, and curriculum in one guided flow.'
+              : 'Try a different status filter.'}
+          </p>
+          {courses.length === 0 && (
+            <button
+              onClick={() => navigate('/lecturer/courses/new')}
+              className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm"
+            >
+              Create your first course
+            </button>
+          )}
         </div>
       ) : (
-        <div className="grid gap-3">
-          {courses.map((course, idx) => (
-            <motion.div
-              key={course.id}
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }}
-              className="bg-white rounded-2xl border border-[#1b1e26]/[0.06] p-5 sm:p-6 shadow-[0_1px_3px_rgba(27,30,38,0.04)]"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+          {visible.map((c) => (
+            <div
+              key={c.id}
+              className="group bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-base font-bold text-[#1b1e26] truncate">{course.title}</h3>
-                    <span className={`shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${STATUS_BADGE[course.status] || 'bg-gray-100 text-gray-500'}`}>
-                      {course.status}
+              <Link to={`/lecturer/courses/${c.id}/edit`} className="relative block h-[68px] shrink-0">
+                {c.coverImageUrl ? (
+                  <img src={c.coverImageUrl} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
+                    <span className="w-7 h-7 rounded-lg bg-[#d0f24a] text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
+                      {(c.title || '?').charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400 line-clamp-1">{course.summary || 'No description'}</p>
+                )}
+                <span className="absolute top-1.5 right-1.5"><CourseStatusPill status={c.status} /></span>
+              </Link>
+
+              <div className="p-2.5 flex flex-col flex-1">
+                <Link to={`/lecturer/courses/${c.id}/edit`} className="block">
+                  <h3 className="text-[13px] font-medium text-[#1b1e26] leading-snug line-clamp-1 group-hover:underline decoration-[#d0f24a] decoration-2 underline-offset-2">
+                    {c.title}
+                  </h3>
+                </Link>
+                <p className="text-[10px] text-gray-400 mt-0.5 truncate">
+                  {c.enrollmentCode ? <span className="font-mono tracking-wider">Code: {c.enrollmentCode}</span> : 'No enrollment code'}
+                </p>
+                {c.summary && (
+                  <p className="text-[10px] text-gray-500 mt-0.5 leading-relaxed line-clamp-1">{c.summary}</p>
+                )}
+
+                <div className="flex flex-wrap gap-1 mt-2">
+                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
+                    {c.moduleCount} module{c.moduleCount === 1 ? '' : 's'}
+                  </span>
+                  {c.estimatedHours && (
+                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
+                      {c.estimatedHours}h
+                    </span>
+                  )}
+                  {c.level && (
+                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#d0f24a]/20 text-[#1b1e26]">
+                      {humanize(c.level)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#1b1e26]/[0.05]">
+                  <span className="text-[10px] text-gray-400 truncate">You</span>
+                  <RowActionMenu
+                    primary={{ label: 'Edit', icon: DockIcons.edit, onClick: () => navigate(`/lecturer/courses/${c.id}/edit`)}}
+                    items={[
+                      statusAction(c),
+                      'divider',
+                      { label: 'Delete course', icon: DockIcons.trash, danger: true, onClick: () => setDeleteTarget(c) },
+                    ]}
+                  />
                 </div>
               </div>
-
-              <div className="mt-3 flex items-center flex-wrap gap-x-5 gap-y-1 text-xs text-gray-400">
-                {course.enrollmentCode && (
-                  <span className="font-mono font-semibold text-[#1b1e26] tracking-wider">Code: {course.enrollmentCode}</span>
-                )}
-                {course.level && <span className="capitalize">{course.level.toLowerCase()}</span>}
-                {course.moduleCount > 0 && <span>{course.moduleCount} module{course.moduleCount !== 1 ? 's' : ''}</span>}
-                {course.estimatedHours && <span>{course.estimatedHours}h</span>}
-              </div>
-
-              <div className="mt-4 flex items-center gap-2">
-                <button onClick={() => navigate(`/lecturer/courses/${course.id}/edit`)} className="px-3 py-1.5 rounded-lg text-gray-400 text-xs font-semibold hover:text-[#1b1e26] hover:bg-gray-100 transition-all">Edit</button>
-                {course.status === 'DRAFT' && (
-                  <button onClick={() => handlePublish(course.id)} className="px-3 py-1.5 rounded-lg bg-[#d0f24a] text-[#1b1e26] text-xs font-bold hover:brightness-90 transition-all">Publish</button>
-                )}
-                {course.status === 'PUBLISHED' && (
-                  <span className="text-xs text-green-600 font-semibold">Students can enroll with code</span>
-                )}
-                <button onClick={() => setConfirmDelete(course)} className="ml-auto px-3 py-1.5 rounded-lg text-gray-400 text-xs font-semibold hover:text-red-500 hover:bg-red-50 transition-all">Delete</button>
-              </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
+
       <ConfirmDeleteModal
-        open={confirmDelete !== null}
-        title="Delete Course"
-        message="Are you sure you want to delete "
-        itemName={confirmDelete?.title}
-        confirmLabel="Delete"
-        isLoading={isDeleting}
-        onClose={() => setConfirmDelete(null)}
-        onConfirm={() => handleDelete(confirmDelete.id)}
+        open={deleteTarget !== null}
+        title="Delete course"
+        message={`Are you sure you want to delete "${deleteTarget?.title || ''}"? This removes its whole curriculum and cannot be undone.`}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={remove}
       />
     </div>
   );

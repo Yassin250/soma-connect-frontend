@@ -148,58 +148,58 @@ export const SchoolCoursesPage = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
           {visible.map((c) => (
             <div
               key={c.id}
-              className="group bg-white rounded-2xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col"
+              className="group bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col"
             >
               {/* Cover */}
-              <Link to={`/school/courses/${c.id}`} className="relative block h-32 shrink-0">
+              <Link to={`/school/courses/${c.id}`} className="relative block h-[68px] shrink-0">
                 {c.coverImageUrl ? (
                   <img src={c.coverImageUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
-                    <span className="w-12 h-12 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-xl font-bold flex items-center justify-center">
+                    <span className="w-7 h-7 rounded-lg bg-[#d0f24a] text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
                       {(c.title || '?').charAt(0).toUpperCase()}
                     </span>
                   </div>
                 )}
-                <span className="absolute top-3 right-3"><CourseStatusPill status={c.status} /></span>
+                <span className="absolute top-1.5 right-1.5"><CourseStatusPill status={c.status} /></span>
               </Link>
 
               {/* Body */}
-              <div className="p-4 flex flex-col flex-1">
+              <div className="p-2.5 flex flex-col flex-1">
                 <Link to={`/school/courses/${c.id}`} className="block">
-                  <h3 className="text-[15px] font-medium text-[#1b1e26] leading-snug line-clamp-2 group-hover:underline decoration-[#d0f24a] decoration-2 underline-offset-2">
+                  <h3 className="text-[13px] font-medium text-[#1b1e26] leading-snug line-clamp-1 group-hover:underline decoration-[#d0f24a] decoration-2 underline-offset-2">
                     {c.title}
                   </h3>
                 </Link>
-                <p className="text-xs text-gray-400 mt-1 truncate">
+                <p className="text-[10px] text-gray-400 mt-0.5 truncate">
                   {[c.code, c.category].filter(Boolean).join(' · ') || '—'}
                 </p>
                 {c.summary && (
-                  <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-2">{c.summary}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5 leading-relaxed line-clamp-1">{c.summary}</p>
                 )}
 
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
+                <div className="flex flex-wrap gap-1 mt-2">
+                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
                     {c.moduleCount} module{c.moduleCount === 1 ? '' : 's'}
                   </span>
                   {c.estimatedHours && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
+                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
                       {c.estimatedHours}h
                     </span>
                   )}
                   {c.level && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#d0f24a]/20 text-[#1b1e26]">
+                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#d0f24a]/20 text-[#1b1e26]">
                       {humanize(c.level)}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-[#1b1e26]/[0.05]">
-                  <span className="text-[11px] text-gray-400 truncate">
+                <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#1b1e26]/[0.05]">
+                  <span className="text-[10px] text-gray-400 truncate">
                     {c.instructorName || 'No instructor'}
                   </span>
                   <RowActionMenu
