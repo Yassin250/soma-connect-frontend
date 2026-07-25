@@ -63,7 +63,7 @@ const GradesPage = () => {
   );
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 sm:space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-[#1b1e26]">Grades & Progress</h1>
         <p className="text-sm text-gray-400 mt-1">Track your performance across all courses.</p>
@@ -153,7 +153,7 @@ const GradesPage = () => {
           </motion.div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 };
 
