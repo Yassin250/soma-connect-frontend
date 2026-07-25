@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { lecturerCourseService } from '../../../services/api';
-
-const API_BASE = 'http://localhost:5050/api/lecturer/courses';
+import { apiClient } from '../../../services/apiClient';
 
 const STATUS_BADGE = {
   ACTIVE: 'bg-green-100 text-green-700',
@@ -26,10 +25,9 @@ const LecturerStudentsPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    const params = filterCourse ? `?courseId=${filterCourse}` : '';
-    fetch(`${API_BASE}/students${params}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
-      .then((r) => r.json())
-      .then((data) => setStudents(data?.data || []))
+    const params = filterCourse ? { courseId: filterCourse } : {};
+    apiClient.get('/api/lecturer/courses/students', { params })
+      .then((r) => setStudents(r.data?.data || []))
       .catch(() => setStudents([]))
       .finally(() => setLoading(false));
   }, [filterCourse]);
