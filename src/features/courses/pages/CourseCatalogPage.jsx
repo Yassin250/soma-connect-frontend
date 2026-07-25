@@ -271,6 +271,9 @@ export const CourseCatalogPage = () => {
                   )}
 
                   <div className="mt-auto pt-4">
+                    {course.instructorName && (
+                      <p className="text-xs text-gray-400 mb-2 truncate">by {course.instructorName}</p>
+                    )}
                     <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                       {course.moduleCount > 0 && (
                         <span className="inline-flex items-center gap-1">
