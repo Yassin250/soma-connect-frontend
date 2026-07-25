@@ -32,11 +32,26 @@ const LecturerStudentsPage = () => {
       .finally(() => setLoading(false));
   }, [filterCourse]);
 
-  const filtered = students.filter((s) =>
-    !search || s.studentName?.toLowerCase().includes(search.toLowerCase()) || s.studentEmail?.toLowerCase().includes(search.toLowerCase())
+  const grouped = students.reduce((acc, s) => {
+    if (!acc[s.studentId]) {
+      acc[s.studentId] = { studentId: s.studentId, studentName: s.studentName, studentEmail: s.studentEmail, courses: [], totalProgress: 0 };
+    }
+    acc[s.studentId].courses.push({ courseId: s.courseId, courseTitle: s.courseTitle, enrollmentStatus: s.enrollmentStatus, progressPercent: s.progressPercent, enrolledAt: s.enrolledAt });
+    acc[s.studentId].totalProgress += s.progressPercent;
+    return acc;
+  }, {});
+
+  const groupedList = Object.values(grouped).map((g) => ({
+    ...g,
+    avgProgress: Math.round(g.totalProgress / g.courses.length),
+    latestCourse: g.courses.reduce((a, b) => new Date(a.enrolledAt) > new Date(b.enrolledAt) ? a : b),
+  }));
+
+  const filtered = groupedList.filter((g) =>
+    !search || g.studentName?.toLowerCase().includes(search.toLowerCase()) || g.studentEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalStudents = new Set(students.map((s) => s.studentId)).size;
+  const totalStudents = groupedList.length;
 
   return (
     <div className="space-y-6">
@@ -89,44 +104,56 @@ const LecturerStudentsPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filtered.map((s, i) => (
-                  <motion.tr
-                    key={`${s.studentId}-${s.courseId}`}
-                    initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
-                    className="hover:bg-[#f7f8fa] transition-colors"
-                  >
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center shrink-0">
-                          {s.studentName?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() || '?'}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-[#1b1e26] truncate">{s.studentName}</p>
-                          <p className="text-xs text-gray-400 truncate">{s.studentEmail}</p>
+                {filtered.map((g, i) => {
+                  const initials = g.studentName?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() || '?';
+                  const statuses = [...new Set(g.courses.map((c) => c.enrollmentStatus))];
+                  return (
+                    <motion.tr
+                      key={g.studentId}
+                      initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
+                      className="hover:bg-[#f7f8fa] transition-colors"
+                    >
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center shrink-0">
+                            {initials}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-[#1b1e26] truncate">{g.studentName}</p>
+                            <p className="text-xs text-gray-400 truncate">{g.studentEmail}</p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className="text-sm text-[#1b1e26] font-medium">{s.courseTitle}</span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${STATUS_BADGE[s.enrollmentStatus] || 'bg-gray-100 text-gray-500'}`}>
-                        {s.enrollmentStatus}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#d0f24a] rounded-full" style={{ width: `${s.progressPercent}%` }} />
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex flex-wrap gap-1.5">
+                          {g.courses.map((c) => (
+                            <span key={c.courseId} className="inline-block px-2 py-0.5 rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 truncate max-w-[160px]">
+                              {c.courseTitle}
+                            </span>
+                          ))}
                         </div>
-                        <span className="text-xs font-semibold text-[#1b1e26] tabular-nums">{s.progressPercent}%</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className="text-sm text-gray-500">{new Date(s.enrolledAt).toLocaleDateString()}</span>
-                    </td>
-                  </motion.tr>
-                ))}
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {statuses.map((st) => (
+                            <span key={st} className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${STATUS_BADGE[st] || 'bg-gray-100 text-gray-500'}`}>{st}</span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-[#d0f24a] rounded-full" style={{ width: `${g.avgProgress}%` }} />
+                          </div>
+                          <span className="text-xs font-semibold text-[#1b1e26] tabular-nums">{g.avgProgress}%</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-500">{new Date(g.latestCourse.enrolledAt).toLocaleDateString()}</span>
+                      </td>
+                    </motion.tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
