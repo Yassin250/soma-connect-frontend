@@ -24,15 +24,40 @@ const gradFor = (str = '') =>
 const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
   const [digits, setDigits] = useState(Array(6).fill(''));
   const [error, setError] = useState('');
+  const [shaking, setShaking] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const refs = Array.from({ length: 6 }, () => React.useRef());
+
+  const resetError = () => { setError(''); setShaking(false); };
 
   if (!open) return null;
 
   const focusNext = (idx) => { if (idx < 5) refs[idx + 1].current?.focus(); };
   const focusPrev = (idx) => { if (idx > 0) refs[idx - 1].current?.focus(); };
 
+  const showError = (msg) => {
+    setError(msg);
+    setShaking(true);
+    setTimeout(() => setShaking(false), 500);
+    setDigits(Array(6).fill(''));
+    setTimeout(() => refs[0].current?.focus(), 50);
+  };
+
+  const submit = async (full) => {
+    resetError();
+    setSubmitting(true);
+    try {
+      await onSubmit(full);
+      setDigits(Array(6).fill(''));
+    } catch (err) {
+      showError(err.message || 'Invalid enrollment code');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleChange = (idx, value) => {
-    setError('');
+    resetError();
     const c = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 1);
     const next = [...digits];
     next[idx] = c;
@@ -40,38 +65,27 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
     if (c) focusNext(idx);
 
     const full = next.join('');
-    if (full.length === 6) {
-      onSubmit(full);
-      setDigits(Array(6).fill(''));
-    }
+    if (full.length === 6) submit(full);
   };
 
   const handleKeyDown = (idx, e) => {
     if (e.key === 'Backspace' && !digits[idx]) focusPrev(idx);
     if (e.key === 'Enter') {
       const full = digits.join('');
-      if (full.length === 6) {
-        onSubmit(full);
-        setDigits(Array(6).fill(''));
-      } else {
-        setError('Please enter all 6 characters of the enrollment code');
-      }
+      if (full.length === 6) submit(full);
+      else setError('Please enter all 6 characters of the enrollment code');
     }
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
+    resetError();
     const pasted = e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
     const next = Array(6).fill('');
     for (let i = 0; i < pasted.length; i++) next[i] = pasted[i];
     setDigits(next);
-    setError('');
-    if (pasted.length === 6) {
-      onSubmit(pasted);
-      setDigits(Array(6).fill(''));
-    } else if (pasted.length > 0) {
-      refs[pasted.length].current?.focus();
-    }
+    if (pasted.length === 6) submit(pasted);
+    else if (pasted.length > 0) refs[pasted.length].current?.focus();
   };
 
   return (
@@ -90,7 +104,12 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
 
         {error && <p className="text-sm text-red-500 mb-4 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
 
-        <div className="flex items-center justify-center gap-2 mb-6" onPaste={handlePaste}>
+        <motion.div
+          className="flex items-center justify-center gap-2 mb-6"
+          onPaste={handlePaste}
+          animate={shaking ? { x: [0, -6, 6, -6, 6, -3, 3, 0] } : {}}
+          transition={{ duration: 0.4 }}
+        >
           {digits.map((d, i) => (
             <input
               key={i}
@@ -102,14 +121,19 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
               onKeyDown={(e) => handleKeyDown(i, e)}
               onPaste={handlePaste}
               autoFocus={i === 0}
-              className="w-12 h-12 text-center text-xl font-bold font-mono tracking-wider text-[#1b1e26] bg-[#f7f8fa] border-2 border-[#1b1e26]/10 rounded-xl focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all uppercase"
+              disabled={submitting}
+              className={`w-12 h-12 text-center text-xl font-bold font-mono tracking-wider rounded-xl border-2 transition-all uppercase outline-none ${
+                shaking
+                  ? 'border-red-400 bg-red-50 text-red-600'
+                  : 'text-[#1b1e26] bg-[#f7f8fa] border-[#1b1e26]/10 focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25'
+              }`}
             />
           ))}
-        </div>
+        </motion.div>
 
         <div className="flex justify-end gap-3">
-          <button onClick={() => { setDigits(Array(6).fill('')); setError(''); onClose(); }} className="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-400 hover:text-[#1b1e26] hover:bg-gray-100 transition-all">Cancel</button>
-          <button onClick={() => { const full = digits.join(''); if (full.length === 6) { onSubmit(full); setDigits(Array(6).fill('')); } else setError('Please enter all 6 characters'); }} className="px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-all">Enroll</button>
+          <button onClick={() => { setDigits(Array(6).fill('')); resetError(); onClose(); }} disabled={submitting} className="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-400 hover:text-[#1b1e26] hover:bg-gray-100 transition-all disabled:opacity-50">Cancel</button>
+          <button onClick={() => { const full = digits.join(''); if (full.length === 6) submit(full); else setError('Please enter all 6 characters'); }} disabled={submitting} className="px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-all disabled:opacity-50">Enroll</button>
         </div>
       </motion.div>
     </motion.div>
@@ -162,14 +186,9 @@ export const CourseCatalogPage = () => {
 
   const handleEnrollWithCode = async (code) => {
     if (!codeModalCourse) return;
-    try {
-      await learnerCourseService.enrollWithCode(codeModalCourse.id, code);
-      navigate(`/learning/course/${codeModalCourse.id}`);
-    } catch (err) {
-      // error will be shown by the course learning page if enrollment fails
-      navigate(`/learning/course/${codeModalCourse.id}`);
-    }
+    await learnerCourseService.enrollWithCode(codeModalCourse.id, code);
     setCodeModalCourse(null);
+    navigate(`/learning/course/${codeModalCourse.id}`);
   };
 
   return (
