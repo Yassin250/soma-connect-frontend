@@ -43,19 +43,6 @@ const themeVars = `
   --clr-accent-20: rgba(245,158,11,0.20);
   --clr-accent-6: rgba(245,158,11,0.06);
 }
-.theme-admin {
-  --clr-accent: #8b5cf6;
-  --clr-accent-hover: #a78bfa;
-  --clr-accent-dark: #7c3aed;
-  --clr-accent-text: #5b21b6;
-  --clr-accent-surface: rgba(139,92,246,0.22);
-  --clr-accent-ring: rgba(139,92,246,0.25);
-  --clr-accent-glow: rgba(139,92,246,0.35);
-  --clr-accent-10: rgba(139,92,246,0.10);
-  --clr-accent-15: rgba(139,92,246,0.15);
-  --clr-accent-20: rgba(139,92,246,0.20);
-  --clr-accent-6: rgba(139,92,246,0.06);
-}
 .theme-lecturer {
   --clr-accent: #0ea5e9;
   --clr-accent-hover: #38bdf8;
