@@ -76,7 +76,7 @@ const LecturerSubmissionsPage = () => {
             <button
               key={item.id}
               onClick={() => loadSubmissions(item)}
-              className={`w-full text-left rounded-2xl border p-4 transition-all ${selectedItem?.id === item.id ? 'border-[#d0f24a] bg-[#d0f24a]/5' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+              className={`w-full text-left rounded-2xl border p-4 transition-all ${selectedItem?.id === item.id ? 'border-accent bg-accent/5' : 'border-gray-100 bg-white hover:border-gray-200'}`}
             >
               <div className="flex items-center justify-between">
                 <div className="min-w-0 flex-1">

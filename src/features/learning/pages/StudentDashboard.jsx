@@ -9,7 +9,6 @@ import { notificationService } from '../../../services/api';
 const API_BASE_URL = 'http://localhost:5050/api/student';
 
 const INK = '#1b1e26';
-const LIME = '#d0f24a';
 
 /* ── shared motion helpers ── */
 const fadeUp = {
@@ -82,7 +81,7 @@ export const StudentDashboard = () => {
     return (
       <div className="min-h-screen bg-[#f7f8fa] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#d0f24a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading your workspace…</p>
         </div>
       </div>
@@ -112,7 +111,7 @@ export const StudentDashboard = () => {
     return (
       <div className="min-h-screen bg-[#f7f8fa] flex items-center justify-center p-6">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-[#d0f24a]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-[#1b1e26]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -188,13 +187,13 @@ export const StudentDashboard = () => {
   ];
 
   const toneStyles = {
-    lime: 'bg-[#d0f24a]/15 text-[#5b6b12]',
+    lime: 'bg-accent/15 text-accent-text',
     emerald: 'bg-emerald-100 text-emerald-600',
     amber: 'bg-amber-100 text-amber-600',
     violet: 'bg-violet-100 text-violet-600',
   };
   const iconTileStyles = {
-    lime: 'bg-[#d0f24a] text-[#1b1e26]',
+    lime: 'bg-accent text-[#1b1e26]',
     emerald: 'bg-emerald-500 text-white',
     amber: 'bg-amber-500 text-white',
     violet: 'bg-violet-500 text-white',
@@ -220,7 +219,7 @@ export const StudentDashboard = () => {
         bg-gradient-to-b from-[#20242e] via-[#181b22] to-[#101217] text-white transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* ambient glow */}
-        <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-[#d0f24a]/15 blur-[90px] pointer-events-none" />
+        <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-accent/15 blur-[90px] pointer-events-none" />
         <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#39435a]/40 blur-[90px] pointer-events-none" />
 
         <div className="relative z-10 space-y-9">
@@ -229,7 +228,7 @@ export const StudentDashboard = () => {
             <Link to="/" className="shrink-0"><BrandLockup hideText size={38} /></Link>
             <div className="overflow-hidden">
               <h2 className="text-sm font-bold text-white truncate">{school.name}</h2>
-              <span className="text-[10px] font-semibold text-[#d0f24a] uppercase tracking-[0.15em] block">
+              <span className="text-[10px] font-semibold text-accent uppercase tracking-[0.15em] block">
                 Student Portal
               </span>
             </div>
@@ -245,7 +244,7 @@ export const StudentDashboard = () => {
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
                   className={`relative flex items-center gap-3 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all ${
-                    active ? 'bg-[#d0f24a] text-[#1b1e26] shadow-lg shadow-[#d0f24a]/20' : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
+                    active ? 'bg-accent text-[#1b1e26] shadow-lg shadow-accent/20' : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,7 +269,7 @@ export const StudentDashboard = () => {
         {/* User + Sign out */}
         <div className="relative z-10 border-t border-white/10 pt-5 mt-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-11 h-11 rounded-2xl bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center text-sm font-bold shrink-0 shadow-lg shadow-[#d0f24a]/20">
+            <div className="w-11 h-11 rounded-2xl bg-accent text-[#1b1e26] flex items-center justify-center text-sm font-bold shrink-0 shadow-lg shadow-accent/20">
               {initials}
             </div>
             <div className="flex-1 overflow-hidden">
@@ -308,15 +307,15 @@ export const StudentDashboard = () => {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
             className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white px-7 sm:px-10 pt-9 pb-24 sm:pb-28"
           >
-            <div className="absolute -top-24 -left-16 w-96 h-96 rounded-full bg-[#d0f24a]/20 blur-[120px] pointer-events-none" />
+            <div className="absolute -top-24 -left-16 w-96 h-96 rounded-full bg-accent/20 blur-[120px] pointer-events-none" />
             <div className="absolute top-1/2 -right-20 w-80 h-80 rounded-full bg-[#39435a]/40 blur-[110px] pointer-events-none" />
             <div className="absolute top-[18%] right-[8%] w-40 h-40 rounded-[2rem] border border-white/10 rotate-[18deg] pointer-events-none hidden sm:block" />
-            <div className="absolute top-[30%] right-[4%] w-10 h-10 rounded-2xl bg-[#d0f24a]/25 rotate-12 pointer-events-none hidden sm:block" />
+            <div className="absolute top-[30%] right-[4%] w-10 h-10 rounded-2xl bg-accent/25 rotate-12 pointer-events-none hidden sm:block" />
 
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
               <div className="max-w-xl">
-                <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-[#d0f24a] uppercase tracking-[0.18em]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#d0f24a]" />
+                <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-accent uppercase tracking-[0.18em]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                   Student Learning Console
                 </span>
                 <h1 className="mt-3 text-[2rem] sm:text-[2.6rem] font-semibold tracking-tight leading-[1.1]">
@@ -332,7 +331,7 @@ export const StudentDashboard = () => {
               <div className="shrink-0 rounded-2xl bg-white/[0.06] border border-white/10 backdrop-blur-xl p-5 w-full sm:w-72">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-9 h-9 rounded-xl bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center shadow-lg shadow-[#d0f24a]/20">
+                    <span className="w-9 h-9 rounded-xl bg-accent text-[#1b1e26] flex items-center justify-center shadow-lg shadow-accent/20">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     </span>
                     <div>
@@ -340,10 +339,10 @@ export const StudentDashboard = () => {
                       <p className="text-lg font-bold text-white leading-tight">{level}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-[#d0f24a] tabular-nums">{totalXp.toLocaleString()} XP</span>
+                  <span className="text-xs font-bold text-accent tabular-nums">{totalXp.toLocaleString()} XP</span>
                 </div>
                 <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${xpPct}%` }} transition={{ duration: 0.9, ease: 'easeOut' }} className="h-full rounded-full bg-[#d0f24a]" />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${xpPct}%` }} transition={{ duration: 0.9, ease: 'easeOut' }} className="h-full rounded-full bg-accent" />
                 </div>
                 <p className="mt-2 text-[11px] text-white/40">{500 - xpIntoLevel} XP to level {level + 1}</p>
               </div>
@@ -383,7 +382,7 @@ export const StudentDashboard = () => {
                     <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
                       <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-3">
-                          <span className="w-10 h-10 rounded-xl bg-[#1b1e26] text-[#d0f24a] flex items-center justify-center shrink-0">
+                          <span className="w-10 h-10 rounded-xl bg-[#1b1e26] text-accent flex items-center justify-center shrink-0">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                           </span>
                           <div>
@@ -391,7 +390,7 @@ export const StudentDashboard = () => {
                             <p className="text-xs text-gray-500">{activeCourse.title} · Module {completedMods.length} of {activeModules.length}</p>
                           </div>
                         </div>
-                        <span className="text-xs font-semibold text-[#5b6b12] bg-[#d0f24a]/20 px-3 py-1 rounded-full">In progress</span>
+                        <span className="text-xs font-semibold text-accent-text bg-accent/20 px-3 py-1 rounded-full">In progress</span>
                       </div>
 
                       <div className="mb-6">
@@ -400,7 +399,7 @@ export const StudentDashboard = () => {
                           <span className="text-xs font-bold text-[#1b1e26]">{courseProgress}%</span>
                         </div>
                         <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${courseProgress}%` }} transition={{ duration: 0.8 }} className="h-full rounded-full bg-gradient-to-r from-[#d0f24a] to-[#b6da2f]" />
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${courseProgress}%` }} transition={{ duration: 0.8 }} className="h-full rounded-full bg-gradient-to-r from-accent to-accent-dark" />
                         </div>
                       </div>
 
@@ -415,14 +414,14 @@ export const StudentDashboard = () => {
                               onClick={() => mod.unlocked && navigate(`/learning/course/${activeCourse.id}`)}
                               className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
                                 isCurrent
-                                  ? 'border-[#d0f24a]/40 bg-[#d0f24a]/10 hover:bg-[#d0f24a]/15 cursor-pointer'
+                                  ? 'border-accent/40 bg-accent/10 hover:bg-accent/15 cursor-pointer'
                                   : isLocked
                                     ? 'opacity-50 cursor-default border-gray-100 bg-gray-50'
                                     : 'border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer'
                               }`}
                             >
                               {isCurrent ? (
-                                <span className="w-8 h-8 rounded-lg bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center shrink-0"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg></span>
+                                <span className="w-8 h-8 rounded-lg bg-accent text-[#1b1e26] flex items-center justify-center shrink-0"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg></span>
                               ) : isCompleted ? (
                                 <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg></span>
                               ) : (
@@ -522,13 +521,13 @@ export const StudentDashboard = () => {
 
                   {/* Job matches teaser */}
                   <motion.div {...fadeUp} transition={{ delay: 0.35 }} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#20242e] to-[#101217] text-white p-6 shadow-sm">
-                    <div className="absolute -bottom-10 -right-8 w-40 h-40 rounded-full bg-[#d0f24a]/15 blur-[70px] pointer-events-none" />
+                    <div className="absolute -bottom-10 -right-8 w-40 h-40 rounded-full bg-accent/15 blur-[70px] pointer-events-none" />
                     <div className="relative z-10">
                       <p className="text-sm font-bold text-white mb-1">Job matches</p>
                       <p className="text-xs text-white/50 mb-4">Based on your {uniqueSkills.length} verified skills</p>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <span className="w-9 h-9 rounded-lg bg-white/10 text-[#d0f24a] flex items-center justify-center shrink-0"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0h-2" /></svg></span>
+                          <span className="w-9 h-9 rounded-lg bg-white/10 text-accent flex items-center justify-center shrink-0"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0h-2" /></svg></span>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-white truncate">Software intern · MTN Rwanda</p>
                             <p className="text-xs text-white/45">Strong match</p>
@@ -536,7 +535,7 @@ export const StudentDashboard = () => {
                           <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">Strong</span>
                         </div>
                       </div>
-                      <button onClick={() => setActiveTab('jobs')} className="mt-4 w-full py-2 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-xs font-bold hover:bg-[#c4e83a] transition-colors">View all matches</button>
+                      <button onClick={() => setActiveTab('jobs')} className="mt-4 w-full py-2 rounded-xl bg-accent text-[#1b1e26] text-xs font-bold hover:bg-accent-hover transition-colors">View all matches</button>
                     </div>
                   </motion.div>
                 </div>
@@ -550,7 +549,7 @@ export const StudentDashboard = () => {
                   <motion.div key={course.id} {...fadeUp} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-5">
                     <div className="flex justify-between items-start gap-4">
                       <div>
-                        <span className="font-mono text-[#5b6b12] bg-[#d0f24a]/20 px-2 py-0.5 rounded text-xs font-bold">{course.code}</span>
+                        <span className="font-mono text-accent-text bg-accent/20 px-2 py-0.5 rounded text-xs font-bold">{course.code}</span>
                         <h3 className="text-[15px] font-semibold text-[#1b1e26] mt-2">{course.title}</h3>
                         <p className="text-xs text-gray-500">Instructor: {course.lecturerName}</p>
                       </div>
@@ -580,7 +579,7 @@ export const StudentDashboard = () => {
                           }`}
                         >
                           {mod.unlocked ? (
-                            <svg className="w-5 h-5 text-[#5b6b12] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                            <svg className="w-5 h-5 text-accent-text shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
                           ) : (
                             <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
                           )}
@@ -607,11 +606,11 @@ export const StudentDashboard = () => {
                               key={quiz.id}
                               onClick={() => !attempt && navigate(`/student/quiz/${quiz.id}`)}
                               className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-colors ${
-                                attempt ? 'border-gray-100 bg-gray-50' : 'border-[#d0f24a]/40 bg-[#d0f24a]/10 hover:bg-[#d0f24a]/15 cursor-pointer'
+                                attempt ? 'border-gray-100 bg-gray-50' : 'border-accent/40 bg-accent/10 hover:bg-accent/15 cursor-pointer'
                               }`}
                             >
                               <div className="flex items-center gap-3">
-                                <svg className={`w-5 h-5 shrink-0 ${attempt ? 'text-emerald-500' : 'text-[#5b6b12]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <svg className={`w-5 h-5 shrink-0 ${attempt ? 'text-emerald-500' : 'text-accent-text'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <div>
                                   <p className="text-sm font-semibold text-[#1b1e26]">{quiz.title}</p>
                                   <p className="text-xs text-gray-500">{quiz.questions.length} questions · {quiz.timeLimit} min</p>
@@ -651,11 +650,11 @@ export const StudentDashboard = () => {
                     return (
                       <motion.div key={assignment.id} {...fadeUp}
                         onClick={() => !submission && navigate(`/student/assignment/${assignment.id}`)}
-                        className={`bg-white border border-gray-100 rounded-2xl p-6 transition-colors shadow-sm ${!submission ? 'hover:border-[#d0f24a]/40 cursor-pointer' : ''}`}
+                        className={`bg-white border border-gray-100 rounded-2xl p-6 transition-colors shadow-sm ${!submission ? 'hover:border-accent/40 cursor-pointer' : ''}`}
                       >
                         <div className="flex justify-between items-start gap-4">
                           <div>
-                            <span className="font-mono text-[#5b6b12] bg-[#d0f24a]/20 px-2 py-0.5 rounded text-xs font-bold">{course.code}</span>
+                            <span className="font-mono text-accent-text bg-accent/20 px-2 py-0.5 rounded text-xs font-bold">{course.code}</span>
                             <h4 className="text-sm font-bold text-[#1b1e26] mt-2">{assignment.title}</h4>
                             <p className="text-xs text-gray-500 mt-1 max-w-lg">{assignment.description}</p>
                           </div>
@@ -688,10 +687,10 @@ export const StudentDashboard = () => {
                 <div className="bg-white border border-gray-100 rounded-2xl p-2 shadow-sm">
                   {[
                     { title: 'Software intern · MTN Rwanda', match: uniqueSkills.length, tag: 'Strong match', tone: 'bg-emerald-100 text-emerald-600' },
-                    { title: 'Junior dev · Norrsken Kigali', match: Math.max(uniqueSkills.length - 1, 0), tag: 'Good match', tone: 'bg-[#d0f24a]/20 text-[#5b6b12]' },
+                    { title: 'Junior dev · Norrsken Kigali', match: Math.max(uniqueSkills.length - 1, 0), tag: 'Good match', tone: 'bg-accent/20 text-accent-text' },
                   ].map((job, i) => (
                     <div key={i} className="flex items-center gap-4 px-4 py-4 border-b border-gray-50 last:border-b-0">
-                      <span className="w-11 h-11 rounded-xl bg-[#1b1e26] text-[#d0f24a] flex items-center justify-center shrink-0">
+                      <span className="w-11 h-11 rounded-xl bg-[#1b1e26] text-accent flex items-center justify-center shrink-0">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0h-2" /><path d="M9 7h1m-1 4h1m4-4h1m-1 4h1" /></svg>
                       </span>
                       <div className="flex-1 min-w-0">

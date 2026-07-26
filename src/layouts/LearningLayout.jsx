@@ -80,7 +80,7 @@ export const LearningLayout = () => {
   }, [logout, navigate]);
 
   return (
-    <div className="h-screen w-full flex bg-[#f7f8fa] text-[#1b1e26] antialiased overflow-hidden">
+    <div className="theme-learner h-screen w-full flex bg-[#f7f8fa] text-[#1b1e26] antialiased overflow-hidden">
       {/* Mobile backdrop */}
       <AnimatePresence>
         {mobileOpen && (
@@ -98,7 +98,7 @@ export const LearningLayout = () => {
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } ${collapsed ? 'lg:w-[84px]' : 'lg:w-[335px]'} w-[335px]`}
       >
-        <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-[#d0f24a]/10 blur-[90px] pointer-events-none" />
+        <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-accent/10 blur-[90px] pointer-events-none" />
         <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#39435a]/30 blur-[90px] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full">
@@ -113,7 +113,7 @@ export const LearningLayout = () => {
             </button>
             <BrandLockup hideText={collapsed} size={36} />
             {!collapsed && (
-              <p className="mt-2 ml-[48px] text-[9px] font-black text-[#d0f24a] uppercase tracking-[0.25em]">Learning Portal</p>
+              <p className="mt-2 ml-[48px] text-[9px] font-black text-accent uppercase tracking-[0.25em]">Learning Portal</p>
             )}
           </div>
 
@@ -137,7 +137,7 @@ export const LearningLayout = () => {
                         collapsed ? 'lg:justify-center' : ''
                       } ${
                         active
-                          ? 'bg-[#d0f24a] text-[#1b1e26] shadow-lg shadow-[#d0f24a]/20'
+                          ? 'bg-accent text-[#1b1e26] shadow-lg shadow-accent/20'
                           : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
                       }`}
                     >
@@ -156,7 +156,7 @@ export const LearningLayout = () => {
           {!collapsed && (
             <div className="relative z-10 border-t border-white/10 mx-3 pt-4 pb-5">
               <div className="flex items-center gap-3 px-2">
-                <span className="w-9 h-9 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-xs font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#d0f24a]/20">
+                <span className="w-9 h-9 rounded-xl bg-accent text-[#1b1e26] text-xs font-bold flex items-center justify-center shrink-0 shadow-lg shadow-accent/20">
                   {initials}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -201,7 +201,7 @@ export const LearningLayout = () => {
                 onClick={() => setProfileOpen((o) => !o)}
                 className="group flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-xl hover:bg-gray-100 transition-colors"
               >
-                <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center ring-0 ring-[#d0f24a]/0 group-hover:ring-4 group-hover:ring-[#d0f24a]/40 transition-all duration-200 shrink-0">
+                <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center ring-0 ring-accent/0 group-hover:ring-4 group-hover:ring-accent/40 transition-all duration-200 shrink-0">
                   {initials}
                 </span>
                 <div className="hidden sm:block text-left min-w-0">
@@ -214,7 +214,7 @@ export const LearningLayout = () => {
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-[100] animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center shrink-0">{initials}</span>
+                    <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center shrink-0">{initials}</span>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[#1b1e26] truncate">{user?.name || 'Learner'}</p>
                       <p className="text-xs text-gray-400 truncate">{user?.email || ''}</p>

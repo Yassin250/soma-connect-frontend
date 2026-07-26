@@ -7,7 +7,7 @@ import { RowActionMenu, DockIcons } from '../../../components/shared/RowActions'
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
 const AVATAR_STYLES = [
-  'bg-[#d0f24a]/20 text-[#5b6b12]',
+  'bg-accent/20 text-accent-text',
   'bg-rose-100 text-rose-700',
   'bg-amber-100 text-amber-700',
   'bg-emerald-100 text-emerald-700',
@@ -84,7 +84,7 @@ const normalizeUserRoles = (user, rolesByName) => {
 };
 
 const filterFieldClass =
-  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-[#d0f24a]/20 focus:border-[#d0f24a] focus:outline-none transition-all';
+  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all';
 const filterSelectClass = `${filterFieldClass} appearance-none pr-8 cursor-pointer`;
 const filterLabelClass = 'text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]';
 
@@ -252,7 +252,7 @@ export const EntityUsersPage = () => {
               <span className="font-medium text-[#1b1e26] whitespace-nowrap inline-flex items-center gap-1.5">
                 {user.name || '—'}
                 {isSelf(user) && (
-                  <span className="px-1.5 py-0.5 rounded-md bg-[#d0f24a] text-[#1b1e26] text-[9px] font-bold uppercase tracking-wide shrink-0">
+                  <span className="px-1.5 py-0.5 rounded-md bg-accent text-[#1b1e26] text-[9px] font-bold uppercase tracking-wide shrink-0">
                     You
                   </span>
                 )}
@@ -285,7 +285,7 @@ export const EntityUsersPage = () => {
                 key={role.id || role.name}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/80 border border-[#1b1e26]/10"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#d0f24a] ring-1 ring-[#1b1e26]/20 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent ring-1 ring-[#1b1e26]/20 shrink-0" />
                 {role.name}
               </span>
             ))}

@@ -166,7 +166,7 @@ const Accordion = ({ title, children }) => {
         aria-expanded={open}
       >
         <span className="text-[15px] font-bold text-[#1b1e26]">{title}</span>
-        <span className={`w-7 h-7 rounded-lg bg-[#f3f4f6] text-[#1b1e26]/60 flex items-center justify-center shrink-0 transition-transform duration-200 ${open ? 'rotate-45 bg-[#d0f24a] text-[#1b1e26]' : ''}`}>
+        <span className={`w-7 h-7 rounded-lg bg-[#f3f4f6] text-[#1b1e26]/60 flex items-center justify-center shrink-0 transition-transform duration-200 ${open ? 'rotate-45 bg-accent text-[#1b1e26]' : ''}`}>
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
         </span>
       </button>
@@ -204,7 +204,7 @@ const RichTextBlocks = ({ blocks }) => (
         return (
           <div key={i} className="rounded-xl bg-[#1b1e26] px-6 py-4 clear-both">
             <h2 className="text-lg font-semibold text-white tracking-tight">
-              <span className="inline-block w-2 h-2 rounded-full bg-[#d0f24a] mr-2.5 align-middle" />
+              <span className="inline-block w-2 h-2 rounded-full bg-accent mr-2.5 align-middle" />
               {b.text}
             </h2>
           </div>
@@ -231,8 +231,8 @@ const RichTextBlocks = ({ blocks }) => (
       }
       if (b.type === 'callout') {
         return (
-          <div key={i} className="clear-both flex items-start gap-3 rounded-xl border border-[#d0f24a]/60 bg-[#d0f24a]/10 px-4 py-4">
-            <span className="w-6 h-6 rounded-full bg-[#1b1e26] text-[#d0f24a] flex items-center justify-center shrink-0 mt-0.5">
+          <div key={i} className="clear-both flex items-start gap-3 rounded-xl border border-accent/60 bg-accent/10 px-4 py-4">
+            <span className="w-6 h-6 rounded-full bg-[#1b1e26] text-accent flex items-center justify-center shrink-0 mt-0.5">
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 16v-4m0-4h.01" strokeLinecap="round" /><circle cx="12" cy="12" r="9" /></svg>
             </span>
             <p className="text-[14px] text-[#1b1e26]/80 leading-relaxed font-medium"><Inline text={b.text} /></p>
@@ -252,7 +252,7 @@ const RichTextBlocks = ({ blocks }) => (
             {b.items.map((item, ii) => (
               <li key={ii} className="flex gap-3 text-[15px] text-gray-600 leading-[1.8]">
                 {b.type === 'ul'
-                  ? <span className="mt-[10px] w-1.5 h-1.5 rounded-full bg-[#d0f24a] ring-2 ring-[#d0f24a]/25 shrink-0" />
+                  ? <span className="mt-[10px] w-1.5 h-1.5 rounded-full bg-accent ring-2 ring-accent/25 shrink-0" />
                   : <span className="font-semibold text-[#1b1e26]/50 shrink-0 tabular-nums">{ii + 1}.</span>}
                 <span className="min-w-0"><MetaOrText text={item} /></span>
               </li>
@@ -315,7 +315,7 @@ const AssignmentSubmit = ({ courseId, itemId, onDone }) => {
           <p className="text-xs text-gray-400 italic">Awaiting grade from instructor.</p>
         )}
         {submission.score != null && (
-          <button onClick={onDone} className="mt-4 px-5 py-2 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-sm font-bold">Mark complete and continue</button>
+          <button onClick={onDone} className="mt-4 px-5 py-2 rounded-xl bg-accent text-[#1b1e26] text-sm font-bold">Mark complete and continue</button>
         )}
       </div>
     );
@@ -440,9 +440,9 @@ const ItemStage = ({ item, courseId, onQuizPassed }) => {
 const AttachmentCard = ({ url, name }) => (
   <a
     href={url} target="_blank" rel="noreferrer"
-    className="mt-4 flex items-center gap-3 rounded-2xl bg-white border border-gray-100 shadow-sm px-4 py-3.5 hover:border-[#d0f24a] hover:shadow-md transition-all group"
+    className="mt-4 flex items-center gap-3 rounded-2xl bg-white border border-gray-100 shadow-sm px-4 py-3.5 hover:border-accent hover:shadow-md transition-all group"
   >
-    <span className="w-10 h-10 rounded-xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center shrink-0 group-hover:bg-[#d0f24a] transition-colors">
+    <span className="w-10 h-10 rounded-xl bg-accent/20 text-[#1b1e26] flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
       </svg>
@@ -480,7 +480,7 @@ const StagePlaceholder = ({ icon, title, sub, actionUrl, actionLabel, tone = 'de
         <p className="text-white/60 text-sm mt-1 max-w-sm mx-auto">{sub}</p>
         {isValidUrl && (
           <a href={actionUrl} target="_blank" rel="noreferrer"
-            className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-sm font-bold hover:bg-[#c4e83a] transition-colors">
+            className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-accent text-[#1b1e26] text-sm font-bold hover:bg-accent-hover transition-colors">
             {actionLabel}
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </a>
@@ -649,7 +649,7 @@ export const CourseLearningPage = () => {
     return (
       <div className="min-h-screen bg-[#f7f8fa] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-14 h-14 border-4 border-[#d0f24a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-14 h-14 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-500 text-sm">Loading course…</p>
         </div>
       </div>
@@ -739,7 +739,7 @@ export const CourseLearningPage = () => {
             </Link>
             <div className="flex items-center gap-3">
               <div className="hidden sm:block w-[230px] md:w-[262px] h-3 bg-gray-100 rounded-full overflow-hidden">
-                <motion.div className="h-full bg-[#d0f24a] rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.5 }} />
+                <motion.div className="h-full bg-accent rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.5 }} />
               </div>
               <span className="text-xl md:text-2xl font-black text-[#1b1e26] tabular-nums tracking-tight">{progress}%</span>
             </div>
@@ -779,7 +779,7 @@ export const CourseLearningPage = () => {
                           className="w-full px-3.5 py-3 flex items-center gap-2.5 text-left hover:bg-gray-50/70 transition-colors"
                         >
                           <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0 ${
-                            st.complete ? 'bg-[#d0f24a] text-[#1b1e26]' : st.locked ? 'bg-gray-100 text-gray-400' : 'bg-[#1b1e26] text-[#d0f24a]'
+                            st.complete ? 'bg-accent text-[#1b1e26]' : st.locked ? 'bg-gray-100 text-gray-400' : 'bg-[#1b1e26] text-accent'
                           }`}>
                             {st.complete ? (
                               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -792,7 +792,7 @@ export const CourseLearningPage = () => {
                             <span className="block text-[11px] text-gray-400">{st.completed || 0}/{st.total || 0} · {humanize(mod.moduleType)}</span>
                           </span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 tabular-nums ${
-                            st.complete ? 'bg-[#d0f24a] text-[#1b1e26]'
+                            st.complete ? 'bg-accent text-[#1b1e26]'
                               : st.locked ? 'bg-gray-100 text-gray-400'
                               : 'bg-[#1b1e26]/[0.05] text-[#1b1e26]/60'
                           }`}>
@@ -814,11 +814,11 @@ export const CourseLearningPage = () => {
                                     onClick={() => selectItem({ ...item, moduleId: mod.id, locked: st.locked })}
                                     disabled={st.locked}
                                     className={`w-full px-3.5 py-2.5 flex items-center gap-2.5 text-left transition-colors ${
-                                      st.locked ? 'opacity-50 cursor-not-allowed' : isActive ? 'bg-[#d0f24a]/12' : 'hover:bg-gray-50/70'
+                                      st.locked ? 'opacity-50 cursor-not-allowed' : isActive ? 'bg-accent/12' : 'hover:bg-gray-50/70'
                                     }`}
                                   >
                                     <span className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                                      isDone ? 'bg-[#d0f24a] text-[#1b1e26]' : isActive ? 'bg-[#1b1e26] text-white' : 'bg-gray-100 text-gray-400'
+                                      isDone ? 'bg-accent text-[#1b1e26]' : isActive ? 'bg-[#1b1e26] text-white' : 'bg-gray-100 text-gray-400'
                                     }`}>
                                       {isDone ? (
                                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -857,7 +857,7 @@ export const CourseLearningPage = () => {
           <div className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-10 py-8">
             {progress === 100 ? (
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 rounded-2xl bg-gradient-to-br from-[#1b1e26] to-[#343b49] text-white p-6 flex items-center gap-4">
-                <span className="w-12 h-12 rounded-2xl bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center shrink-0">
+                <span className="w-12 h-12 rounded-2xl bg-accent text-[#1b1e26] flex items-center justify-center shrink-0">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
                 <div>
@@ -878,7 +878,7 @@ export const CourseLearningPage = () => {
                     <span className="truncate">{active.moduleTitle}</span>
                   </div>
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#d0f24a]/25 text-[#1b1e26] text-[11px] font-bold uppercase tracking-wide">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/25 text-[#1b1e26] text-[11px] font-bold uppercase tracking-wide">
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d={(ITEM_META[active.itemType] || ITEM_META.LINK).icon} strokeLinecap="round" strokeLinejoin="round" /></svg>
                       {(ITEM_META[active.itemType] || {}).label || 'Item'}
                     </span>
@@ -906,7 +906,7 @@ export const CourseLearningPage = () => {
                 </div>
             ) : (
               <div className="text-center py-24">
-                <span className="w-14 h-14 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
+                <span className="w-14 h-14 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
                 <p className="text-base font-semibold text-[#1b1e26]">This course has no lessons yet</p>
@@ -930,7 +930,7 @@ export const CourseLearningPage = () => {
                   </button>
                   <button onClick={markComplete} disabled={completing}
                     className={`inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-[13px] font-bold transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60 disabled:pointer-events-none ${
-                      done.has(active.id) ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a]'
+                      done.has(active.id) ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-accent text-[#1b1e26] hover:bg-accent-hover'
                     }`}>
                     {done.has(active.id) ? 'Completed' : completing ? 'Saving…' : 'Mark complete'}
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>

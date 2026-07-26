@@ -27,7 +27,7 @@ export const Table = ({ columns, data, emptyMessage = "No data available", class
             </tr>
           ) : (
             data.map((row, rowIdx) => (
-              <tr key={rowIdx} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+              <tr key={rowIdx} className="hover:bg-accent/[0.08] transition-colors">
                 {columns.map((col, colIdx) => (
                   <td key={colIdx} className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">
                     {col.render ? col.render(row) : row[col.key]}

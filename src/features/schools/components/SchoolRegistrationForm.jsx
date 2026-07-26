@@ -33,7 +33,7 @@ export const SchoolRegistrationForm = () => {
     return (
       <div className="min-h-screen bg-[#16181f] text-white flex items-center justify-center p-6 antialiased">
         <div className="relative w-full max-w-xl bg-slate-900/50 backdrop-blur-md rounded-2xl p-8 border border-slate-800 shadow-2xl text-center space-y-6">
-          <div className="mx-auto w-16 h-16 bg-[#d0f24a]/10 border border-[#d0f24a]/30 rounded-full flex items-center justify-center text-[#d0f24a]">
+          <div className="mx-auto w-16 h-16 bg-accent/10 border border-accent/30 rounded-full flex items-center justify-center text-accent">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -53,7 +53,7 @@ export const SchoolRegistrationForm = () => {
             </div>
             <div className="flex justify-between text-xs border-t border-slate-700/50 pt-2">
               <span className="text-slate-400">Auto-created Admin:</span>
-              <span className="text-[#d0f24a] font-mono">admin@{registeredDomain}</span>
+              <span className="text-accent font-mono">admin@{registeredDomain}</span>
             </div>
           </div>
 
@@ -64,7 +64,7 @@ export const SchoolRegistrationForm = () => {
           <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => navigate('/super-admin/approvals')}
-              className="px-6 py-2.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] text-xs font-semibold rounded-lg shadow-lg hover:shadow-[#d0f24a]/20 transition-all"
+              className="px-6 py-2.5 bg-accent hover:bg-accent-hover text-[#1b1e26] text-xs font-semibold rounded-lg shadow-lg hover:shadow-accent/20 transition-all"
             >
               Simulate Super-Admin Approval Panel
             </button>
@@ -85,7 +85,7 @@ export const SchoolRegistrationForm = () => {
       {/* Branding panel */}
       <div className="md:w-5/12 bg-gradient-to-br from-[#20242e] to-[#101217] p-8 flex flex-col justify-between relative overflow-hidden select-none">
         <div className="absolute top-[20%] left-[-10%] w-[130%] h-32 bg-white/5 rounded-full rotate-[-12deg] pointer-events-none" />
-        <div className="absolute top-[40%] right-[-10%] w-48 h-48 bg-[#d0f24a]/10 rounded-full blur-xl pointer-events-none" />
+        <div className="absolute top-[40%] right-[-10%] w-48 h-48 bg-accent/10 rounded-full blur-xl pointer-events-none" />
 
         <div className="flex items-center space-x-2 relative z-10">
           <svg className="w-5 h-7 fill-current opacity-95 text-white" viewBox="0 0 24 24">
@@ -133,7 +133,7 @@ export const SchoolRegistrationForm = () => {
                   {...register('name', { required: 'School name is required' })}
                   type="text"
                   placeholder="e.g. University of Rwanda"
-                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-[#d0f24a] text-white placeholder-slate-500"
+                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-accent text-white placeholder-slate-500"
                 />
                 {errors.name && <p className="text-[9px] text-red-500">{errors.name.message}</p>}
               </div>
@@ -150,7 +150,7 @@ export const SchoolRegistrationForm = () => {
                   })}
                   type="text"
                   placeholder="e.g. ur.ac.rw"
-                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-[#d0f24a] text-white placeholder-slate-500"
+                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-accent text-white placeholder-slate-500"
                 />
                 {errors.slug && <p className="text-[9px] text-red-500">{errors.slug.message}</p>}
               </div>
@@ -163,7 +163,7 @@ export const SchoolRegistrationForm = () => {
                   {...register('address', { required: 'Address is required' })}
                   type="text"
                   placeholder="e.g. Kigali / Gasabo"
-                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-[#d0f24a] text-white placeholder-slate-500"
+                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-accent text-white placeholder-slate-500"
                 />
                 {errors.address && <p className="text-[9px] text-red-500">{errors.address.message}</p>}
               </div>
@@ -172,7 +172,7 @@ export const SchoolRegistrationForm = () => {
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">School Type</label>
                 <select
                   {...register('type', { required: 'Type is required' })}
-                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-[#d0f24a] text-slate-300"
+                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-accent text-slate-300"
                 >
                   <option value="university">University / Higher Learning</option>
                   <option value="tvet">TVET Institute</option>
@@ -189,7 +189,7 @@ export const SchoolRegistrationForm = () => {
                   {...register('contactName', { required: 'Contact name is required' })}
                   type="text"
                   placeholder="e.g. Jean Bosco"
-                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-[#d0f24a] text-white placeholder-slate-500"
+                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-accent text-white placeholder-slate-500"
                 />
                 {errors.email && <p className="text-[9px] text-red-500">{errors.email.message}</p>}
               </div>
@@ -200,7 +200,7 @@ export const SchoolRegistrationForm = () => {
                   {...register('phone')}
                   type="text"
                   placeholder="e.g. +250 788 123 456"
-                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-[#d0f24a] text-white placeholder-slate-500"
+                  className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs px-3 py-2.5 focus:outline-none focus:border-accent text-white placeholder-slate-500"
                 />
               </div>
             </div>
@@ -208,7 +208,7 @@ export const SchoolRegistrationForm = () => {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] text-xs font-semibold rounded-lg shadow-md hover:shadow-[#d0f24a]/10 transition-all"
+                className="w-full py-2.5 bg-accent hover:bg-accent-hover text-[#1b1e26] text-xs font-semibold rounded-lg shadow-md hover:shadow-accent/10 transition-all"
               >
                 Submit Registration Profile
               </button>
@@ -216,7 +216,7 @@ export const SchoolRegistrationForm = () => {
           </form>
 
           <div className="text-center pt-2 text-slate-500 text-[11px]">
-            Already approved? <a href="/login" className="text-[#d0f24a] hover:underline">Log in here</a>
+            Already approved? <a href="/login" className="text-accent hover:underline">Log in here</a>
           </div>
         </div>
       </div>

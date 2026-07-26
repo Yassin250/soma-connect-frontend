@@ -97,13 +97,13 @@ export const StudentDirectoryPage = () => {
               <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Name</label>
               <input type="text" required value={newName} onChange={(e) => setNewName(e.target.value)}
                 placeholder="e.g. Ganza Kenny"
-                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-[#d0f24a]" />
+                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-accent" />
             </div>
             <div>
               <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Email</label>
               <input type="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="e.g. g.kenny@domain.edu"
-                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-[#d0f24a]" />
+                className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2.5 text-slate-800 outline-none focus:border-accent" />
             </div>
           </div>
           <div className="flex gap-2 justify-end pt-2">
@@ -136,7 +136,7 @@ export const StudentDirectoryPage = () => {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {students.map((stud) => (
-                  <tr key={stud.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                  <tr key={stud.id} className="hover:bg-accent/[0.08] transition-colors">
                     <td className="px-4 py-2.5 text-[13px] font-bold text-slate-900">{stud.name}</td>
                     <td className="px-4 py-2.5 text-[13px] font-mono text-slate-500">{stud.email}</td>
                     <td className="px-4 py-2.5 text-right">

@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
  */
 
 const fieldClass =
-  'w-full rounded-lg bg-[#f7f8fa] border border-[#1b1e26]/10 px-3 py-2 text-[13px] text-[#1b1e26] placeholder-gray-400 focus:bg-white focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all';
+  'w-full rounded-lg bg-[#f7f8fa] border border-[#1b1e26]/10 px-3 py-2 text-[13px] text-[#1b1e26] placeholder-gray-400 focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none transition-all';
 const selectClass = `${fieldClass} cursor-pointer`;
 const labelClass = 'block text-[10px] font-bold text-[#1b1e26]/45 uppercase tracking-[0.12em] mb-1';
 const miniBtnClass =
@@ -57,7 +57,7 @@ const LimeCheck = ({ checked, onChange, label }) => (
     <button
       type="button"
       onClick={() => onChange({ target: { checked: !checked } })}
-      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${checked ? 'bg-[#d0f24a] border-[#d0f24a] text-[#1b1e26]' : 'bg-white border-[#1b1e26]/15 text-transparent'}`}
+      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${checked ? 'bg-accent border-accent text-[#1b1e26]' : 'bg-white border-[#1b1e26]/15 text-transparent'}`}
     >
       <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
         <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
@@ -354,8 +354,8 @@ export const CourseBuilderPage = () => {
                   className="flex items-center gap-2.5 group shrink-0"
                 >
                   <span className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-200 ${
-                    done ? 'bg-[#1b1e26] text-[#d0f24a]'
-                      : active ? 'bg-[#d0f24a] text-[#1b1e26] ring-[3px] ring-[#d0f24a]/25'
+                    done ? 'bg-[#1b1e26] text-accent'
+                      : active ? 'bg-accent text-[#1b1e26] ring-[3px] ring-accent/25'
                       : 'bg-[#f3f4f6] text-[#1b1e26]/40 group-hover:bg-[#1b1e26]/[0.08]'
                   }`}>
                     {done ? (
@@ -371,7 +371,7 @@ export const CourseBuilderPage = () => {
                   </span>
                 </button>
                 {i < STEPS.length - 1 && (
-                  <span className={`flex-1 h-0.5 mx-2.5 rounded-full transition-colors duration-300 ${done ? 'bg-[#d0f24a]' : 'bg-[#1b1e26]/[0.06]'}`} />
+                  <span className={`flex-1 h-0.5 mx-2.5 rounded-full transition-colors duration-300 ${done ? 'bg-accent' : 'bg-[#1b1e26]/[0.06]'}`} />
                 )}
               </React.Fragment>
             );
@@ -518,7 +518,7 @@ export const CourseBuilderPage = () => {
                 aria-pressed={basics.certificateEnabled}
                 className="mt-2.5 flex items-center gap-2 group"
               >
-                <span className={`w-4 h-4 rounded-[5px] border flex items-center justify-center shrink-0 transition-colors ${basics.certificateEnabled ? 'bg-[#d0f24a] border-[#d0f24a] text-[#1b1e26]' : 'bg-white border-[#1b1e26]/20 text-transparent group-hover:border-[#1b1e26]/35'}`}>
+                <span className={`w-4 h-4 rounded-[5px] border flex items-center justify-center shrink-0 transition-colors ${basics.certificateEnabled ? 'bg-accent border-accent text-[#1b1e26]' : 'bg-white border-[#1b1e26]/20 text-transparent group-hover:border-[#1b1e26]/35'}`}>
                   <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
                 <span className="text-[12px] font-medium text-[#1b1e26]/65">Issue a certificate on completion</span>
@@ -574,7 +574,7 @@ export const CourseBuilderPage = () => {
 
             <button
               onClick={() => setObjectives((p) => [...p, newObjective()])}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[#1b1e26]/20 text-[13px] font-semibold text-[#1b1e26]/60 hover:text-[#1b1e26] hover:border-[#d0f24a] hover:bg-[#d0f24a]/10 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[#1b1e26]/20 text-[13px] font-semibold text-[#1b1e26]/60 hover:text-[#1b1e26] hover:border-accent hover:bg-accent/10 transition-colors"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
               Add objective
@@ -600,7 +600,7 @@ export const CourseBuilderPage = () => {
                     <p className="text-[10px] font-bold text-[#1b1e26]/40 uppercase tracking-[0.12em]">Module {mi + 1}</p>
                     {/* Title + type stay on ONE row — the input shrinks instead of the select wrapping */}
                     <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-lg bg-[#1b1e26] text-[#d0f24a] text-[12px] font-bold flex items-center justify-center shrink-0">
+                      <span className="w-8 h-8 rounded-lg bg-[#1b1e26] text-accent text-[12px] font-bold flex items-center justify-center shrink-0">
                         {mi + 1}
                       </span>
                       <input
@@ -746,7 +746,7 @@ export const CourseBuilderPage = () => {
                                   <span className="font-mono">---</span> = divider ·{' '}
                                   add <span className="font-mono">|left</span>/<span className="font-mono">|right</span> to an image URL to wrap text beside it
                                 </p>
-                                <label className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold cursor-pointer bg-[#f3f4f6] text-[#1b1e26]/70 hover:bg-[#d0f24a]/25 hover:text-[#1b1e26] transition-colors">
+                                <label className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold cursor-pointer bg-[#f3f4f6] text-[#1b1e26]/70 hover:bg-accent/25 hover:text-[#1b1e26] transition-colors">
                                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                   Insert image
                                   <input
@@ -784,7 +784,7 @@ export const CourseBuilderPage = () => {
                     })}
                     <button
                       onClick={() => setModules((p) => p.map((x, xi) => (xi === mi ? { ...x, items: [...x.items, newItem()] } : x)))}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1b1e26]/50 hover:text-[#1b1e26] hover:bg-[#d0f24a]/15 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1b1e26]/50 hover:text-[#1b1e26] hover:bg-accent/15 transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
                       Add item
@@ -796,7 +796,7 @@ export const CourseBuilderPage = () => {
 
             <button
               onClick={() => setModules((p) => [...p, newModule(true)])}
-              className="w-full py-3 rounded-2xl border border-dashed border-[#1b1e26]/20 text-sm font-semibold text-[#1b1e26]/60 hover:text-[#1b1e26] hover:border-[#d0f24a] hover:bg-[#d0f24a]/10 transition-colors inline-flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-2xl border border-dashed border-[#1b1e26]/20 text-sm font-semibold text-[#1b1e26]/60 hover:text-[#1b1e26] hover:border-accent hover:bg-accent/10 transition-colors inline-flex items-center justify-center gap-2"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
               Add module
@@ -848,7 +848,7 @@ export const CourseBuilderPage = () => {
             <div className="space-y-2">
               {modules.filter((m) => m.title.trim()).map((m, i) => (
                 <div key={i} className="flex items-center gap-3 rounded-xl bg-[#f7f8fa] border border-[#1b1e26]/[0.05] px-4 py-2.5">
-                  <span className="w-6 h-6 rounded-md bg-[#1b1e26] text-[#d0f24a] text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                  <span className="w-6 h-6 rounded-md bg-[#1b1e26] text-accent text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                   <span className="text-[13px] font-medium text-[#1b1e26] truncate flex-1">{m.title}</span>
                   <span className="text-[11px] text-gray-400 shrink-0">{m.items.filter((x) => x.title.trim()).length} items</span>
                   {i > 0 && m.lockedAfterPrevious && (
@@ -897,7 +897,7 @@ export const CourseBuilderPage = () => {
             <button
               onClick={() => save(true)}
               disabled={saving}
-              className="w-full sm:w-auto px-6 py-2 rounded-xl text-[13px] font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+              className="w-full sm:w-auto px-6 py-2 rounded-xl text-[13px] font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
             >
               {saving ? 'Saving…' : 'Save & publish'}
             </button>

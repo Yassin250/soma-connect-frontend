@@ -8,7 +8,7 @@ import { logicalRect, logicalViewport } from '../../utils/rootZoom';
  * doesn't collide with the row's own `group` hover styles).
  */
 const ACTION_TONES = {
-  ink: 'hover:text-[#1b1e26] hover:bg-[#d0f24a]/40',
+  ink: 'hover:text-[#1b1e26] hover:bg-accent/40',
   amber: 'hover:text-amber-600 hover:bg-amber-50',
   emerald: 'hover:text-emerald-600 hover:bg-emerald-50',
   gray: 'hover:text-[#1b1e26]/70 hover:bg-[#1b1e26]/[0.06]',
@@ -124,8 +124,8 @@ export const RowActionMenu = ({ primary, items = [] }) => {
           aria-expanded={open}
           className={`inline-flex items-center gap-2 pl-3.5 pr-3 h-8 text-[13px] font-semibold rounded-lg transition-colors ${
             open
-              ? 'bg-[#c4e83a] text-[#1b1e26]'
-              : 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a]'
+              ? 'bg-accent-hover text-[#1b1e26]'
+              : 'bg-accent text-[#1b1e26] hover:bg-accent-hover'
           }`}
         >
           <span>Actions</span>

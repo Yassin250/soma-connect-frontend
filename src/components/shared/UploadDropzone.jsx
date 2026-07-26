@@ -57,7 +57,7 @@ const useDragOver = (onFile) => {
 
 const ProgressBar = ({ value }) => (
   <div className="w-full h-1.5 bg-[#1b1e26]/[0.08] rounded-full overflow-hidden">
-    <div className="h-full bg-[#d0f24a] rounded-full transition-all duration-200" style={{ width: `${value}%` }} />
+    <div className="h-full bg-accent rounded-full transition-all duration-200" style={{ width: `${value}%` }} />
   </div>
 );
 
@@ -89,7 +89,7 @@ export const CoverImageDropzone = ({ value, onChange }) => {
           <div className="absolute inset-0 bg-[#1b1e26]/0 group-hover:bg-[#1b1e26]/50 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
             <button
               type="button" onClick={pick}
-              className="px-4 py-2 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-xs font-bold hover:bg-[#c4e83a] transition-colors"
+              className="px-4 py-2 rounded-xl bg-accent text-[#1b1e26] text-xs font-bold hover:bg-accent-hover transition-colors"
             >
               Replace
             </button>
@@ -109,8 +109,8 @@ export const CoverImageDropzone = ({ value, onChange }) => {
           type="button" onClick={pick} {...handlers}
           className={`w-full h-28 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1.5 transition-colors ${
             over
-              ? 'border-[#d0f24a] bg-[#d0f24a]/10'
-              : 'border-[#1b1e26]/15 bg-[#f7f8fa] hover:border-[#d0f24a] hover:bg-[#d0f24a]/5'
+              ? 'border-accent bg-accent/10'
+              : 'border-[#1b1e26]/15 bg-[#f7f8fa] hover:border-accent hover:bg-accent/5'
           }`}
         >
           {uploading ? (
@@ -120,13 +120,13 @@ export const CoverImageDropzone = ({ value, onChange }) => {
             </div>
           ) : (
             <>
-              <span className="w-10 h-10 rounded-xl bg-[#d0f24a]/25 text-[#1b1e26] flex items-center justify-center">
+              <span className="w-10 h-10 rounded-xl bg-accent/25 text-[#1b1e26] flex items-center justify-center">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </span>
               <p className="text-[13px] font-semibold text-[#1b1e26]/70">
-                Drag &amp; drop a cover image, or <span className="text-[#5b6b12] underline decoration-[#d0f24a] decoration-2 underline-offset-2">browse</span>
+                Drag &amp; drop a cover image, or <span className="text-accent-text underline decoration-accent decoration-2 underline-offset-2">browse</span>
               </p>
               <p className="text-[11px] text-gray-400">JPG, PNG, GIF or WEBP · up to 5 MB</p>
             </>
@@ -162,8 +162,8 @@ export const AttachmentDropzone = ({ url, name, onChange }) => {
       />
 
       {url ? (
-        <div className="flex items-center gap-2 rounded-lg bg-[#d0f24a]/10 border border-[#d0f24a]/40 px-2.5 py-1.5">
-          <svg className="w-3.5 h-3.5 text-[#5b6b12] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="flex items-center gap-2 rounded-lg bg-accent/10 border border-accent/40 px-2.5 py-1.5">
+          <svg className="w-3.5 h-3.5 text-accent-text shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
           </svg>
           <a
@@ -176,7 +176,7 @@ export const AttachmentDropzone = ({ url, name, onChange }) => {
           {size != null && <span className="text-[10px] text-[#1b1e26]/40 shrink-0">{prettySize(size)}</span>}
           <button
             type="button" onClick={pick}
-            className="text-[10px] font-bold text-[#5b6b12] hover:underline shrink-0"
+            className="text-[10px] font-bold text-accent-text hover:underline shrink-0"
           >
             Replace
           </button>
@@ -198,8 +198,8 @@ export const AttachmentDropzone = ({ url, name, onChange }) => {
           type="button" onClick={pick} {...handlers}
           className={`w-full flex items-center gap-2 rounded-lg border border-dashed px-2.5 py-1.5 text-left transition-colors ${
             over
-              ? 'border-[#d0f24a] bg-[#d0f24a]/10'
-              : 'border-[#1b1e26]/15 text-[#1b1e26]/45 hover:border-[#d0f24a] hover:text-[#1b1e26]/70 hover:bg-[#d0f24a]/5'
+              ? 'border-accent bg-accent/10'
+              : 'border-[#1b1e26]/15 text-[#1b1e26]/45 hover:border-accent hover:text-[#1b1e26]/70 hover:bg-accent/5'
           }`}
         >
           <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

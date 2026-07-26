@@ -125,7 +125,7 @@ const EnrollCodeModal = ({ open, courseTitle, onSubmit, onClose }) => {
               className={`w-12 h-12 text-center text-xl font-bold font-mono tracking-wider rounded-xl border-2 transition-all uppercase outline-none ${
                 shaking
                   ? 'border-red-400 bg-red-50 text-red-600'
-                  : 'text-[#1b1e26] bg-[#f7f8fa] border-[#1b1e26]/10 focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25'
+                  : 'text-[#1b1e26] bg-[#f7f8fa] border-[#1b1e26]/10 focus:border-accent focus:ring-2 focus:ring-accent/25'
               }`}
             />
           ))}
@@ -270,7 +270,7 @@ export const CourseCatalogPage = () => {
                       </span>
                     )}
                     {course.certificateEnabled && (
-                      <span className="ml-auto inline-flex items-center gap-0.5 text-[9px] font-bold text-[#1b5e20] bg-[#d0f24a]/90 px-1.5 py-0.5 rounded-full">
+                      <span className="ml-auto inline-flex items-center gap-0.5 text-[9px] font-bold text-accent-text bg-accent/90 px-1.5 py-0.5 rounded-full">
                         <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         Certificate
                       </span>

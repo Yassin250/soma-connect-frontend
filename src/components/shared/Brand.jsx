@@ -25,7 +25,7 @@ const ICON_MASK = {
  */
 export const BrandMark = ({ size = 40, iconColor = 'bg-[#1b1e26]', className = '' }) => (
   <span
-    className={`rounded-xl bg-[#d0f24a] flex items-center justify-center shrink-0 shadow-sm ${className}`}
+    className={`rounded-xl bg-accent flex items-center justify-center shrink-0 shadow-sm ${className}`}
     style={{ width: size, height: size }}
   >
     <span

@@ -13,7 +13,7 @@ const ENROLL_BADGE = {
 };
 
 const AVATAR_STYLES = [
-  'bg-[#d0f24a]/20 text-[#5b6b12]', 'bg-rose-100 text-rose-700',
+  'bg-accent/20 text-accent-text', 'bg-rose-100 text-rose-700',
   'bg-amber-100 text-amber-700',   'bg-emerald-100 text-emerald-700',
   'bg-[#1b1e26]/[0.06] text-[#1b1e26]/70', 'bg-violet-100 text-violet-700',
   'bg-fuchsia-100 text-fuchsia-700','bg-teal-100 text-teal-700',
@@ -30,7 +30,7 @@ const avatarStyle = (seed) => {
 };
 
 const filterFieldClass =
-  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-[#d0f24a]/20 focus:border-[#d0f24a] focus:outline-none transition-all';
+  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all';
 const filterSelectClass = `${filterFieldClass} appearance-none pr-8 cursor-pointer`;
 const filterLabelClass = 'text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]';
 
@@ -62,7 +62,7 @@ const CoursesModal = ({ student, onClose }) => {
                 <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${ENROLL_BADGE[c.enrollmentStatus] || 'bg-gray-100 text-gray-500'}`}>{c.enrollmentStatus}</span>
                 <div className="flex items-center gap-1.5">
                   <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#d0f24a] rounded-full" style={{ width: `${c.progressPercent}%` }} />
+                    <div className="h-full bg-accent rounded-full" style={{ width: `${c.progressPercent}%` }} />
                   </div>
                   <span className="text-[10px] font-semibold text-[#1b1e26] tabular-nums">{c.progressPercent}%</span>
                 </div>
@@ -174,7 +174,7 @@ const LecturerStudentsPage = () => {
         return (
           <button
             onClick={() => setCoursesTarget(g)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/80 border border-[#1b1e26]/10 hover:bg-[#d0f24a]/20 hover:border-[#d0f24a]/30 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/80 border border-[#1b1e26]/10 hover:bg-accent/20 hover:border-accent/30 transition-colors"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
@@ -205,7 +205,7 @@ const LecturerStudentsPage = () => {
       render: (g) => (
         <div className="flex items-center gap-2">
           <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#d0f24a] rounded-full" style={{ width: `${g.avgProgress}%` }} />
+            <div className="h-full bg-accent rounded-full" style={{ width: `${g.avgProgress}%` }} />
           </div>
           <span className="text-[10px] font-semibold text-[#1b1e26] tabular-nums">{g.avgProgress}%</span>
         </div>

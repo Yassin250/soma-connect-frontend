@@ -9,7 +9,7 @@ const initialsOf = (name) =>
 
 const fieldLabelClass = 'block text-[10px] font-bold text-[#1b1e26]/45 uppercase tracking-[0.14em] mb-1';
 const inputClass =
-  'w-full rounded-xl bg-white border border-[#1b1e26]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:border-[#d0f24a] focus:ring-4 focus:ring-[#d0f24a]/20 focus:outline-none transition-all';
+  'w-full rounded-xl bg-white border border-[#1b1e26]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none transition-all';
 
 // Read-only fact card used on the overview tab.
 const DetailCard = ({ label, value, children }) => (
@@ -90,7 +90,7 @@ export const SchoolAccountPage = () => {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Identity header */}
       <div className="flex items-center gap-5">
-        <span className="w-20 h-20 rounded-[1.75rem] bg-[#1b1e26] text-[#d0f24a] text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#1b1e26]/15">
+        <span className="w-20 h-20 rounded-[1.75rem] bg-[#1b1e26] text-accent text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#1b1e26]/15">
           {initialsOf(user?.name || user?.username)}
         </span>
         <div className="min-w-0">
@@ -237,7 +237,7 @@ export const SchoolAccountPage = () => {
                 <button
                   type="submit"
                   disabled={pwLoading}
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
                 >
                   {pwLoading ? 'Updating…' : 'Update Password'}
                 </button>

@@ -9,6 +9,17 @@ export default {
       fontFamily: {
         sans: ['Poppins', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
       },
+      colors: {
+        accent: {
+          DEFAULT: 'var(--clr-accent)',
+          hover: 'var(--clr-accent-hover)',
+          dark: 'var(--clr-accent-dark)',
+          text: 'var(--clr-accent-text)',
+          surface: 'var(--clr-accent-surface)',
+          ring: 'var(--clr-accent-ring)',
+          glow: 'var(--clr-accent-glow)',
+        },
+      },
     },
   },
   plugins: [],

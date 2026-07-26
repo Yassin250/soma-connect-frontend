@@ -75,7 +75,7 @@ export const CourseDetailView = ({ course }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
               {course.objectives.map((o) => (
                 <div key={o.id || o.sortOrder} className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-md bg-[#d0f24a]/30 text-[#1b1e26] flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-md bg-accent/30 text-[#1b1e26] flex items-center justify-center shrink-0 mt-0.5">
                     <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                       <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -106,7 +106,7 @@ export const CourseDetailView = ({ course }) => {
               {course.modules.map((m, idx) => (
                 <div key={m.id || idx} className="rounded-xl border border-[#1b1e26]/[0.06] overflow-hidden">
                   <div className="flex items-center gap-3 px-4 py-3 bg-[#fafbfc]">
-                    <span className="w-7 h-7 rounded-lg bg-[#1b1e26] text-[#d0f24a] text-[11px] font-bold flex items-center justify-center shrink-0">
+                    <span className="w-7 h-7 rounded-lg bg-[#1b1e26] text-accent text-[11px] font-bold flex items-center justify-center shrink-0">
                       {idx + 1}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -130,7 +130,7 @@ export const CourseDetailView = ({ course }) => {
                     <div className="divide-y divide-[#1b1e26]/[0.04]">
                       {m.items.map((item, itemIdx) => (
                         <div key={item.id || itemIdx} className="flex items-center gap-3 px-4 py-2.5">
-                          <span className="w-6 h-6 rounded-md bg-[#d0f24a]/20 text-[#1b1e26]/70 flex items-center justify-center shrink-0">
+                          <span className="w-6 h-6 rounded-md bg-accent/20 text-[#1b1e26]/70 flex items-center justify-center shrink-0">
                             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                               <path d={ITEM_TYPE_ICONS[item.itemType] || ITEM_TYPE_ICONS.READING} />
                             </svg>
@@ -161,7 +161,7 @@ export const CourseDetailView = ({ course }) => {
             <img src={course.coverImageUrl} alt={course.title} className="w-full h-44 object-cover" />
           ) : (
             <div className="w-full h-44 bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
-              <span className="w-16 h-16 rounded-2xl bg-[#d0f24a] text-[#1b1e26] text-2xl font-bold flex items-center justify-center">
+              <span className="w-16 h-16 rounded-2xl bg-accent text-[#1b1e26] text-2xl font-bold flex items-center justify-center">
                 {(course.title || '?').charAt(0).toUpperCase()}
               </span>
             </div>
@@ -184,7 +184,7 @@ export const CourseDetailView = ({ course }) => {
         {/* Instructor */}
         {course.instructorName && (
           <div className="bg-white rounded-2xl border border-[#1b1e26]/[0.06] shadow-sm p-5 flex items-center gap-3">
-            <span className="w-11 h-11 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center shrink-0">
+            <span className="w-11 h-11 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center shrink-0">
               {initialsOf(course.instructorName)}
             </span>
             <div className="min-w-0">

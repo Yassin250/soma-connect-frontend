@@ -30,7 +30,7 @@ const BORDERS = {
   success: 'border-l-emerald-500',
   error: 'border-l-red-500',
   warning: 'border-l-amber-500',
-  info: 'border-l-[#d0f24a]',
+  info: 'border-l-accent',
 };
 
 export const ToastProvider = ({ children }) => {

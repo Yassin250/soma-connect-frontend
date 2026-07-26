@@ -174,7 +174,7 @@ export const SuperAdminApprovals = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-6">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#d0f24a] bg-[#d0f24a]/10 px-2.5 py-1 rounded">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-1 rounded">
               Internal Controls
             </span>
             <h1 className="text-3xl font-extrabold tracking-tight mt-2 text-white">
@@ -246,7 +246,7 @@ export const SuperAdminApprovals = () => {
                         <h4 className="text-base font-bold text-white">{school.name}</h4>
                         <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider ${
                           school.status === 'ACTIVE' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                          school.status === 'APPROVED' ? 'bg-[#d0f24a]/10 text-[#d0f24a] border border-[#d0f24a]/20' :
+                           school.status === 'APPROVED' ? 'bg-accent/10 text-accent border border-accent/20' :
                           school.status === 'REJECTED' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
                           'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                         }`}>
@@ -313,7 +313,7 @@ export const SuperAdminApprovals = () => {
               </div>
               <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-800">
                 <span className="text-slate-400">Approved (Pending Setup)</span>
-                <span className="font-bold text-[#d0f24a]">
+                <span className="font-bold text-accent">
                   {schools.filter(s => s.status === 'APPROVED').length}
                 </span>
               </div>
@@ -325,8 +325,8 @@ export const SuperAdminApprovals = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-[#d0f24a]/5 border border-[#d0f24a]/10 rounded-lg space-y-2">
-              <h4 className="text-xs font-bold text-[#d0f24a]">Manual review protocol:</h4>
+            <div className="p-4 bg-accent/5 border border-accent/10 rounded-lg space-y-2">
+              <h4 className="text-xs font-bold text-accent">Manual review protocol:</h4>
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 Confirm domain records match official high-level registrar tables from UR/IPRC or HECC/WDA databases before clicking Approve.
               </p>
@@ -431,7 +431,7 @@ export const SuperAdminApprovals = () => {
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="e.g. Email domain does not represent an official university or TVET registry."
                 rows={4}
-                className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs p-3 focus:outline-none focus:border-[#d0f24a] text-white placeholder-slate-500 resize-none"
+                className="w-full bg-[#20242e] border border-slate-800 rounded-lg text-xs p-3 focus:outline-none focus:border-accent text-white placeholder-slate-500 resize-none"
               />
             </div>
 

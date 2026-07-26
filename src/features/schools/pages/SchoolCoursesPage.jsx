@@ -109,7 +109,7 @@ export const SchoolCoursesPage = () => {
             >
               {f.label}
               <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                active ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
+                active ? 'bg-accent text-[#1b1e26]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
               }`}>
                 {counts[f.id] || 0}
               </span>
@@ -125,7 +125,7 @@ export const SchoolCoursesPage = () => {
         </div>
       ) : visible.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#1b1e26]/15 p-14 text-center">
-          <span className="w-14 h-14 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
+          <span className="w-14 h-14 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
@@ -141,7 +141,7 @@ export const SchoolCoursesPage = () => {
           {courses.length === 0 && (
             <button
               onClick={() => navigate('/school/courses/new')}
-              className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm"
+              className="px-6 py-2.5 rounded-xl text-sm font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm"
             >
               Create your first course
             </button>
@@ -160,7 +160,7 @@ export const SchoolCoursesPage = () => {
                   <img src={c.coverImageUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
-                    <span className="w-7 h-7 rounded-lg bg-[#d0f24a] text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
+                    <span className="w-7 h-7 rounded-lg bg-accent text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
                       {(c.title || '?').charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -171,7 +171,7 @@ export const SchoolCoursesPage = () => {
               {/* Body */}
               <div className="p-2.5 flex flex-col flex-1">
                 <Link to={`/school/courses/${c.id}`} className="block">
-                  <h3 className="text-[13px] font-medium text-[#1b1e26] leading-snug line-clamp-1 group-hover:underline decoration-[#d0f24a] decoration-2 underline-offset-2">
+                  <h3 className="text-[13px] font-medium text-[#1b1e26] leading-snug line-clamp-1 group-hover:underline decoration-accent decoration-2 underline-offset-2">
                     {c.title}
                   </h3>
                 </Link>
@@ -192,7 +192,7 @@ export const SchoolCoursesPage = () => {
                     </span>
                   )}
                   {c.level && (
-                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#d0f24a]/20 text-[#1b1e26]">
+                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-accent/20 text-[#1b1e26]">
                       {humanize(c.level)}
                     </span>
                   )}

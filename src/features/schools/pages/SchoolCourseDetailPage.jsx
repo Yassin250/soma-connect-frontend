@@ -88,7 +88,7 @@ export const SchoolCourseDetailPage = () => {
             <button
               onClick={() => setStatus('PUBLISHED', 'published')}
               disabled={busy}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+              className="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
             >
               {course.status === 'ARCHIVED' ? 'Republish' : 'Publish'}
             </button>

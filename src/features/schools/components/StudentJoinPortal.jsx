@@ -94,7 +94,7 @@ export const StudentJoinPortal = () => {
         
         {/* Header decoration */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-full bg-[#d0f24a]/10 border border-[#d0f24a]/30 flex items-center justify-center mx-auto text-[#d0f24a] font-bold text-lg uppercase">
+          <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center mx-auto text-accent font-bold text-lg uppercase">
             {school.name.substring(0, 2)}
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">Student Self-Enrollment</h2>
@@ -107,7 +107,7 @@ export const StudentJoinPortal = () => {
             <p className="text-xs text-slate-300 leading-relaxed">{successMsg}</p>
             <button
               onClick={() => navigate('/login')}
-              className="w-full py-2.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-xs font-bold rounded-lg text-[#1b1e26] shadow"
+              className="w-full py-2.5 bg-accent hover:bg-accent-hover text-xs font-bold rounded-lg text-[#1b1e26] shadow"
             >
               Sign In to Dashboard
             </button>
@@ -127,7 +127,7 @@ export const StudentJoinPortal = () => {
                 {...register('name', { required: 'Name is required' })}
                 type="text"
                 placeholder="e.g. Ganza Kenny"
-                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
+                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-accent"
               />
               {errors.name && <p className="text-[9px] text-red-400">{errors.name.message}</p>}
             </div>
@@ -144,7 +144,7 @@ export const StudentJoinPortal = () => {
                 })}
                 type="email"
                 placeholder={`e.g. g.kenny@${school.domain}`}
-                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
+                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-accent"
               />
               {errors.email && <p className="text-[9px] text-red-400">{errors.email.message}</p>}
             </div>
@@ -165,14 +165,14 @@ export const StudentJoinPortal = () => {
                 })}
                 type="password"
                 placeholder="••••••••"
-                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-[#d0f24a]"
+                className="w-full bg-[#20242e] border border-slate-850 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-accent"
               />
               {errors.password && <p className="text-[9px] text-red-400">{errors.password.message}</p>}
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-xs font-semibold rounded-lg shadow-md transition-all text-[#1b1e26]"
+              className="w-full py-2.5 bg-accent hover:bg-accent-hover text-xs font-semibold rounded-lg shadow-md transition-all text-[#1b1e26]"
             >
               Verify & Complete Registration
             </button>

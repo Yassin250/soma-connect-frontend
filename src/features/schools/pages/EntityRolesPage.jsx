@@ -127,7 +127,7 @@ export const EntityRolesPage = () => {
             className={`inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full text-[11px] font-bold shadow-sm transition-all ${
               isPlatform
                 ? 'bg-gray-200 text-gray-500 cursor-default'
-                : 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] cursor-pointer'
+                : 'bg-accent text-[#1b1e26] hover:bg-accent-hover cursor-pointer'
             }`}
           >
             {role.permissions?.length ?? 0}
@@ -226,7 +226,7 @@ export const EntityRolesPage = () => {
             </button>
 
             <div className="mb-6 pr-8">
-              <span className="w-11 h-11 rounded-2xl bg-[#d0f24a]/25 text-[#1b1e26] flex items-center justify-center mb-3">
+              <span className="w-11 h-11 rounded-2xl bg-accent/25 text-[#1b1e26] flex items-center justify-center mb-3">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15.5 7.5 21 2M18 5l-3 3M11 11a4 4 0 1 1-5.66 5.66A4 4 0 0 1 11 11z" />
                 </svg>
@@ -253,7 +253,7 @@ export const EntityRolesPage = () => {
                         onChange={() => togglePerm(permission.id)}
                         className="peer sr-only"
                       />
-                      <span className="w-5 h-5 rounded-md border-2 border-[#1b1e26]/15 bg-white text-transparent peer-checked:bg-[#d0f24a] peer-checked:border-[#d0f24a] peer-checked:text-[#1b1e26] peer-focus-visible:ring-4 peer-focus-visible:ring-[#d0f24a]/30 flex items-center justify-center shrink-0 transition-all duration-150">
+                      <span className="w-5 h-5 rounded-md border-2 border-[#1b1e26]/15 bg-white text-transparent peer-checked:bg-accent peer-checked:border-accent peer-checked:text-[#1b1e26] peer-focus-visible:ring-4 peer-focus-visible:ring-accent/30 flex items-center justify-center shrink-0 transition-all duration-150">
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
                           <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -283,7 +283,7 @@ export const EntityRolesPage = () => {
                 type="button"
                 onClick={savePermissions}
                 disabled={permSaving}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+                className="px-6 py-2.5 rounded-xl text-sm font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
               >
                 {permSaving ? 'Saving…' : 'Save permissions'}
               </button>

@@ -24,7 +24,7 @@ const gradFor = (str = '') =>
   GRADIENTS[[...String(str)].reduce((a, ch) => a + ch.charCodeAt(0), 0) % GRADIENTS.length];
 
 /* ── Animated SVG progress ring ── */
-const ProgressRing = ({ value = 0, size = 168, stroke = 13, track = 'rgba(255,255,255,0.12)', bar = '#d0f24a', children }) => {
+const ProgressRing = ({ value = 0, size = 168, stroke = 13, track = 'rgba(255,255,255,0.12)', bar = 'var(--clr-accent)', children }) => {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const pct = Math.min(100, Math.max(0, value));
@@ -102,7 +102,7 @@ export const LearnerDashboard = () => {
     { label: 'Certificates', value: certificatesEarned, tone: 'violet', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
   ];
   const iconTileStyles = {
-    lime: 'bg-[#d0f24a] text-[#1b1e26]',
+    lime: 'bg-accent text-[#1b1e26]',
     amber: 'bg-amber-500 text-white',
     emerald: 'bg-emerald-500 text-white',
     violet: 'bg-violet-500 text-white',
@@ -142,7 +142,7 @@ export const LearnerDashboard = () => {
           </div>
           <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2.5">
             <motion.div initial={{ width: 0 }} animate={{ width: `${course.overallProgressPercent}%` }} transition={{ duration: 0.8 }}
-              className={`h-full rounded-full ${course.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-gradient-to-r from-[#d0f24a] to-[#b6da2f]'}`} />
+              className={`h-full rounded-full ${course.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-gradient-to-r from-accent to-accent-dark'}`} />
           </div>
           <div className="w-full py-2 rounded-lg bg-[#1b1e26] text-white text-[10px] font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1">
             {ctaLabel(course)}
@@ -173,14 +173,14 @@ export const LearnerDashboard = () => {
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
           className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white px-7 sm:px-10 py-9 sm:py-10"
         >
-          <div className="absolute -top-24 -left-16 w-96 h-96 rounded-full bg-[#d0f24a]/20 blur-[120px] pointer-events-none" />
+          <div className="absolute -top-24 -left-16 w-96 h-96 rounded-full bg-accent/20 blur-[120px] pointer-events-none" />
           <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#39435a]/40 blur-[110px] pointer-events-none" />
           <div className="absolute top-[20%] right-[26%] w-36 h-36 rounded-[2rem] border border-white/10 rotate-[18deg] pointer-events-none hidden lg:block" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
             <div className="flex-1 min-w-0">
-              <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-[#d0f24a] uppercase tracking-[0.18em]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#d0f24a]" />
+              <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-accent uppercase tracking-[0.18em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 My Learning
               </span>
               <h1 className="mt-3 text-[2rem] sm:text-[2.7rem] font-semibold tracking-tight leading-[1.08]">
@@ -200,7 +200,7 @@ export const LearnerDashboard = () => {
                   { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', label: `${totalHours}h of content` },
                 ].map((p) => (
                   <span key={p.label} className="inline-flex items-center gap-2 rounded-xl bg-white/[0.06] border border-white/10 backdrop-blur-xl px-3.5 py-2 text-xs font-semibold text-white/85">
-                    <svg className="w-4 h-4 text-[#d0f24a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={p.icon} /></svg>
+                    <svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={p.icon} /></svg>
                     {p.label}
                   </span>
                 ))}
@@ -234,7 +234,7 @@ export const LearnerDashboard = () => {
 
             <div className="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6">
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-bold text-[#5b6b12] uppercase tracking-[0.15em] mb-1.5">
+                <p className="text-[11px] font-bold text-accent-text uppercase tracking-[0.15em] mb-1.5">
                   {featured.overallProgressPercent > 0 && featured.status !== 'COMPLETED' ? 'Jump back in' : 'Featured for you'}
                 </p>
                 <h2 className="text-xl sm:text-2xl font-bold text-[#1b1e26] tracking-tight leading-tight">{featured.courseTitle}</h2>
@@ -243,7 +243,7 @@ export const LearnerDashboard = () => {
 
                 <button
                   onClick={() => navigate(`/learning/course/${featured.courseId}`)}
-                  className="mt-5 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#d0f24a] text-[#1b1e26] text-sm font-bold hover:bg-[#c4e83a] active:scale-[0.98] transition-all shadow-sm"
+                  className="mt-5 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-[#1b1e26] text-sm font-bold hover:bg-accent-hover active:scale-[0.98] transition-all shadow-sm"
                 >
                   {featured.status === 'COMPLETED' ? 'Review course' : featured.overallProgressPercent > 0 ? 'Resume learning' : 'Start course'}
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -295,8 +295,8 @@ export const LearnerDashboard = () => {
           </div>
         ) : courses.length === 0 ? (
           <div className="relative overflow-hidden bg-white border border-gray-100 rounded-3xl p-12 text-center">
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-[#d0f24a]/15 blur-[90px] pointer-events-none" />
-            <span className="relative w-16 h-16 rounded-2xl bg-[#d0f24a] text-[#1b1e26] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#d0f24a]/25">
+            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-accent/15 blur-[90px] pointer-events-none" />
+            <span className="relative w-16 h-16 rounded-2xl bg-accent text-[#1b1e26] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-accent/25">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
             <h2 className="relative text-xl font-bold text-[#1b1e26] mb-1.5">Your journey starts here</h2>

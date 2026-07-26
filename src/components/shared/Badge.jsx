@@ -7,7 +7,7 @@ export const Badge = ({ children, variant = 'default', className = '' }) => {
     success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     warning: 'bg-amber-50 text-amber-700 border-amber-200',
     danger: 'bg-rose-50 text-rose-700 border-rose-200',
-    info: 'bg-[#d0f24a]/20 text-[#5b6b12] border-[#d0f24a]/40',
+    info: 'bg-accent/20 text-accent-text border-accent/40',
     outline: 'bg-transparent text-[#1b1e26]/60 border-[#1b1e26]/15',
   };
 

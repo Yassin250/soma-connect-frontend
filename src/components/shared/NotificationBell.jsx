@@ -168,7 +168,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
           </svg>
         )}
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#d0f24a] text-[#1b1e26] text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-in zoom-in duration-200">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-[#1b1e26] text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-in zoom-in duration-200">
             {unreadCount}
           </span>
         )}
@@ -217,7 +217,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
                 >
                   {t.label}
                   <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center transition-colors ${
-                    active ? 'bg-[#1b1e26] text-[#d0f24a]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
+                    active ? 'bg-[#1b1e26] text-accent' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
                   }`}>
                     {counts[t.id]}
                   </span>
@@ -230,7 +230,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
           <div className="max-h-[340px] overflow-y-auto divide-y divide-gray-50 bell-scroll">
             {visible.length === 0 ? (
               <div className="py-12 text-center animate-in fade-in duration-200">
-                <span className="w-11 h-11 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-3">
+                <span className="w-11 h-11 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-3">
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -245,7 +245,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
                   onClick={() => markRead(n.id)}
                   className="px-4 py-3.5 flex gap-3 hover:bg-gray-50/70 transition-colors cursor-pointer"
                 >
-                  <span className="w-9 h-9 rounded-xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="w-9 h-9 rounded-xl bg-accent/20 text-[#1b1e26] flex items-center justify-center shrink-0 mt-0.5">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d={n.icon} />
                     </svg>
@@ -253,7 +253,7 @@ export const NotificationBell = ({ seed = [], viewAllPath }) => {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="text-[13px] font-semibold text-[#1b1e26] truncate">{n.title}</p>
-                      {n.unread && <span className="w-2 h-2 rounded-full bg-[#d0f24a] ring-1 ring-[#1b1e26]/10 shrink-0" />}
+                      {n.unread && <span className="w-2 h-2 rounded-full bg-accent ring-1 ring-[#1b1e26]/10 shrink-0" />}
                     </div>
                     <p className="text-xs text-gray-500 leading-relaxed bg-[#f7f8fa] border border-[#1b1e26]/[0.04] rounded-lg px-2.5 py-2 mt-1.5">
                       {n.body}

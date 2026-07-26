@@ -219,8 +219,8 @@ export const SchoolClassesPage = () => {
               onClick={() => selectClass(cls)}
               className={`bg-white border rounded-2xl overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
                 selectedClass?.id === cls.id
-                  ? 'border-[#d0f24a] shadow-lg shadow-[#d0f24a]/30 ring-2 ring-[#d0f24a]/40'
-                  : 'border-slate-200 hover:border-[#d0f24a]'
+                  ? 'border-accent shadow-lg shadow-accent/30 ring-2 ring-accent/40'
+                  : 'border-slate-200 hover:border-accent'
               }`}
             >
               <div className="h-32 bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center text-white">
@@ -303,14 +303,14 @@ export const SchoolClassesPage = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {sections.map((section) => (
-                    <tr key={section.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                    <tr key={section.id} className="hover:bg-accent/[0.08] transition-colors">
                       <td className="px-4 py-2.5">
                         <span className="text-[13px] font-bold text-slate-900">{section.name}</span>
                       </td>
                       <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{section.teacher}</td>
                       <td className="px-4 py-2.5 text-[13px] text-slate-500">{section.room}</td>
                       <td className="px-4 py-2.5">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#d0f24a]/20 text-[#1b1e26] border border-[#d0f24a]/50 tracking-wider">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-accent/20 text-[#1b1e26] border border-accent/50 tracking-wider">
                           {section.students}
                         </span>
                       </td>
@@ -345,15 +345,15 @@ export const SchoolClassesPage = () => {
             <div className="space-y-4 text-left">
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Class Name</label>
-                <input type="text" placeholder="e.g., Senior One" value={newClass.name} onChange={(e) => setNewClass({ ...newClass, name: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300" />
+                <input type="text" placeholder="e.g., Senior One" value={newClass.name} onChange={(e) => setNewClass({ ...newClass, name: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Code</label>
-                <input type="text" placeholder="e.g., S1" value={newClass.code} onChange={(e) => setNewClass({ ...newClass, code: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300" />
+                <input type="text" placeholder="e.g., S1" value={newClass.code} onChange={(e) => setNewClass({ ...newClass, code: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Level</label>
-                <select value={newClass.level} onChange={(e) => setNewClass({ ...newClass, level: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800">
+                <select value={newClass.level} onChange={(e) => setNewClass({ ...newClass, level: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800">
                   <option value="">Select level</option>
                   <option value="Primary">Primary</option>
                   <option value="Ordinary (O-Level)">Ordinary (O-Level)</option>
@@ -363,7 +363,7 @@ export const SchoolClassesPage = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Description</label>
-                <textarea rows={3} placeholder="Brief description..." value={newClass.description} onChange={(e) => setNewClass({ ...newClass, description: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300 resize-none" />
+                <textarea rows={3} placeholder="Brief description..." value={newClass.description} onChange={(e) => setNewClass({ ...newClass, description: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300 resize-none" />
               </div>
               <div className="border-t border-slate-100 pt-5 mt-6 flex items-center justify-end gap-3">
                 <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-sm">Cancel</button>
@@ -386,19 +386,19 @@ export const SchoolClassesPage = () => {
             <div className="space-y-4 text-left">
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Section Name</label>
-                <input type="text" placeholder="e.g., Section A" value={newSection.name} onChange={(e) => setNewSection({ ...newSection, name: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300" />
+                <input type="text" placeholder="e.g., Section A" value={newSection.name} onChange={(e) => setNewSection({ ...newSection, name: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Teacher</label>
-                <input type="text" placeholder="Teacher name..." value={newSection.teacher} onChange={(e) => setNewSection({ ...newSection, teacher: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300" />
+                <input type="text" placeholder="Teacher name..." value={newSection.teacher} onChange={(e) => setNewSection({ ...newSection, teacher: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Room</label>
-                <input type="text" placeholder="Room number..." value={newSection.room} onChange={(e) => setNewSection({ ...newSection, room: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300" />
+                <input type="text" placeholder="Room number..." value={newSection.room} onChange={(e) => setNewSection({ ...newSection, room: e.target.value })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase block">Student Count</label>
-                <input type="number" placeholder="0" min={0} value={newSection.students} onChange={(e) => setNewSection({ ...newSection, students: parseInt(e.target.value) || 0 })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300" />
+                <input type="number" placeholder="0" min={0} value={newSection.students} onChange={(e) => setNewSection({ ...newSection, students: parseInt(e.target.value) || 0 })} className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300" />
               </div>
               <div className="border-t border-slate-100 pt-5 mt-6 flex items-center justify-end gap-3">
                 <button type="button" onClick={() => setShowSectionForm(false)} className="px-5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-sm">Cancel</button>

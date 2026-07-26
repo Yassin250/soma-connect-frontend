@@ -55,7 +55,7 @@ const QuizEngine = ({ courseId, itemId, onComplete }) => {
         </div>
         {result.passed && (
           <div className="mt-6 text-center">
-            <button onClick={onComplete} className="px-6 py-2.5 rounded-xl bg-[#d0f24a] text-[#1b1e26] text-sm font-bold hover:bg-[#c4e83a] transition-colors">Mark complete and continue</button>
+            <button onClick={onComplete} className="px-6 py-2.5 rounded-xl bg-accent text-[#1b1e26] text-sm font-bold hover:bg-accent-hover transition-colors">Mark complete and continue</button>
           </div>
         )}
       </div>
@@ -98,7 +98,7 @@ const QuizEngine = ({ courseId, itemId, onComplete }) => {
               <p className="text-sm font-semibold text-[#1b1e26] mb-2.5">{i + 1}. {q.questionText}</p>
               <div className="space-y-2">
                 {options.map((opt) => (
-                  <label key={opt} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${answers[q.id] === opt ? 'border-[#d0f24a] bg-[#d0f24a]/10' : 'border-gray-100 hover:border-gray-200'}`}>
+                  <label key={opt} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${answers[q.id] === opt ? 'border-accent bg-accent/10' : 'border-gray-100 hover:border-gray-200'}`}>
                     <input type="radio" name={`q-${q.id}`} value={opt} checked={answers[q.id] === opt} onChange={() => handleSelect(q.id, opt)} className="w-4 h-4 accent-[#1b1e26]" />
                     <span className="text-sm text-[#1b1e26]">{opt}</span>
                   </label>

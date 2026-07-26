@@ -231,7 +231,7 @@ export const DataTable = ({
                           type="button"
                           onClick={() => toggleFilterValue(f.key, v)}
                           title={`Remove ${f.label}: ${opt?.label ?? v}`}
-                          className="group/chip inline-flex items-center gap-1 h-6 pl-2 pr-1.5 rounded-full bg-[#d0f24a]/25 text-[#1b1e26] text-[11px] font-semibold hover:bg-[#d0f24a]/45 transition-colors"
+                          className="group/chip inline-flex items-center gap-1 h-6 pl-2 pr-1.5 rounded-full bg-accent/25 text-[#1b1e26] text-[11px] font-semibold hover:bg-accent/45 transition-colors"
                         >
                           {opt?.label ?? v}
                           <svg className="w-2.5 h-2.5 opacity-40 group-hover/chip:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
@@ -250,7 +250,7 @@ export const DataTable = ({
                     filtersOpen
                       ? 'bg-[#1b1e26] text-white border-[#1b1e26] shadow-sm'
                       : activeCount > 0
-                        ? 'bg-white text-[#1b1e26] border-[#d0f24a] ring-2 ring-[#d0f24a]/20'
+                        ? 'bg-white text-[#1b1e26] border-accent ring-2 ring-accent/20'
                         : 'bg-white text-[#1b1e26]/70 border-[#1b1e26]/10 hover:text-[#1b1e26] hover:bg-[#f7f8fa]'
                   }`}
                 >
@@ -259,7 +259,7 @@ export const DataTable = ({
                   </svg>
                   Filters
                   {activeCount > 0 && (
-                    <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${filtersOpen ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#1b1e26] text-[#d0f24a]'}`}>
+                    <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${filtersOpen ? 'bg-accent text-[#1b1e26]' : 'bg-[#1b1e26] text-accent'}`}>
                       {activeCount}
                     </span>
                   )}
@@ -289,8 +289,8 @@ export const DataTable = ({
                               onClick={() => toggleFilterValue(f.key, opt.value)}
                               className={`inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[12px] font-semibold border transition-all duration-150 ${
                                 on
-                                  ? 'bg-[#d0f24a] border-[#d0f24a] text-[#1b1e26] shadow-sm'
-                                  : 'bg-white border-[#1b1e26]/10 text-[#1b1e26]/60 hover:border-[#d0f24a] hover:text-[#1b1e26]'
+                                  ? 'bg-accent border-accent text-[#1b1e26] shadow-sm'
+                                  : 'bg-white border-[#1b1e26]/10 text-[#1b1e26]/60 hover:border-accent hover:text-[#1b1e26]'
                               }`}
                             >
                               {on && (
@@ -364,7 +364,7 @@ export const DataTable = ({
               <tr>
                 <td colSpan={orderedColumns.length} className="px-5 py-14">
                   <div className="flex flex-col items-center text-center max-w-sm mx-auto">
-                    <span className="w-12 h-12 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26]/70 flex items-center justify-center mb-3 ring-1 ring-[#d0f24a]/30">
+                    <span className="w-12 h-12 rounded-2xl bg-accent/20 text-[#1b1e26]/70 flex items-center justify-center mb-3 ring-1 ring-accent/30">
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                         {activeCount > 0 ? (
                           <><path d="M4 6h16M7 12h10M10 18h4" strokeLinecap="round" /><circle cx="18" cy="17" r="4" /><path d="M16.5 15.5l3 3M19.5 15.5l-3 3" strokeLinecap="round" /></>
@@ -381,7 +381,7 @@ export const DataTable = ({
                       <button
                         type="button"
                         onClick={clearFilters}
-                        className="mt-3 inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-[12px] font-semibold bg-[#1b1e26] text-[#d0f24a] hover:bg-black transition-colors"
+                        className="mt-3 inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-[12px] font-semibold bg-[#1b1e26] text-accent hover:bg-black transition-colors"
                       >
                         Clear filters
                       </button>
@@ -393,7 +393,7 @@ export const DataTable = ({
               visibleRows.map((row, rowIndex) => (
                 <tr
                   key={row[keyField]}
-                  className="group bg-white transition-colors duration-150 hover:bg-[#d0f24a]/[0.08]"
+                  className="group bg-white transition-colors duration-150 hover:bg-accent/[0.08]"
                 >
                   {orderedColumns.map((c) => (
                     <td

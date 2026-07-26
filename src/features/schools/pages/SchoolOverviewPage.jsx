@@ -113,7 +113,7 @@ export const SchoolOverviewPage = () => {
           >
             <div className="flex items-start justify-between">
               <span className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                s.featured ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#d0f24a]/20 text-[#1b1e26]'
+                s.featured ? 'bg-accent text-[#1b1e26]' : 'bg-accent/20 text-[#1b1e26]'
               }`}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={s.icon} />
@@ -139,9 +139,9 @@ export const SchoolOverviewPage = () => {
             <Link
               key={a.path}
               to={a.path}
-              className="group flex items-center gap-3.5 rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-4 transition-all duration-200 hover:border-[#d0f24a] hover:shadow-md"
+              className="group flex items-center gap-3.5 rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-4 transition-all duration-200 hover:border-accent hover:shadow-md"
             >
-              <span className="w-11 h-11 rounded-xl bg-[#f3f4f6] group-hover:bg-[#d0f24a]/25 text-[#1b1e26] flex items-center justify-center shrink-0 transition-colors">
+              <span className="w-11 h-11 rounded-xl bg-[#f3f4f6] group-hover:bg-accent/25 text-[#1b1e26] flex items-center justify-center shrink-0 transition-colors">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={a.icon} />
                 </svg>
@@ -160,7 +160,7 @@ export const SchoolOverviewPage = () => {
 
       {/* Coming-soon strip */}
       <div className="rounded-2xl border border-dashed border-[#1b1e26]/15 bg-white/60 p-5 flex items-center gap-4">
-        <span className="w-10 h-10 rounded-xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center shrink-0">
+        <span className="w-10 h-10 rounded-xl bg-accent/20 text-[#1b1e26] flex items-center justify-center shrink-0">
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>

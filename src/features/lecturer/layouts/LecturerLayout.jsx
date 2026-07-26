@@ -157,7 +157,7 @@ export const LecturerLayout = () => {
   };
 
   return (
-    <div className="h-screen w-full flex bg-[#f3f4f6] text-[#1b1e26] antialiased overflow-hidden">
+    <div className="theme-lecturer h-screen w-full flex bg-[#f3f4f6] text-[#1b1e26] antialiased overflow-hidden">
 
       {mobileOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden" onClick={() => setMobileOpen(false)} />
@@ -180,7 +180,7 @@ export const LecturerLayout = () => {
             </button>
           </div>
           {!collapsed && (
-            <p className="mt-2 ml-[48px] text-[9px] font-black text-[#d0f24a] uppercase tracking-[0.25em]">Lecturer Portal</p>
+            <p className="mt-2 ml-[48px] text-[9px] font-black text-accent uppercase tracking-[0.25em]">Lecturer Portal</p>
           )}
         </div>
 
@@ -191,7 +191,7 @@ export const LecturerLayout = () => {
             className={({ isActive: active }) =>
               `group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200 ${
                 active
-                  ? 'bg-[#d0f24a] text-[#1b1e26] font-semibold shadow-sm'
+                  ? 'bg-accent text-[#1b1e26] font-semibold shadow-sm'
                   : 'text-white/60 hover:text-white hover:bg-white/[0.06] font-medium'
               }`
             }
@@ -217,7 +217,7 @@ export const LecturerLayout = () => {
                     railMode ? 'lg:justify-center' : 'justify-between'
                   } ${
                     railMode && anyChildActive
-                      ? 'bg-[#d0f24a] text-[#1b1e26] shadow-sm'
+                      ? 'bg-accent text-[#1b1e26] shadow-sm'
                       : expanded && !railMode
                       ? 'text-white bg-white/[0.06]'
                       : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
@@ -231,7 +231,7 @@ export const LecturerLayout = () => {
                   </span>
                   {!railMode && (
                     <svg
-                      className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-[#d0f24a]' : 'text-white/30'}`}
+                      className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-accent' : 'text-white/30'}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -254,11 +254,11 @@ export const LecturerLayout = () => {
                           onClick={() => setMobileOpen(false)}
                           className={`group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-all duration-200 ${
                             active
-                              ? 'bg-[#d0f24a] text-[#1b1e26] font-semibold shadow-sm'
+                              ? 'bg-accent text-[#1b1e26] font-semibold shadow-sm'
                               : 'text-white/50 hover:text-white hover:bg-white/[0.06] font-medium'
                           }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${active ? 'bg-[#1b1e26]' : 'bg-white/20 group-hover:bg-[#d0f24a]'}`} />
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${active ? 'bg-[#1b1e26]' : 'bg-white/20 group-hover:bg-accent'}`} />
                           <span className="truncate">{item.label}</span>
                         </NavLink>
                       );
@@ -272,7 +272,7 @@ export const LecturerLayout = () => {
 
         {!collapsed && (
           <div className="p-3.5 shrink-0">
-            <div className="rounded-2xl bg-[#d0f24a] p-4 relative overflow-hidden">
+            <div className="rounded-2xl bg-accent p-4 relative overflow-hidden">
               <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/20" />
               <div className="relative">
                 <div className="flex items-center gap-1.5">
@@ -341,7 +341,7 @@ export const LecturerLayout = () => {
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                 <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center shrink-0">
                     {initialsOf(user?.name || user?.username)}
                   </span>
                   <div className="min-w-0">

@@ -64,7 +64,7 @@ const GradesPage = () => {
 
   if (!data.enrollments?.length) return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <span className="w-14 h-14 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mb-4">
+      <span className="w-14 h-14 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mb-4">
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
       </span>
       <h2 className="text-base font-semibold text-[#1b1e26]">No grades yet</h2>
@@ -75,7 +75,7 @@ const GradesPage = () => {
 
   const progressBg = (pct) => pct === 100
     ? 'linear-gradient(90deg, #22c55e, #16a34a)'
-    : 'linear-gradient(90deg, #d0f24a, #a3d420)';
+    : 'linear-gradient(90deg, var(--clr-accent), var(--clr-accent-dark))';
 
   const scoreColor = (s) => s >= 80 ? 'text-green-600' : s >= 60 ? 'text-amber-600' : 'text-red-500';
 
@@ -158,7 +158,7 @@ const GradesPage = () => {
       <div className="w-56 shrink-0 hidden md:block">
         <div className="sticky top-6">
           <div className="flex items-center gap-2 px-3 mb-4">
-            <div className="w-1 h-4 rounded-full bg-[#d0f24a]" />
+            <div className="w-1 h-4 rounded-full bg-accent" />
             <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">Courses</p>
           </div>
           <div className="space-y-1">
@@ -175,9 +175,9 @@ const GradesPage = () => {
                       : 'hover:bg-white/60 border border-transparent'
                   }`}
                 >
-                  {active && <motion.div layoutId="sidebar-active" className="absolute left-[-1px] top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-[#d0f24a]" />}
+                  {active && <motion.div layoutId="sidebar-active" className="absolute left-[-1px] top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-accent" />}
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${
-                    active ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#1b1e26] text-white'
+                    active ? 'bg-accent text-[#1b1e26]' : 'bg-[#1b1e26] text-white'
                   }`}>
                     {(c.courseTitle || '?').charAt(0).toUpperCase()}
                   </span>
@@ -226,7 +226,7 @@ const GradesPage = () => {
               <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden">
                 <div className="relative bg-gradient-to-r from-[#1b1e26] to-[#343b49] px-5 py-5 overflow-hidden">
                   <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-[#d0f24a]/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-accent/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
                   <div className="relative flex items-center justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2.5 mb-1">
@@ -239,7 +239,7 @@ const GradesPage = () => {
                     </div>
                     <Link
                       to={`/learning/course/${selected.courseId}`}
-                      className="shrink-0 px-3.5 py-2 rounded-lg bg-[#d0f24a] text-[#1b1e26] text-[11px] font-bold hover:bg-[#c4e83a] active:scale-[0.97] transition-all shadow-sm"
+                      className="shrink-0 px-3.5 py-2 rounded-lg bg-accent text-[#1b1e26] text-[11px] font-bold hover:bg-accent-hover active:scale-[0.97] transition-all shadow-sm"
                     >
                       Open Course
                     </Link>
@@ -295,7 +295,7 @@ const GradesPage = () => {
               <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-[#1b1e26]/[0.06]">
                   <div className="flex items-center gap-2">
-                    <div className="w-1 h-4 rounded-full bg-[#d0f24a]" />
+            <div className="w-1 h-4 rounded-full bg-accent" />
                     <h2 className="text-[13px] font-semibold text-[#1b1e26]">Graded Items</h2>
                   </div>
                   <span className="text-[10px] font-semibold text-gray-400">{selected.items?.length || 0} total</span>

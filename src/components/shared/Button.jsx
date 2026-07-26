@@ -11,7 +11,7 @@ export const Button = ({
 }) => {
   const variants = {
     primary: 'bg-[#1b1e26] text-white hover:bg-black shadow-sm',
-    accent: 'bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] shadow-sm',
+    accent: 'bg-accent text-[#1b1e26] hover:bg-accent-hover shadow-sm',
     secondary: 'bg-[#1b1e26]/[0.06] text-[#1b1e26] hover:bg-[#1b1e26]/10',
     outline: 'bg-transparent border border-[#1b1e26]/15 text-[#1b1e26]/80 hover:bg-[#f7f8fa]',
     danger: 'bg-rose-600 text-white hover:bg-rose-700',

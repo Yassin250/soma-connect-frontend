@@ -14,7 +14,7 @@ export const Input = ({ label, error, className = '', ...props }) => {
         className={`w-full rounded-lg px-3 py-2 text-[13px] outline-none transition-all bg-[#f7f8fa] text-[#1b1e26] placeholder-gray-400 border ${
           error
             ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-200'
-            : 'border-[#1b1e26]/10 focus:bg-white focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25'
+            : 'border-[#1b1e26]/10 focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/25'
         }`}
         {...props}
       />

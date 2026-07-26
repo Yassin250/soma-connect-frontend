@@ -40,7 +40,7 @@ const MyCoursesPage = () => {
 
   if (!courses.length) return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <span className="w-14 h-14 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mb-4">
+      <span className="w-14 h-14 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mb-4">
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
       </span>
       <h2 className="text-base font-semibold text-[#1b1e26]">No enrolled courses yet</h2>
@@ -70,7 +70,7 @@ const MyCoursesPage = () => {
             >
               {f.label}
               <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                active ? 'bg-[#d0f24a] text-[#1b1e26]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
+                active ? 'bg-accent text-[#1b1e26]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
               }`}>
                 {counts[f.id] || 0}
               </span>
@@ -81,13 +81,13 @@ const MyCoursesPage = () => {
 
       {visible.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#1b1e26]/15 p-14 text-center">
-          <span className="w-14 h-14 rounded-2xl bg-[#d0f24a]/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
+          <span className="w-14 h-14 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
           </span>
           <p className="text-base font-semibold text-[#1b1e26]">{filter === 'ALL' ? 'No courses yet' : 'Nothing in this filter'}</p>
           <p className="text-sm text-gray-400 mt-1">{filter === 'ALL' ? 'Browse the catalog and enroll in a course to get started.' : 'Try a different status filter.'}</p>
           {filter === 'ALL' && (
-            <Link to="/courses" className="mt-4 inline-block px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm">Browse Courses</Link>
+            <Link to="/courses" className="mt-4 inline-block px-6 py-2.5 rounded-xl text-sm font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm">Browse Courses</Link>
           )}
         </div>
       ) : (
@@ -105,7 +105,7 @@ const MyCoursesPage = () => {
                     <img src={c.coverImageUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
-                      <span className="w-7 h-7 rounded-lg bg-[#d0f24a] text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
+                      <span className="w-7 h-7 rounded-lg bg-accent text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
                         {(c.courseTitle || '?').charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -115,7 +115,7 @@ const MyCoursesPage = () => {
 
                 <div className="p-2.5 flex flex-col flex-1">
                   <Link to={`/learning/course/${c.courseId}`} className="block">
-                    <h3 className="text-[13px] font-medium text-[#1b1e26] leading-snug line-clamp-1 group-hover:underline decoration-[#d0f24a] decoration-2 underline-offset-2">
+                    <h3 className="text-[13px] font-medium text-[#1b1e26] leading-snug line-clamp-1 group-hover:underline decoration-accent decoration-2 underline-offset-2">
                       {c.courseTitle}
                     </h3>
                   </Link>
@@ -132,7 +132,7 @@ const MyCoursesPage = () => {
                       <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">{c.estimatedHours}h</span>
                     )}
                     {c.level && (
-                      <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#d0f24a]/20 text-[#1b1e26]">{c.level.toLowerCase()}</span>
+                      <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-accent/20 text-[#1b1e26]">{c.level.toLowerCase()}</span>
                     )}
                     {c.totalItems > 0 && (
                       <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">{c.completedItems}/{c.totalItems} items</span>
@@ -151,7 +151,7 @@ const MyCoursesPage = () => {
                           width: `${pct}%`,
                           background: pct === 100
                             ? 'linear-gradient(90deg, #22c55e, #16a34a)'
-                            : 'linear-gradient(90deg, #d0f24a, #a3d420)',
+                            : 'linear-gradient(90deg, var(--clr-accent), var(--clr-accent-dark))',
                         }}
                       />
                     </div>

@@ -179,7 +179,7 @@ export const SchoolSubjectsPage = () => {
           filteredAllocations.map((alloc) => (
             <div
               key={alloc.id}
-              className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:border-[#d0f24a]"
+              className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:border-accent"
             >
               <div className={`h-28 bg-gradient-to-br ${getSubjectColor(alloc.code)} flex items-center justify-center text-white`}>
                 <div className="text-center">
@@ -204,7 +204,7 @@ export const SchoolSubjectsPage = () => {
                   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#d0f24a]/20 text-[#1b1e26] border border-[#d0f24a]/50 tracking-wider">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-accent/20 text-[#1b1e26] border border-accent/50 tracking-wider">
                     {alloc.hours} hours/week
                   </span>
                 </div>
@@ -261,7 +261,7 @@ export const SchoolSubjectsPage = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredAllocations.map((alloc) => (
-                  <tr key={alloc.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                  <tr key={alloc.id} className="hover:bg-accent/[0.08] transition-colors">
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getSubjectColor(alloc.code)} flex items-center justify-center text-white text-[10px] font-bold`}>
@@ -273,7 +273,7 @@ export const SchoolSubjectsPage = () => {
                     <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{alloc.className}</td>
                     <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{alloc.teacher}</td>
                     <td className="px-4 py-2.5">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#d0f24a]/20 text-[#1b1e26] border border-[#d0f24a]/50 tracking-wider">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-accent/20 text-[#1b1e26] border border-accent/50 tracking-wider">
                         {alloc.hours}h
                       </span>
                     </td>
@@ -312,7 +312,7 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., Mathematics"
                   value={newAllocation.subject}
                   onChange={(e) => setNewAllocation({ ...newAllocation, subject: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300"
                 />
               </div>
               <div className="space-y-1.5">
@@ -320,7 +320,7 @@ export const SchoolSubjectsPage = () => {
                 <select
                   value={newAllocation.className}
                   onChange={(e) => setNewAllocation({ ...newAllocation, className: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800"
                 >
                   <option value="">Select class</option>
                   {mockClassesList.map((cls) => (
@@ -333,7 +333,7 @@ export const SchoolSubjectsPage = () => {
                 <select
                   value={newAllocation.teacher}
                   onChange={(e) => setNewAllocation({ ...newAllocation, teacher: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800"
                 >
                   <option value="">Select teacher</option>
                   {mockTeachersList.map((t) => (
@@ -350,7 +350,7 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., 6"
                   value={newAllocation.hours || ''}
                   onChange={(e) => setNewAllocation({ ...newAllocation, hours: parseInt(e.target.value) || 0 })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300"
                 />
               </div>
               <div className="space-y-1.5">
@@ -360,7 +360,7 @@ export const SchoolSubjectsPage = () => {
                   placeholder="e.g., MAT"
                   value={newAllocation.code}
                   onChange={(e) => setNewAllocation({ ...newAllocation, code: e.target.value })}
-                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-[#d0f24a] text-slate-800 placeholder-slate-300"
+                  className="w-full text-xs px-4 py-3.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-accent text-slate-800 placeholder-slate-300"
                 />
               </div>
               <div className="border-t border-slate-100 pt-5 mt-6 flex items-center justify-end gap-3">
