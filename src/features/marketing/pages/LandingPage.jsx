@@ -201,7 +201,7 @@ export const LandingPage = () => {
       {/* ───────────────── NAV ───────────────── */}
       <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#32292F]/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between">
-          <Link to="/"><BrandLockup /></Link>
+          <Link to="/"><span style={{ '--clr-accent': '#99E1D9' }}><BrandLockup /></span></Link>
 
           <nav className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((l) => (
@@ -311,7 +311,7 @@ export const LandingPage = () => {
             <div className="relative rounded-3xl bg-white/[0.04] border border-white/10 backdrop-blur-xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
-                  <BrandMark size={34} />
+                  <span style={{ '--clr-accent': '#99E1D9' }}><BrandMark size={34} /></span>
                   <span className="text-sm font-semibold text-white">Your learning space</span>
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#32292F] bg-[#99E1D9] px-2 py-1 rounded-full">Live</span>
@@ -735,7 +735,7 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <div className="grid lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
             <div className="lg:col-span-2">
-              <BrandLockup />
+              <span style={{ '--clr-accent': '#99E1D9' }}><BrandLockup /></span>
               <p className="mt-4 text-sm text-white/50 leading-relaxed max-w-xs">
                 Bridging Rwandan classrooms and the global job market through AI verified excellence.
               </p>
