@@ -33,12 +33,12 @@ const slideVariants = {
 
 // Same field recipe as LoginForm: filled rounded-2xl input with a leading icon.
 const inputClass =
-  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#1b1e26]/5 focus:border-[#1b1e26]/20';
+  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#32292F]/5 focus:border-[#32292F]/20';
 const inputWithEyeClass = `${inputClass.replace('pr-4', 'pr-11')}`;
 const labelClass = 'text-[13px] font-semibold text-gray-700';
 const iconWrapClass = 'absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none';
 const primaryBtnClass =
-  'w-full py-3.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70';
+  'w-full py-3.5 bg-[#99E1D9] hover:bg-[#b0ebe4] text-[#32292F] text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70';
 
 /**
  * @param {(step: string) => void} onStepChange  Notifies the parent page (left panel copy).
@@ -159,7 +159,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
           <span
             key={s}
             className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === stepIndex ? 'w-8 bg-[#1b1e26]' : i < stepIndex ? 'w-4 bg-[#d0f24a]' : 'w-4 bg-gray-200'
+              i === stepIndex ? 'w-8 bg-[#32292F]' : i < stepIndex ? 'w-4 bg-[#99E1D9]' : 'w-4 bg-gray-200'
             }`}
           />
         ))}
@@ -182,7 +182,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
               <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                 Account recovery
               </h3>
-              <h1 className="text-[28px] leading-tight font-semibold text-[#1b1e26] tracking-tight">
+              <h1 className="text-[28px] leading-tight font-semibold text-[#32292F] tracking-tight">
                 Forgot password
               </h1>
               <p className="text-sm text-gray-500">Enter your email and we'll send a reset link.</p>
@@ -218,7 +218,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
 
             <button type="submit" disabled={isSubmitting} aria-busy={isSubmitting} className={primaryBtnClass}>
               <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
-                {isSubmitting && <ButtonLoader size={18} className="text-[#1b1e26]" />}
+                {isSubmitting && <ButtonLoader size={18} className="text-[#32292F]" />}
                 <span>{isSubmitting ? 'Sending…' : 'Send reset link'}</span>
               </span>
             </button>
@@ -227,7 +227,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
               <button
                 type="button"
                 onClick={() => { setErrorMessage(''); setStep('reset'); }}
-                className="text-sm font-semibold text-[#1b1e26] hover:underline block mx-auto"
+                className="text-sm font-semibold text-[#32292F] hover:underline block mx-auto"
               >
                 I already have a reset token
               </button>
@@ -252,14 +252,14 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
               <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                 Final step
               </h3>
-              <h1 className="text-[28px] leading-tight font-semibold text-[#1b1e26] tracking-tight">
+              <h1 className="text-[28px] leading-tight font-semibold text-[#32292F] tracking-tight">
                 Set new password
               </h1>
               <p className="text-sm text-gray-500">Paste your reset token and choose a strong password.</p>
             </div>
 
             {info && (
-              <p className="text-xs text-[#1b1e26] bg-[#d0f24a]/15 border border-[#d0f24a]/50 rounded-xl px-3.5 py-2.5">
+              <p className="text-xs text-[#32292F] bg-[#99E1D9]/15 border border-[#99E1D9]/50 rounded-xl px-3.5 py-2.5">
                 {info}
               </p>
             )}
@@ -338,7 +338,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
 
             <button type="submit" disabled={isSubmitting} aria-busy={isSubmitting} className={primaryBtnClass}>
               <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
-                {isSubmitting && <ButtonLoader size={18} className="text-[#1b1e26]" />}
+                {isSubmitting && <ButtonLoader size={18} className="text-[#32292F]" />}
                 <span>{isSubmitting ? 'Resetting…' : 'Reset password'}</span>
               </span>
             </button>

@@ -6,7 +6,7 @@ import { ButtonLoader } from '../../../components/shared/ButtonLoader';
 import { authService } from '../../../services/api';
 
 const inputClass =
-  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#1b1e26]/5 focus:border-[#1b1e26]/20';
+  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#32292F]/5 focus:border-[#32292F]/20';
 const labelClass = 'text-[13px] font-semibold text-gray-700';
 
 const Field = ({ label, icon, children }) => (
@@ -63,10 +63,10 @@ export const LearnerRegisterPage = () => {
     <div className="h-screen w-full flex bg-white antialiased overflow-hidden">
       {/* Left brand panel */}
       <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
-        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#d0f24a]/20 blur-[100px]" />
+        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#99E1D9]/20 blur-[100px]" />
         <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#39435a]/40 blur-[100px]" />
         <div className="absolute top-[16%] right-[7%] w-44 h-44 rounded-[2.5rem] border border-white/10 rotate-[18deg]" />
-        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#d0f24a]/25 rotate-12" />
+        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#99E1D9]/25 rotate-12" />
         <div className="relative z-10">
           <Link to="/" aria-label="Soma Connect home"><BrandLockup /></Link>
         </div>
@@ -93,7 +93,7 @@ export const LearnerRegisterPage = () => {
         <motion.div initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7, ease: 'easeOut' }} className="w-full max-w-md mx-auto">
           <div className="space-y-1.5 mb-8">
             <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">Create your account</h3>
-            <h1 className="text-[28px] leading-tight font-semibold text-[#1b1e26] tracking-tight">Join as a learner</h1>
+            <h1 className="text-[28px] leading-tight font-semibold text-[#32292F] tracking-tight">Join as a learner</h1>
             <p className="text-sm text-gray-500">Free to start — enroll in any program in minutes.</p>
           </div>
 
@@ -128,21 +128,21 @@ export const LearnerRegisterPage = () => {
 
             <button
               type="submit" disabled={submitting} aria-busy={submitting}
-              className={`w-full py-3.5 bg-[#d0f24a] hover:bg-[#c4e83a] text-[#1b1e26] text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${submitting ? 'opacity-95' : ''}`}
+              className={`w-full py-3.5 bg-[#99E1D9] hover:bg-[#b0ebe4] text-[#32292F] text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${submitting ? 'opacity-95' : ''}`}
             >
               <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
-                {submitting && <ButtonLoader size={18} className="text-[#1b1e26]" />}
+                {submitting && <ButtonLoader size={18} className="text-[#32292F]" />}
                 <span>{submitting ? 'Creating account…' : 'Create free account'}</span>
               </span>
             </button>
 
             <p className="text-center text-sm text-gray-500">
               Already have an account?{' '}
-              <Link to={next ? `/login?next=${encodeURIComponent(next)}` : '/login'} className="text-[#1b1e26] hover:underline font-bold">Sign in</Link>
+              <Link to={next ? `/login?next=${encodeURIComponent(next)}` : '/login'} className="text-[#32292F] hover:underline font-bold">Sign in</Link>
             </p>
             <p className="text-center text-xs text-gray-400 pt-2 border-t border-gray-100">
               Registering an institution?{' '}
-              <Link to="/register/institution" className="text-[#1b1e26]/70 hover:text-[#1b1e26] hover:underline font-semibold">Register a school</Link>
+              <Link to="/register/institution" className="text-[#32292F]/70 hover:text-[#32292F] hover:underline font-semibold">Register a school</Link>
             </p>
           </form>
         </motion.div>
