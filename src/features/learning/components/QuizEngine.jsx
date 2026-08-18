@@ -99,7 +99,7 @@ const QuizEngine = ({ courseId, itemId, onComplete }) => {
               <div className="space-y-2">
                 {options.map((opt) => (
                   <label key={opt} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${answers[q.id] === opt ? 'border-accent bg-accent/10' : 'border-gray-100 hover:border-gray-200'}`}>
-                    <input type="radio" name={`q-${q.id}`} value={opt} checked={answers[q.id] === opt} onChange={() => handleSelect(q.id, opt)} className="w-4 h-4 accent-[#1b1e26]" />
+                    <input type="radio" name={`q-${q.id}`} value={opt} checked={answers[q.id] === opt} onChange={() => handleSelect(q.id, opt)} className="w-4 h-4 accent-[#171717]" />
                     <span className="text-sm text-[#1b1e26]">{opt}</span>
                   </label>
                 ))}
@@ -109,7 +109,7 @@ const QuizEngine = ({ courseId, itemId, onComplete }) => {
         })}
       </div>
       <div className="mt-6 flex justify-end">
-        <button onClick={handleSubmit} disabled={!allAnswered || submitting} className="px-6 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50">
+        <button onClick={handleSubmit} disabled={!allAnswered || submitting} className="px-6 py-2.5 rounded-xl bg-[#171717] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50">
           {submitting ? 'Submitting…' : 'Submit quiz'}
         </button>
       </div>

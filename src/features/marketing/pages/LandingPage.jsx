@@ -2,12 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../../context/AuthContext';
-import { BrandLockup, BrandMark } from '../../../components/shared/Brand';
+import { BrandLockup } from '../../../components/shared/Brand';
 import { publicCourseService } from '../../../services/api';
 import { dashboardPathForRoles } from '../../../utils/dashboardPath';
-
-const INK = '#32292F';
-const LIME = '#99E1D9';
 
 // Scroll-reveal wrapper
 const Reveal = ({ children, delay = 0, className = '' }) => (
@@ -199,25 +196,25 @@ export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white text-[#32292F] antialiased overflow-x-hidden scroll-smooth">
       {/* ───────────────── NAV ───────────────── */}
-      <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#32292F]/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'}`}>
+      <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#120E1A]/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between">
-          <Link to="/"><span style={{ '--clr-accent': '#99E1D9' }}><BrandLockup /></span></Link>
+          <Link to="/"><span style={{ '--clr-accent': '#8B5CF6' }}><BrandLockup /></span></Link>
 
           <nav className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="text-sm font-medium text-white/70 hover:text-[#99E1D9] transition-colors">{l.label}</a>
+              <a key={l.href} href={l.href} className="text-sm font-medium text-white/70 hover:text-[#8B5CF6] transition-colors">{l.label}</a>
             ))}
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
             {isAuthenticated ? (
-              <Link to={dashHref} className="px-5 py-2.5 rounded-xl bg-[#99E1D9] text-[#32292F] text-sm font-bold hover:bg-[#b0ebe4] transition-colors">
+              <Link to={dashHref} className="px-5 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-sm font-bold hover:bg-[#A78BFA] transition-colors">
                 Go to Dashboard
               </Link>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-semibold text-white hover:text-[#99E1D9] transition-colors">Sign In</Link>
-                <Link to="/register" className="px-5 py-2.5 rounded-xl bg-[#99E1D9] text-[#32292F] text-sm font-bold hover:bg-[#b0ebe4] transition-colors shadow-sm">Get Started</Link>
+                <Link to="/login" className="text-sm font-semibold text-white hover:text-[#8B5CF6] transition-colors">Sign In</Link>
+                <Link to="/register" className="px-5 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-sm font-bold hover:bg-[#A78BFA] transition-colors shadow-sm">Get Started</Link>
               </>
             )}
           </div>
@@ -229,17 +226,17 @@ export const LandingPage = () => {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="lg:hidden mt-3 mx-4 rounded-2xl bg-[#32292F] border border-white/10 p-4 space-y-1 shadow-xl">
+          <div className="lg:hidden mt-3 mx-4 rounded-2xl bg-[#120E1A] border border-white/10 p-4 space-y-1 shadow-xl">
             {NAV_LINKS.map((l) => (
               <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="block px-3 py-2.5 rounded-xl text-sm font-medium text-white/80 hover:bg-white/5">{l.label}</a>
             ))}
             <div className="pt-2 flex gap-2">
               {isAuthenticated ? (
-                <Link to={dashHref} className="flex-1 text-center px-4 py-2.5 rounded-xl bg-[#99E1D9] text-[#32292F] text-sm font-bold">Dashboard</Link>
+                <Link to={dashHref} className="flex-1 text-center px-4 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-sm font-bold">Dashboard</Link>
               ) : (
                 <>
                   <Link to="/login" className="flex-1 text-center px-4 py-2.5 rounded-xl border border-white/20 text-white text-sm font-semibold">Sign In</Link>
-                  <Link to="/register" className="flex-1 text-center px-4 py-2.5 rounded-xl bg-[#99E1D9] text-[#32292F] text-sm font-bold">Get Started</Link>
+                   <Link to="/register" className="flex-1 text-center px-4 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-sm font-bold">Get Started</Link>
                 </>
               )}
             </div>
@@ -248,26 +245,18 @@ export const LandingPage = () => {
       </header>
 
       {/* ───────────────── HERO ───────────────── */}
-      <section id="home" className="relative bg-gradient-to-br from-[#32292F] via-[#2d252b] to-[#261f24] text-white pt-36 pb-24 sm:pt-44 sm:pb-32 overflow-hidden">
+      <section id="home" className="relative bg-gradient-to-br from-[#120E1A] via-[#1a1025] to-[#140d1e] text-white pt-36 pb-24 sm:pt-44 sm:pb-32 overflow-hidden">
         {/* ambient */}
-        <div className="absolute -top-24 -left-24 w-[28rem] h-[28rem] rounded-full bg-[#99E1D9]/20 blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/3 -right-20 w-96 h-96 rounded-full bg-[#4a3d45]/40 blur-[110px] pointer-events-none" />
+        <div className="absolute -top-24 -left-24 w-[28rem] h-[28rem] rounded-full bg-[#8B5CF6]/20 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/3 -right-20 w-96 h-96 rounded-full bg-[#2a1a3a]/40 blur-[110px] pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <motion.span
-              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#99E1D9] bg-[#99E1D9]/10 border border-[#99E1D9]/20 px-3 py-1.5 rounded-full"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#99E1D9] animate-pulse" />
-              AI-Verified Learning · Rwanda to Global
-            </motion.span>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
               className="mt-6 text-[2.6rem] leading-[1.08] sm:text-6xl font-semibold tracking-tight"
             >
-              Learn with Integrity.<br />Lead with <span className="text-[#99E1D9]">Opportunity.</span>
+              Learn with Integrity.<br />Lead with <span className="text-[#8B5CF6]">Opportunity.</span>
             </motion.h1>
 
             <motion.p
@@ -282,7 +271,7 @@ export const LandingPage = () => {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
               className="mt-9 flex flex-wrap items-center gap-4"
             >
-              <Link to="/register" className="px-7 py-3.5 rounded-2xl bg-[#99E1D9] text-[#32292F] text-sm font-bold hover:bg-[#b0ebe4] transition-all active:scale-[0.98] shadow-lg shadow-[#99E1D9]/20">
+              <Link to="/register" className="px-7 py-3.5 rounded-2xl bg-[#8B5CF6] text-white text-sm font-bold hover:bg-[#A78BFA] transition-all active:scale-[0.98] shadow-lg shadow-[#8B5CF6]/20">
                 Get Started. It's free
               </Link>
               <a href="#programs" className="px-7 py-3.5 rounded-2xl border border-white/15 text-white text-sm font-semibold hover:bg-white/5 transition-colors">
@@ -303,65 +292,27 @@ export const LandingPage = () => {
             </motion.div>
           </div>
 
-          {/* Hero visual — floating course preview */}
+          {/* Hero visual — landing image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}
             className="relative hidden lg:block"
           >
-            <div className="relative rounded-3xl bg-white/[0.04] border border-white/10 backdrop-blur-xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-2.5">
-                  <span style={{ '--clr-accent': '#99E1D9' }}><BrandMark size={34} /></span>
-                  <span className="text-sm font-semibold text-white">Your learning space</span>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#32292F] bg-[#99E1D9] px-2 py-1 rounded-full">Live</span>
-              </div>
+            {/* soft brand glow behind the image */}
+            <div className="absolute -inset-10 rounded-full bg-[#8B5CF6]/25 blur-[90px] pointer-events-none" />
 
-              {/* mini progress cards */}
-              {[
-                { t: '3D Design Course', by: 'Michael Andrew', pct: 45, color: 'text-[#99E1D9]' },
-                { t: 'Development Basics', by: 'Natalia Vernan', pct: 75, color: 'text-emerald-400' },
-              ].map((c) => (
-                <div key={c.t} className="flex items-center gap-4 rounded-2xl bg-white/[0.03] border border-white/5 p-4 mb-3">
-                  <span className="w-11 h-11 rounded-xl bg-[#99E1D9]/15 text-[#99E1D9] flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white truncate">{c.t}</p>
-                    <p className="text-xs text-white/40">{c.by}</p>
-                  </div>
-                  <span className={`text-sm font-bold tabular-nums ${c.color}`}>{c.pct}%</span>
-                </div>
-              ))}
-
-              <div className="mt-4 rounded-2xl bg-[#99E1D9] p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#32292F]/60">Verified certificate</p>
-                  <p className="text-sm font-bold text-[#32292F]">Data Analytics · Passed ✓</p>
-                </div>
-                <svg className="w-9 h-9 text-[#32292F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div>
+            <div className="relative group lg:scale-105 lg:origin-top-right">
+              <img
+                src="/landing/landing.png"
+                alt="Soma Connect learning dashboard preview"
+                className="w-full max-w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
             </div>
-
-            {/* floating badge */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute -bottom-5 -left-6 bg-white text-[#32292F] rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3"
-            >
-              <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-              <div>
-                <p className="text-sm font-bold">94% placed</p>
-                <p className="text-[11px] text-gray-400">within 6 months</p>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* ───────────────── TRUST BAR ───────────────── */}
-      <section className="bg-[#32292F] py-8 border-t border-white/5">
+      <section className="bg-[#120E1A] py-8 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-white/30 mb-6">Trusted by learners & institutions across Rwanda</p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 opacity-60">
@@ -376,7 +327,7 @@ export const LandingPage = () => {
       <section id="features" className="bg-[#f7f8fa] py-24">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal className="max-w-2xl mx-auto text-center mb-16">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#99E1D9]/40 px-3 py-1.5 rounded-full">Why Soma Connect</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#8B5CF6]/40 px-3 py-1.5 rounded-full">Why Soma Connect</span>
             <h2 className="mt-5 text-4xl sm:text-[2.75rem] font-semibold tracking-tight leading-tight">Learning that actually gets you hired</h2>
             <p className="mt-4 text-gray-500 text-lg">We built the whole loop of learning, proving, and getting discovered around one idea: integrity you can verify.</p>
           </Reveal>
@@ -385,7 +336,7 @@ export const LandingPage = () => {
             {FEATURES.map((f, i) => (
               <Reveal key={f.title} delay={i * 0.08}>
                 <div className="h-full bg-white rounded-2xl border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                  <span className="w-12 h-12 rounded-2xl bg-[#32292F] text-[#99E1D9] flex items-center justify-center">
+                  <span className="w-12 h-12 rounded-2xl bg-[#120E1A] text-[#8B5CF6] flex items-center justify-center">
                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
                   </span>
                   <h3 className="mt-5 text-lg font-semibold">{f.title}</h3>
@@ -399,20 +350,20 @@ export const LandingPage = () => {
 
       {/* ───────────────── PROGRAMS ───────────────── */}
       <section id="programs" className="relative bg-[#f7f8fa] py-24 overflow-hidden">
-        <div className="absolute -top-16 right-1/4 w-80 h-80 rounded-full bg-[#99E1D9]/25 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 -left-20 w-72 h-72 rounded-full bg-[#4a3d45]/[0.06] blur-[100px] pointer-events-none" />
+        <div className="absolute -top-16 right-1/4 w-80 h-80 rounded-full bg-[#8B5CF6]/25 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 -left-20 w-72 h-72 rounded-full bg-[#2a1a3a]/[0.06] blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8">
           {/* Header + category filter */}
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
             <Reveal className="max-w-xl">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#99E1D9]/40 px-3 py-1.5 rounded-full">Popular programs</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#8B5CF6]/40 px-3 py-1.5 rounded-full">Popular programs</span>
               <h2 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.1]">
                 Certificates that{' '}
                 <span className="relative inline-block">
                   open doors
                   <svg className="absolute left-0 -bottom-1 w-full" height="10" viewBox="0 0 200 10" preserveAspectRatio="none" fill="none">
-                    <path d="M2 7c40-5 80-5 120-3s60 3 76 1" stroke="#99E1D9" strokeWidth="5" strokeLinecap="round" />
+                    <path d="M2 7c40-5 80-5 120-3s60 3 76 1" stroke="#8B5CF6" strokeWidth="5" strokeLinecap="round" />
                   </svg>
                 </span>
               </h2>
@@ -429,12 +380,12 @@ export const LandingPage = () => {
                     onClick={() => setProgramCat(c.label)}
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                       programCat === c.label
-                        ? 'bg-[#32292F] text-white shadow-md'
+                        ? 'bg-[#120E1A] text-white shadow-md'
                         : 'bg-white text-[#32292F]/55 hover:text-[#32292F] border border-[#32292F]/[0.07] hover:border-[#32292F]/20'
                     }`}
                   >
                     {c.label}
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${programCat === c.label ? 'bg-white/15' : 'bg-[#32292F]/[0.06]'}`}>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${programCat === c.label ? 'bg-white/15' : 'bg-[#120E1A]/[0.06]'}`}>
                       {c.count}
                     </span>
                   </button>
@@ -470,7 +421,7 @@ export const LandingPage = () => {
                 <p className="text-gray-500">No courses available at the moment.</p>
               </div>
             ) : (
-              filteredPrograms.map((p) => (
+              filteredPrograms.slice(0, 3).map((p) => (
                 <div
                   key={p.id}
                   onClick={() => goToCourse(p.id)}
@@ -507,7 +458,7 @@ export const LandingPage = () => {
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-[11px] font-semibold uppercase tracking-wide text-[#32292F]/40">{p.category}</span>
                         {p.certificate && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#1b5e20] bg-[#99E1D9]/30 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white bg-[#8B5CF6]/30 px-2 py-0.5 rounded-full">
                             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                             Certificate
                           </span>
@@ -534,7 +485,7 @@ export const LandingPage = () => {
                       <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
                         {p.instructor ? (
                           <div className="flex items-center gap-2 min-w-0">
-                            <span className="w-7 h-7 rounded-full bg-[#32292F] text-white text-[9px] font-bold flex items-center justify-center shrink-0">{nameInitials(p.instructor)}</span>
+                            <span className="w-7 h-7 rounded-full bg-[#120E1A] text-white text-[9px] font-bold flex items-center justify-center shrink-0">{nameInitials(p.instructor)}</span>
                             <span className="text-xs font-medium text-[#32292F]/70 truncate">{p.instructor}</span>
                           </div>
                         ) : (
@@ -549,7 +500,7 @@ export const LandingPage = () => {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); goToCourse(p.id); }}
-                        className="mt-4 w-full py-2.5 rounded-xl bg-[#32292F] text-white text-sm font-bold hover:bg-black transition-colors active:scale-[0.98] inline-flex items-center justify-center gap-2 group-hover:bg-[#99E1D9] group-hover:text-[#32292F]"
+                        className="mt-4 w-full py-2.5 rounded-xl bg-[#120E1A] text-white text-sm font-bold hover:bg-black transition-colors active:scale-[0.98] inline-flex items-center justify-center gap-2 group-hover:bg-[#8B5CF6] group-hover:text-white"
                       >
                         {isAuthenticated ? 'Start learning' : 'Enroll now'}
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -561,7 +512,7 @@ export const LandingPage = () => {
           </motion.div>
 
           <Reveal className="mt-12 text-center">
-            <Link to="/register" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-[#32292F] text-white text-sm font-bold hover:bg-black transition-colors active:scale-[0.98]">
+            <Link to="/register" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-[#120E1A] text-white text-sm font-bold hover:bg-black transition-colors active:scale-[0.98]">
               Explore all {programs.length}+ programs
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
@@ -570,11 +521,11 @@ export const LandingPage = () => {
       </section>
 
       {/* ───────────────── HOW IT WORKS ───────────────── */}
-      <section id="how" className="relative bg-gradient-to-br from-[#32292F] via-[#2d252b] to-[#261f24] text-white py-24 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#99E1D9]/10 blur-[120px] pointer-events-none" />
+      <section id="how" className="relative bg-gradient-to-br from-[#120E1A] via-[#1a1025] to-[#140d1e] text-white py-24 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#8B5CF6]/10 blur-[120px] pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal className="max-w-2xl mb-16">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#99E1D9] bg-[#99E1D9]/10 border border-[#99E1D9]/20 px-3 py-1.5 rounded-full">How it works</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8B5CF6] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 px-3 py-1.5 rounded-full">How it works</span>
             <h2 className="mt-5 text-4xl sm:text-[2.75rem] font-semibold tracking-tight">From first lesson to first job</h2>
           </Reveal>
 
@@ -582,7 +533,7 @@ export const LandingPage = () => {
             {STEPS.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.08}>
                 <div className="relative rounded-2xl bg-white/[0.03] border border-white/10 p-6 h-full">
-                  <span className="text-4xl font-bold text-[#99E1D9]/30">{s.n}</span>
+                  <span className="text-4xl font-bold text-[#8B5CF6]/30">{s.n}</span>
                   <h3 className="mt-3 text-lg font-semibold text-white">{s.title}</h3>
                   <p className="mt-2 text-sm text-white/50 leading-relaxed">{s.desc}</p>
                 </div>
@@ -608,25 +559,25 @@ export const LandingPage = () => {
       <section className="bg-[#f7f8fa] py-24">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal>
-            <div className="relative rounded-[2rem] bg-gradient-to-br from-[#32292F] to-[#261f24] text-white p-10 sm:p-14 overflow-hidden">
-              <div className="absolute -bottom-16 -right-10 w-72 h-72 rounded-full bg-[#99E1D9]/15 blur-[90px] pointer-events-none" />
+            <div className="relative rounded-[2rem] bg-gradient-to-br from-[#120E1A] to-[#140d1e] text-white p-10 sm:p-14 overflow-hidden">
+              <div className="absolute -bottom-16 -right-10 w-72 h-72 rounded-full bg-[#8B5CF6]/15 blur-[90px] pointer-events-none" />
               <div className="relative grid lg:grid-cols-2 gap-10 items-center">
                 <div>
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#99E1D9]">For institutions</span>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8B5CF6]">For institutions</span>
                   <h2 className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">Bring Soma Connect to your school</h2>
                   <p className="mt-4 text-white/60 leading-relaxed max-w-lg">
                     Classes, attendance, courses, plagiarism checks and financial reports in one dashboard for your whole institution,
                     with verified outcomes you can show parents and partners.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <Link to="/register" className="px-6 py-3 rounded-2xl bg-[#99E1D9] text-[#32292F] text-sm font-bold hover:bg-[#b0ebe4] transition-colors">Partner with us</Link>
+                    <Link to="/register" className="px-6 py-3 rounded-2xl bg-[#8B5CF6] text-white text-sm font-bold hover:bg-[#A78BFA] transition-colors">Partner with us</Link>
                     <a href="#pricing" className="px-6 py-3 rounded-2xl border border-white/15 text-white text-sm font-semibold hover:bg-white/5 transition-colors">See plans</a>
                   </div>
                 </div>
                 <div className="space-y-3">
                   {['Unified school dashboard', 'Bulk student & staff onboarding', 'Attendance & performance analytics', 'AI-plagiarism & originality checks'].map((t) => (
                     <div key={t} className="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/5 px-4 py-3.5">
-                      <span className="w-7 h-7 rounded-lg bg-[#99E1D9] text-[#32292F] flex items-center justify-center shrink-0">
+                        <span className="w-7 h-7 rounded-lg bg-[#8B5CF6] text-white flex items-center justify-center shrink-0">
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       </span>
                       <span className="text-sm font-medium text-white/90">{t}</span>
@@ -643,7 +594,7 @@ export const LandingPage = () => {
       <section className="bg-white py-24">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal className="max-w-2xl mx-auto text-center mb-14">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#99E1D9]/40 px-3 py-1.5 rounded-full">Loved by learners</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#8B5CF6]/40 px-3 py-1.5 rounded-full">Loved by learners</span>
             <h2 className="mt-5 text-4xl sm:text-[2.75rem] font-semibold tracking-tight">Real people, real outcomes</h2>
           </Reveal>
 
@@ -651,10 +602,10 @@ export const LandingPage = () => {
             {TESTIMONIALS.map((t, i) => (
               <Reveal key={t.name} delay={i * 0.08}>
                 <div className="h-full bg-[#f7f8fa] rounded-2xl border border-gray-100 p-7 flex flex-col">
-                  <svg className="w-8 h-8 text-[#99E1D9]" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 8c-2.5 0-4.5 2-4.5 4.5S7 17 9.5 17c.3 0 .6 0 .9-.1-.6 1.3-2 2.3-3.9 2.6l.4 1.5c3.6-.7 6.1-3.4 6.1-7.2V12.5C13 9.5 11.5 8 9.5 8zm9 0c-2.5 0-4.5 2-4.5 4.5S16 17 18.5 17c.3 0 .6 0 .9-.1-.6 1.3-2 2.3-3.9 2.6l.4 1.5c3.6-.7 6.1-3.4 6.1-7.2V12.5C22 9.5 20.5 8 18.5 8z" /></svg>
+                  <svg className="w-8 h-8 text-[#8B5CF6]" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 8c-2.5 0-4.5 2-4.5 4.5S7 17 9.5 17c.3 0 .6 0 .9-.1-.6 1.3-2 2.3-3.9 2.6l.4 1.5c3.6-.7 6.1-3.4 6.1-7.2V12.5C13 9.5 11.5 8 9.5 8zm9 0c-2.5 0-4.5 2-4.5 4.5S16 17 18.5 17c.3 0 .6 0 .9-.1-.6 1.3-2 2.3-3.9 2.6l.4 1.5c3.6-.7 6.1-3.4 6.1-7.2V12.5C22 9.5 20.5 8 18.5 8z" /></svg>
                   <p className="mt-4 text-[15px] text-gray-700 leading-relaxed flex-1">“{t.quote}”</p>
                   <div className="mt-6 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-full bg-[#32292F] text-white text-xs font-bold flex items-center justify-center">{t.name.split(' ').map((w) => w[0]).join('')}</span>
+                    <span className="w-10 h-10 rounded-full bg-[#120E1A] text-white text-xs font-bold flex items-center justify-center">{t.name.split(' ').map((w) => w[0]).join('')}</span>
                     <div>
                       <p className="text-sm font-semibold">{t.name}</p>
                       <p className="text-xs text-gray-400">{t.role}</p>
@@ -671,16 +622,16 @@ export const LandingPage = () => {
       <section id="pricing" className="bg-[#f7f8fa] py-24">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <Reveal className="max-w-2xl mx-auto text-center mb-14">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#99E1D9]/40 px-3 py-1.5 rounded-full">Pricing</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#32292F]/50 bg-[#8B5CF6]/40 px-3 py-1.5 rounded-full">Pricing</span>
             <h2 className="mt-5 text-4xl sm:text-[2.75rem] font-semibold tracking-tight">Start free. Grow when you're ready.</h2>
           </Reveal>
 
           <div className="grid md:grid-cols-3 gap-6 items-stretch">
             {PLANS.map((p, i) => (
               <Reveal key={p.name} delay={i * 0.08}>
-                <div className={`h-full rounded-2xl p-8 flex flex-col ${p.featured ? 'bg-[#32292F] text-white shadow-2xl scale-[1.03] relative' : 'bg-white border border-gray-100'}`}>
-                  {p.featured && <span className="absolute top-5 right-5 text-[10px] font-bold uppercase tracking-wide text-[#32292F] bg-[#99E1D9] px-2.5 py-1 rounded-full">Most popular</span>}
-                  <p className={`text-sm font-semibold ${p.featured ? 'text-[#99E1D9]' : 'text-gray-500'}`}>{p.name}</p>
+                <div className={`h-full rounded-2xl p-8 flex flex-col ${p.featured ? 'bg-[#120E1A] text-white shadow-2xl scale-[1.03] relative' : 'bg-white border border-gray-100'}`}>
+                  {p.featured && <span className="absolute top-5 right-5 text-[10px] font-bold uppercase tracking-wide text-white bg-[#8B5CF6] px-2.5 py-1 rounded-full">Most popular</span>}
+                  <p className={`text-sm font-semibold ${p.featured ? 'text-[#8B5CF6]' : 'text-gray-500'}`}>{p.name}</p>
                   <div className="mt-3 flex items-end gap-1">
                     <span className="text-4xl font-bold tracking-tight">{p.price}</span>
                     {p.per && <span className={`text-sm mb-1 ${p.featured ? 'text-white/50' : 'text-gray-400'}`}>{p.per}</span>}
@@ -689,17 +640,17 @@ export const LandingPage = () => {
                   <ul className="mt-6 space-y-3 flex-1">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <svg className={`w-5 h-5 shrink-0 ${p.featured ? 'text-[#99E1D9]' : 'text-emerald-500'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className={`w-5 h-5 shrink-0 ${p.featured ? 'text-[#8B5CF6]' : 'text-emerald-500'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         <span className={p.featured ? 'text-white/80' : 'text-gray-600'}>{f}</span>
                       </li>
                     ))}
                   </ul>
                   {p.name === 'Institution' ? (
-                    <a href="https://wa.me/250794219712?text=Hello%20Soma%20Connect%2C%20I%27m%20interested%20in%20the%20Institution%20plan" target="_blank" rel="noopener noreferrer" className="block mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors bg-[#32292F] text-white hover:bg-black">
+                    <a href="https://wa.me/250794219712?text=Hello%20Soma%20Connect%2C%20I%27m%20interested%20in%20the%20Institution%20plan" target="_blank" rel="noopener noreferrer" className="block mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors bg-[#120E1A] text-white hover:bg-black">
                       {p.cta}
                     </a>
                   ) : (
-                    <Link to="/register" className={`block mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors ${p.featured ? 'bg-[#99E1D9] text-[#32292F] hover:bg-[#b0ebe4]' : 'bg-[#32292F] text-white hover:bg-black'}`}>
+                    <Link to="/register" className={`block mt-8 text-center px-6 py-3 rounded-2xl text-sm font-bold transition-colors ${p.featured ? 'bg-[#8B5CF6] text-white hover:bg-[#A78BFA]' : 'bg-[#120E1A] text-white hover:bg-black'}`}>
                       {p.cta}
                     </Link>
                   )}
@@ -714,14 +665,14 @@ export const LandingPage = () => {
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal>
-            <div className="relative rounded-[2rem] bg-[#99E1D9] p-12 sm:p-16 text-center overflow-hidden">
+            <div className="relative rounded-[2rem] bg-[#8B5CF6] p-12 sm:p-16 text-center overflow-hidden">
               <div className="absolute -top-10 -left-8 w-40 h-40 rounded-full bg-white/25 pointer-events-none" />
-              <div className="absolute -bottom-12 -right-6 w-56 h-56 rounded-full bg-[#32292F]/5 pointer-events-none" />
+              <div className="absolute -bottom-12 -right-6 w-56 h-56 rounded-full bg-[#120E1A]/5 pointer-events-none" />
               <div className="relative">
-                <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-[#32292F]">Your future starts with one lesson.</h2>
-                <p className="mt-4 text-[#32292F]/70 text-lg max-w-xl mx-auto">Join thousands of Rwandan learners building verified skills and getting hired.</p>
+                <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white">Your future starts with one lesson.</h2>
+                <p className="mt-4 text-white/80 text-lg max-w-xl mx-auto">Join thousands of Rwandan learners building verified skills and getting hired.</p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  <Link to="/register" className="px-8 py-4 rounded-2xl bg-[#32292F] text-white text-sm font-bold hover:bg-black transition-colors active:scale-[0.98]">Create your free account</Link>
+                  <Link to="/register" className="px-8 py-4 rounded-2xl bg-[#120E1A] text-white text-sm font-bold hover:bg-black transition-colors active:scale-[0.98]">Create your free account</Link>
                   <Link to="/login" className="px-8 py-4 rounded-2xl bg-white/60 text-[#32292F] text-sm font-bold hover:bg-white transition-colors">Sign in</Link>
                 </div>
               </div>
@@ -731,17 +682,17 @@ export const LandingPage = () => {
       </section>
 
       {/* ───────────────── FOOTER ───────────────── */}
-      <footer className="bg-[#32292F] text-white pt-16 pb-8">
+      <footer className="bg-[#120E1A] text-white pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <div className="grid lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
             <div className="lg:col-span-2">
-              <span style={{ '--clr-accent': '#99E1D9' }}><BrandLockup /></span>
+              <span style={{ '--clr-accent': '#8B5CF6' }}><BrandLockup /></span>
               <p className="mt-4 text-sm text-white/50 leading-relaxed max-w-xs">
                 Bridging Rwandan classrooms and the global job market through AI verified excellence.
               </p>
               <div className="mt-5 flex gap-3">
                 {['M22 12a10 10 0 10-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z', 'M23 4.9c-.8.4-1.7.6-2.6.8a4.5 4.5 0 002-2.5c-.9.5-1.9.9-2.9 1.1a4.5 4.5 0 00-7.7 4.1A12.8 12.8 0 013 3.6a4.5 4.5 0 001.4 6 4.5 4.5 0 01-2-.6v.1a4.5 4.5 0 003.6 4.4 4.5 4.5 0 01-2 .1 4.5 4.5 0 004.2 3.1A9 9 0 012 19.5a12.7 12.7 0 006.9 2c8.3 0 12.8-6.9 12.8-12.8v-.6c.9-.6 1.6-1.4 2.3-2.2z', 'M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zM8.5 17.5v-7H6v7h2.5zM7.2 9.3a1.4 1.4 0 100-2.8 1.4 1.4 0 000 2.8zM18 17.5v-4c0-2.1-1.1-3.1-2.6-3.1-1.2 0-1.7.7-2 1.1v-1H11v7h2.5v-3.9c0-.9.6-1.3 1.2-1.3.6 0 1.1.4 1.1 1.3v3.9H18z'].map((d, i) => (
-                  <a key={i} href="#" className="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#99E1D9] hover:text-[#32292F] text-white/60 flex items-center justify-center transition-colors">
+                  <a key={i} href="#" className="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#8B5CF6] hover:text-white text-white/60 flex items-center justify-center transition-colors">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d={d} /></svg>
                   </a>
                 ))}
@@ -753,7 +704,7 @@ export const LandingPage = () => {
                 <p className="text-sm font-semibold text-white mb-4">{col.title}</p>
                 <ul className="space-y-2.5">
                   {col.links.map((l) => (
-                    <li key={l}><a href="#" className="text-sm text-white/50 hover:text-[#99E1D9] transition-colors">{l}</a></li>
+                    <li key={l}><a href="#" className="text-sm text-white/50 hover:text-[#8B5CF6] transition-colors">{l}</a></li>
                   ))}
                 </ul>
               </div>

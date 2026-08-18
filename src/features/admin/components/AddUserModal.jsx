@@ -4,8 +4,8 @@ import { adminService } from '../../../services/api';
 import { logicalRect, logicalViewport } from '../../../utils/rootZoom';
 
 const inputClass =
-  'w-full rounded-xl bg-[#f7f8fa] border border-[#1b1e26]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:bg-white focus:border-[#d0f24a] focus:ring-4 focus:ring-[#d0f24a]/20 focus:outline-none transition-all';
-const labelClass = 'block text-[10px] font-bold text-[#1b1e26]/45 uppercase tracking-[0.14em] mb-1.5';
+  'w-full rounded-xl bg-[#f7f8fa] border border-[#120E1A]/10 px-3.5 py-2.5 text-sm text-[#120E1A] placeholder-gray-400 focus:bg-white focus:border-[#8B5CF6] focus:ring-4 focus:ring-[#8B5CF6]/20 focus:outline-none transition-all';
+const labelClass = 'block text-[10px] font-bold text-[#120E1A]/45 uppercase tracking-[0.14em] mb-1.5';
 
 /* ── Searchable, multi-select role picker (select2-style, no dependency) ── */
 const RoleMultiSelect = ({ options, value, onChange }) => {
@@ -71,12 +71,12 @@ const RoleMultiSelect = ({ options, value, onChange }) => {
       <div
         onClick={() => setOpen((o) => !o)}
         className={`min-h-[44px] w-full rounded-xl bg-[#f7f8fa] border px-2.5 py-2 flex flex-wrap items-center gap-1.5 cursor-pointer transition-all ${
-          open ? 'bg-white border-[#d0f24a] ring-4 ring-[#d0f24a]/20' : 'border-[#1b1e26]/10'
+          open ? 'bg-white border-[#8B5CF6] ring-4 ring-[#8B5CF6]/20' : 'border-[#120E1A]/10'
         }`}
       >
         {selected.length === 0 && <span className="text-sm text-gray-400 px-1">Select one or more roles…</span>}
         {selected.map((o) => (
-          <span key={o.id} className="inline-flex items-center gap-1 rounded-lg bg-[#1b1e26] text-white text-[11px] font-semibold pl-2.5 pr-1 py-1">
+          <span key={o.id} className="inline-flex items-center gap-1 rounded-lg bg-[#120E1A] text-white text-[11px] font-semibold pl-2.5 pr-1 py-1">
             {o.name}
             <button
               type="button"
@@ -88,7 +88,7 @@ const RoleMultiSelect = ({ options, value, onChange }) => {
             </button>
           </span>
         ))}
-        <svg className={`w-4 h-4 text-[#1b1e26]/40 ml-auto shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        <svg className={`w-4 h-4 text-[#120E1A]/40 ml-auto shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </div>
 
       {/* Dropdown (rendered outside modal for proper scroll/visibility) */}
@@ -103,9 +103,9 @@ const RoleMultiSelect = ({ options, value, onChange }) => {
             transform: dropdownStyle.transform,
             zIndex: 70,
           }}
-          className="rounded-xl bg-white border border-[#1b1e26]/10 shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150"
+          className="rounded-xl bg-white border border-[#120E1A]/10 shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150"
         >
-          <div className="p-2 border-b border-[#1b1e26]/[0.06]">
+          <div className="p-2 border-b border-[#120E1A]/[0.06]">
             <div className="relative">
               <svg className="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" /></svg>
               <input
@@ -113,7 +113,7 @@ const RoleMultiSelect = ({ options, value, onChange }) => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search roles…"
-                className="w-full rounded-lg bg-[#f7f8fa] pl-8 pr-3 py-2 text-sm text-[#1b1e26] placeholder-gray-400 outline-none focus:bg-white focus:ring-2 focus:ring-[#d0f24a]/40"
+                className="w-full rounded-lg bg-[#f7f8fa] pl-8 pr-3 py-2 text-sm text-[#120E1A] placeholder-gray-400 outline-none focus:bg-white focus:ring-2 focus:ring-[#8B5CF6]/40"
               />
             </div>
           </div>
@@ -128,10 +128,10 @@ const RoleMultiSelect = ({ options, value, onChange }) => {
                     key={o.id}
                     type="button"
                     onClick={() => toggle(o.id)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-[#1b1e26] hover:bg-[#d0f24a]/[0.12] transition-colors text-left"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-[#120E1A] hover:bg-[#8B5CF6]/[0.12] transition-colors text-left"
                   >
-                    <span className={`w-4 h-4 rounded-[5px] flex items-center justify-center shrink-0 border ${isSel ? 'bg-[#1b1e26] border-[#1b1e26]' : 'border-[#1b1e26]/25'}`}>
-                      {isSel && <svg className="w-3 h-3 text-[#d0f24a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                    <span className={`w-4 h-4 rounded-[5px] flex items-center justify-center shrink-0 border ${isSel ? 'bg-[#120E1A] border-[#120E1A]' : 'border-[#120E1A]/25'}`}>
+                      {isSel && <svg className="w-3 h-3 text-[#8B5CF6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                     </span>
                     <span className="font-medium">{o.name}</span>
                   </button>
@@ -159,7 +159,7 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
 
   const isEditMode = !!editingUser;
 
-  const entityRoles = ['ENTITY_ADMIN', 'STUDENT'];
+  const entityRoles = ['ENTITY_ADMIN', 'STUDENT', 'STAFF', 'LECTURE'];
   const showEntitySelect = fetchEntities && roleIds.some((rid) => {
     const r = roles.find((rr) => String(rr.id) === rid);
     return r && entityRoles.includes(r.name);
@@ -256,12 +256,12 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
   return createPortal(
     // Backdrop — clicking outside the card closes the modal.
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#120E1A]/40 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
       role="presentation"
     >
       <div
-        className="relative w-full max-w-[600px] max-h-[92vh] overflow-y-auto bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] p-6 sm:p-8 animate-in zoom-in-95 fade-in duration-200"
+        className="relative w-full max-w-[600px] max-h-[92vh] overflow-y-auto bg-white rounded-3xl border border-[#120E1A]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] p-6 sm:p-8 animate-in zoom-in-95 fade-in duration-200"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -270,19 +270,19 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center text-[#1b1e26]/40 hover:text-[#1b1e26] hover:bg-[#f3f4f6] transition-colors"
+          className="absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center text-[#120E1A]/40 hover:text-[#120E1A] hover:bg-[#f3f4f6] transition-colors"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
         </button>
 
         {/* Header */}
         <div className="mb-6 pr-8">
-          <span className="w-11 h-11 rounded-2xl bg-[#d0f24a]/25 text-[#1b1e26] flex items-center justify-center mb-3">
+          <span className="w-11 h-11 rounded-2xl bg-[#8B5CF6]/25 text-[#120E1A] flex items-center justify-center mb-3">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM19 8v6M22 11h-6" />
             </svg>
           </span>
-          <h3 className="text-xl font-semibold text-[#1b1e26] tracking-tight">
+          <h3 className="text-xl font-semibold text-[#120E1A] tracking-tight">
             {isEditMode ? 'Update user' : 'Add new user'}
           </h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -360,13 +360,13 @@ export const AddUserModal = ({ isOpen, onClose, onSubmit, editingUser, fetchRole
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[#1b1e26]/70 border border-[#1b1e26]/10 hover:bg-[#f3f4f6] transition-colors"
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[#120E1A]/70 border border-[#120E1A]/10 hover:bg-[#f3f4f6] transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm"
+              className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#8B5CF6] text-white hover:bg-[#C4B5FD] transition-colors active:scale-[0.98] shadow-sm"
             >
               {isEditMode ? 'Save changes' : 'Create user'}
             </button>

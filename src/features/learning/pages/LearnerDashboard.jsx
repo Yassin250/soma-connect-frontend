@@ -15,10 +15,10 @@ const LEVEL_LABEL = { BEGINNER: 'Beginner', INTERMEDIATE: 'Intermediate', ADVANC
 const GRADIENTS = [
   'from-[#6366f1] to-[#8b5cf6]',
   'from-[#0ea5e9] to-[#22d3ee]',
-  'from-[#f59e0b] to-[#f97316]',
+  'from-[#C6FF34] to-[#a8e600]',
   'from-[#10b981] to-[#34d399]',
   'from-[#ec4899] to-[#f43f5e]',
-  'from-[#3b4a6b] to-[#1b1e26]',
+  'from-[#3b4a6b] to-[#171717]',
 ];
 const gradFor = (str = '') =>
   GRADIENTS[[...String(str)].reduce((a, ch) => a + ch.charCodeAt(0), 0) % GRADIENTS.length];
@@ -114,7 +114,7 @@ export const LearnerDashboard = () => {
     <motion.div
       {...fadeUp}
       onClick={() => navigate(`/learning/course/${course.courseId}`)}
-      className="group cursor-pointer bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-[0_8px_24px_rgba(27,30,38,0.1)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
+      className="group cursor-pointer bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-[0_8px_24px_rgba(23,23,23,0.1)] hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
     >
       <Cover course={course} className="h-[68px]">
         <div className="absolute inset-0 p-2 flex items-start justify-between">
@@ -144,7 +144,7 @@ export const LearnerDashboard = () => {
             <motion.div initial={{ width: 0 }} animate={{ width: `${course.overallProgressPercent}%` }} transition={{ duration: 0.8 }}
               className={`h-full rounded-full ${course.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-gradient-to-r from-accent to-accent-dark'}`} />
           </div>
-          <div className="w-full py-2 rounded-lg bg-[#1b1e26] text-white text-[10px] font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1">
+          <div className="w-full py-2 rounded-lg bg-[#171717] text-white text-[10px] font-bold text-center group-hover:bg-black transition-colors inline-flex items-center justify-center gap-1">
             {ctaLabel(course)}
             <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
@@ -171,10 +171,10 @@ export const LearnerDashboard = () => {
         {/* ── HERO — greeting + big overall-progress ring ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white px-7 sm:px-10 py-9 sm:py-10"
+          className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#171717] via-[#1a1a1a] to-[#141414] text-white px-7 sm:px-10 py-9 sm:py-10"
         >
           <div className="absolute -top-24 -left-16 w-96 h-96 rounded-full bg-accent/20 blur-[120px] pointer-events-none" />
-          <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#39435a]/40 blur-[110px] pointer-events-none" />
+          <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#C6FF34]/40 blur-[110px] pointer-events-none" />
           <div className="absolute top-[20%] right-[26%] w-36 h-36 rounded-[2rem] border border-white/10 rotate-[18deg] pointer-events-none hidden lg:block" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
@@ -221,7 +221,7 @@ export const LearnerDashboard = () => {
         {!loading && !error && featured && (
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.5 }}
-            className="grid md:grid-cols-[300px_1fr] bg-white rounded-3xl border border-gray-100 shadow-[0_16px_50px_rgba(27,30,38,0.10)] overflow-hidden"
+            className="grid md:grid-cols-[300px_1fr] bg-white rounded-3xl border border-gray-100 shadow-[0_16px_50px_rgba(23,23,23,0.10)] overflow-hidden"
           >
             <Cover course={featured} className="h-44 md:h-auto min-h-[180px]">
               <div className="absolute inset-0 p-5 flex flex-col justify-between">
@@ -252,7 +252,7 @@ export const LearnerDashboard = () => {
 
               {/* Course-specific ring */}
               <div className="shrink-0 self-center">
-                <ProgressRing value={featured.overallProgressPercent} size={128} stroke={11} track="#eef0f2" bar="#1b1e26">
+                <ProgressRing value={featured.overallProgressPercent} size={128} stroke={11} track="#eef0f2" bar="#C6FF34">
                   <span className="text-2xl font-extrabold text-[#1b1e26] leading-none">{featured.overallProgressPercent}%</span>
                   <span className="mt-0.5 text-[10px] font-semibold text-gray-400">{featured.completedItems}/{featured.totalItems} lessons</span>
                 </ProgressRing>
@@ -291,7 +291,7 @@ export const LearnerDashboard = () => {
         ) : error ? (
           <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center">
             <p className="text-sm text-gray-500 mb-4">{error}</p>
-            <button onClick={load} className="px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors">Try again</button>
+            <button onClick={load} className="px-5 py-2.5 rounded-xl bg-[#171717] text-white text-sm font-semibold hover:bg-black transition-colors">Try again</button>
           </div>
         ) : courses.length === 0 ? (
           <div className="relative overflow-hidden bg-white border border-gray-100 rounded-3xl p-12 text-center">
@@ -301,7 +301,7 @@ export const LearnerDashboard = () => {
             </span>
             <h2 className="relative text-xl font-bold text-[#1b1e26] mb-1.5">Your journey starts here</h2>
             <p className="relative text-sm text-gray-500 mb-6 max-w-sm mx-auto">You haven't enrolled in any course yet. Browse the catalog and pick your first one — it only takes a click.</p>
-            <Link to="/courses" className="relative inline-flex items-center gap-2 px-6 py-3 bg-[#1b1e26] text-white rounded-2xl font-bold hover:bg-black transition-colors">
+            <Link to="/courses" className="relative inline-flex items-center gap-2 px-6 py-3 bg-[#171717] text-white rounded-2xl font-bold hover:bg-black transition-colors">
               Browse courses
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>

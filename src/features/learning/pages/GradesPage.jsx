@@ -24,7 +24,7 @@ function ScoreRing({ pct, size = 36, stroke = 3 }) {
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - (pct / 100) * circ;
-  const color = pct >= 80 ? '#16a34a' : pct >= 60 ? '#d97706' : '#ef4444';
+  const color = pct >= 80 ? '#a8e600' : pct >= 60 ? '#d97706' : '#ef4444';
   return (
     <svg width={size} height={size} className="rotate-[-90deg] shrink-0">
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#f0f1f3" strokeWidth={stroke} />
@@ -69,12 +69,12 @@ const GradesPage = () => {
       </span>
       <h2 className="text-base font-semibold text-[#1b1e26]">No grades yet</h2>
       <p className="text-sm text-gray-400 mt-1">Enroll in a course and start learning to see your grades.</p>
-      <Link to="/courses" className="mt-4 px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors">Browse Courses</Link>
+      <Link to="/courses" className="mt-4 px-5 py-2.5 rounded-xl bg-[#171717] text-white text-sm font-semibold hover:bg-black transition-colors">Browse Courses</Link>
     </div>
   );
 
   const progressBg = (pct) => pct === 100
-    ? 'linear-gradient(90deg, #22c55e, #16a34a)'
+    ? 'linear-gradient(90deg, #C6FF34, #a8e600)'
     : 'linear-gradient(90deg, var(--clr-accent), var(--clr-accent-dark))';
 
   const scoreColor = (s) => s >= 80 ? 'text-green-600' : s >= 60 ? 'text-amber-600' : 'text-red-500';
@@ -93,7 +93,7 @@ const GradesPage = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 border-b border-[#1b1e26]/[0.06]">
+            <tr className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 border-b border-[#171717]/[0.06]">
               <th className="pb-2.5 pr-4 font-medium w-[60%]">Name</th>
               <th className="pb-2.5 pr-4 font-medium w-[15%]">Type</th>
               <th className="pb-2.5 pr-4 font-medium text-right">Score</th>
@@ -108,7 +108,7 @@ const GradesPage = () => {
                   key={item.itemId}
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="border-b border-[#1b1e26]/[0.04] text-[13px] hover:bg-[#f7f8fa] transition-colors group"
+                  className="border-b border-[#171717]/[0.04] text-[13px] hover:bg-[#f7f8fa] transition-colors group"
                 >
                   <td className="py-2.5 pr-4">
                     <div className="flex items-center gap-2.5">
@@ -132,7 +132,7 @@ const GradesPage = () => {
               );
             })}
             {ungraded.map((item) => (
-              <tr key={item.itemId} className="border-b border-[#1b1e26]/[0.04] text-[13px] opacity-40 hover:opacity-70 transition-all">
+              <tr key={item.itemId} className="border-b border-[#171717]/[0.04] text-[13px] opacity-40 hover:opacity-70 transition-all">
                 <td className="py-2.5 pr-4">
                   <div className="flex items-center gap-2.5">
                     <span className="w-7 h-7 rounded-lg bg-[#f7f8fa] flex items-center justify-center text-gray-400">
@@ -171,13 +171,13 @@ const GradesPage = () => {
                   onClick={() => { prevId.current = selected?.courseId; setSelected(c); }}
                   className={`relative w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-200 ${
                     active
-                      ? 'bg-white border border-[#1b1e26]/[0.06] shadow-sm'
+                      ? 'bg-white border border-[#171717]/[0.06] shadow-sm'
                       : 'hover:bg-white/60 border border-transparent'
                   }`}
                 >
                   {active && <motion.div layoutId="sidebar-active" className="absolute left-[-1px] top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-accent" />}
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${
-                    active ? 'bg-accent text-[#1b1e26]' : 'bg-[#1b1e26] text-white'
+                    active ? 'bg-accent text-[#1b1e26]' : 'bg-[#171717] text-white'
                   }`}>
                     {(c.courseTitle || '?').charAt(0).toUpperCase()}
                   </span>
@@ -202,7 +202,7 @@ const GradesPage = () => {
         <select
           value={selected?.courseId || ''}
           onChange={(e) => { prevId.current = selected?.courseId; setSelected(data.enrollments.find((c) => c.courseId === e.target.value)); }}
-          className="w-full px-4 py-2.5 rounded-xl border border-[#1b1e26]/[0.1] bg-white text-sm font-semibold text-[#1b1e26] appearance-none"
+          className="w-full px-4 py-2.5 rounded-xl border border-[#171717]/[0.1] bg-white text-sm font-semibold text-[#1b1e26] appearance-none"
         >
           {data.enrollments.map((c) => (
             <option key={c.courseId} value={c.courseId}>{c.courseTitle} — {c.averageScore > 0 ? `${c.averageScore}%` : 'No grade'}</option>
@@ -223,8 +223,8 @@ const GradesPage = () => {
               className="space-y-5"
             >
               {/* Course header */}
-              <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden">
-                <div className="relative bg-gradient-to-r from-[#1b1e26] to-[#343b49] px-5 py-5 overflow-hidden">
+              <div className="bg-white rounded-xl border border-[#171717]/[0.06] shadow-sm overflow-hidden">
+                <div className="relative bg-gradient-to-r from-[#171717] to-[#1c1c1c] px-5 py-5 overflow-hidden">
                   <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
                   <div className="absolute top-0 right-0 w-48 h-48 bg-accent/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
                   <div className="relative flex items-center justify-between gap-4">
@@ -284,7 +284,7 @@ const GradesPage = () => {
                   { label: 'completed', value: data.completed, cls: 'text-green-600' },
                   { label: 'overall avg', value: `${data.overallAverageScore}%`, cls: scoreColor(data.overallAverageScore) },
                 ].map((s) => (
-                  <div key={s.label} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#1b1e26]/[0.06] text-[11px] shadow-sm hover:shadow-md transition-shadow">
+                  <div key={s.label} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#171717]/[0.06] text-[11px] shadow-sm hover:shadow-md transition-shadow">
                     <span className={`font-bold ${s.cls}`}>{s.value}</span>
                     <span className="text-gray-400">{s.label}</span>
                   </div>
@@ -292,8 +292,8 @@ const GradesPage = () => {
               </div>
 
               {/* Items table */}
-              <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm">
-                <div className="flex items-center justify-between px-5 py-3 border-b border-[#1b1e26]/[0.06]">
+              <div className="bg-white rounded-xl border border-[#171717]/[0.06] shadow-sm">
+                <div className="flex items-center justify-between px-5 py-3 border-b border-[#171717]/[0.06]">
                   <div className="flex items-center gap-2">
             <div className="w-1 h-4 rounded-full bg-accent" />
                     <h2 className="text-[13px] font-semibold text-[#1b1e26]">Graded Items</h2>

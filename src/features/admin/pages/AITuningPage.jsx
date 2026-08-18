@@ -21,11 +21,11 @@ const PARAMS = [
     min: 0, max: 100, step: 1, unit: '%',
     desc: 'Threshold below which similarity is acceptable.',
     icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-    gradient: 'from-[#d0f24a] to-[#c4e83a]',
-    lightBg: 'bg-[#d0f24a]/20',
-    iconColor: 'text-[#5b6b12]',
-    barColor: 'bg-[#d0f24a]',
-    trackColor: 'bg-[#d0f24a]/20',
+    gradient: 'from-[#8B5CF6] to-[#C4B5FD]',
+    lightBg: 'bg-[#8B5CF6]/20',
+    iconColor: 'text-[#FFFFFF]',
+    barColor: 'bg-[#8B5CF6]',
+    trackColor: 'bg-[#8B5CF6]/20',
   },
   {
     key: 'matchingAccuracy',
@@ -89,7 +89,7 @@ const getRiskLevel = (key, value) => {
     return { label: 'Relaxed', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' };
   }
   if (key === 'temperature') {
-    if (value < 0.5) return { label: 'Precise', color: 'text-[#5b6b12] bg-[#d0f24a]/20 border-[#d0f24a]/50' };
+    if (value < 0.5) return { label: 'Precise', color: 'text-[#FFFFFF] bg-[#8B5CF6]/20 border-[#8B5CF6]/50' };
     if (value < 1.2) return { label: 'Balanced', color: 'text-amber-600 bg-amber-50 border-amber-200' };
     return { label: 'Creative', color: 'text-purple-600 bg-purple-50 border-purple-200' };
   }
@@ -202,7 +202,7 @@ export const AITuningPage = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFFFFF] bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
               Intelligence Engine
             </span>
             <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${statusColor}`}>
@@ -218,7 +218,7 @@ export const AITuningPage = () => {
           <button onClick={handleReset} className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-all">
             Reset
           </button>
-          <button onClick={handleSave} disabled={isSaving} className="px-5 py-2 text-xs font-bold uppercase tracking-wider bg-[#1b1e26] text-white rounded-xl hover:bg-black disabled:opacity-50 transition-all shadow-md">
+          <button onClick={handleSave} disabled={isSaving} className="px-5 py-2 text-xs font-bold uppercase tracking-wider bg-[#120E1A] text-white rounded-xl hover:bg-black disabled:opacity-50 transition-all shadow-md">
             {isSaving ? (
               <span className="flex items-center gap-2">
                 <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -298,7 +298,7 @@ export const AITuningPage = () => {
                         [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-slate-300
                         [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer
                         [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
-                        [&::-webkit-slider-thumb]:hover:border-[#d0f24a] [&::-webkit-slider-thumb]:hover:shadow-lg"
+                        [&::-webkit-slider-thumb]:hover:border-[#8B5CF6] [&::-webkit-slider-thumb]:hover:shadow-lg"
                     />
                   </div>
                 </div>
@@ -337,7 +337,7 @@ export const AITuningPage = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Plagiarism Flag Rate', value: `${Math.min(100, Math.round(((params.plagiarismThreshold || 75) / 100) * (params.autoFlagScore || 70)))}%`, desc: 'Estimated auto-flag rate based on current thresholds', color: 'text-[#5b6b12]' },
+            { label: 'Plagiarism Flag Rate', value: `${Math.min(100, Math.round(((params.plagiarismThreshold || 75) / 100) * (params.autoFlagScore || 70)))}%`, desc: 'Estimated auto-flag rate based on current thresholds', color: 'text-[#FFFFFF]' },
             { label: 'Detection Sensitivity', value: summaryRisk, desc: 'Overall strictness of the detection engine', color: 'text-violet-600' },
             { label: 'AI Model Profile', value: (params.temperature || 0.7) < 0.5 ? 'Deterministic' : (params.temperature || 0.7) < 1.2 ? 'Balanced' : 'Creative', desc: 'Behaviour profile of the AI analysis model', color: 'text-cyan-600' },
             { label: 'Match Precision', value: `${params.matchingAccuracy || 85}%`, desc: 'Text matching precision threshold', color: 'text-emerald-600' },

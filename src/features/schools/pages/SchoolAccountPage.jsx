@@ -90,7 +90,7 @@ export const SchoolAccountPage = () => {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Identity header */}
       <div className="flex items-center gap-5">
-        <span className="w-20 h-20 rounded-[1.75rem] bg-[#1b1e26] text-accent text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#1b1e26]/15">
+        <span className="w-20 h-20 rounded-[1.75rem] bg-gradient-to-br from-[#10B981] to-[#6EE7B7] text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/25">
           {initialsOf(user?.name || user?.username)}
         </span>
         <div className="min-w-0">
@@ -119,7 +119,7 @@ export const SchoolAccountPage = () => {
                 onClick={() => setTab(t.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   active
-                    ? 'bg-[#1b1e26] text-white shadow-sm'
+                    ? 'bg-[#0E1412] text-white shadow-sm'
                     : 'text-gray-500 hover:text-[#1b1e26] hover:bg-white'
                 }`}
               >
@@ -237,7 +237,7 @@ export const SchoolAccountPage = () => {
                 <button
                   type="submit"
                   disabled={pwLoading}
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-accent text-[#1b1e26] hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-accent text-white hover:bg-accent-hover transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
                 >
                   {pwLoading ? 'Updating…' : 'Update Password'}
                 </button>

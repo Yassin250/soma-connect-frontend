@@ -5,56 +5,56 @@ import { AppRouter } from './routes/AppRouter';
 
 const themeVars = `
 :root {
-  --clr-accent: #d0f24a;
-  --clr-accent-hover: #c4e83a;
-  --clr-accent-dark: #a3d420;
-  --clr-accent-text: #5b6b12;
-  --clr-accent-surface: rgba(208,242,74,0.22);
-  --clr-accent-ring: rgba(208,242,74,0.25);
-  --clr-accent-glow: rgba(208,242,74,0.35);
-  --clr-accent-10: rgba(208,242,74,0.10);
-  --clr-accent-15: rgba(208,242,74,0.15);
-  --clr-accent-20: rgba(208,242,74,0.20);
-  --clr-accent-6: rgba(208,242,74,0.06);
+  --clr-accent: #8B5CF6;
+  --clr-accent-hover: #A78BFA;
+  --clr-accent-dark: #7C3AED;
+  --clr-accent-text: #FFFFFF;
+  --clr-accent-surface: rgba(139,92,246,0.22);
+  --clr-accent-ring: rgba(139,92,246,0.25);
+  --clr-accent-glow: rgba(139,92,246,0.35);
+  --clr-accent-10: rgba(139,92,246,0.10);
+  --clr-accent-15: rgba(139,92,246,0.15);
+  --clr-accent-20: rgba(139,92,246,0.20);
+  --clr-accent-6: rgba(139,92,246,0.06);
 }
 .theme-school {
-  --clr-accent: #22c55e;
-  --clr-accent-hover: #4ade80;
-  --clr-accent-dark: #16a34a;
-  --clr-accent-text: #166534;
-  --clr-accent-surface: rgba(34,197,94,0.22);
-  --clr-accent-ring: rgba(34,197,94,0.25);
-  --clr-accent-glow: rgba(34,197,94,0.35);
-  --clr-accent-10: rgba(34,197,94,0.10);
-  --clr-accent-15: rgba(34,197,94,0.15);
-  --clr-accent-20: rgba(34,197,94,0.20);
-  --clr-accent-6: rgba(34,197,94,0.06);
+  --clr-accent: #10B981;
+  --clr-accent-hover: #34D399;
+  --clr-accent-dark: #059669;
+  --clr-accent-text: #FFFFFF;
+  --clr-accent-surface: rgba(16,185,129,0.22);
+  --clr-accent-ring: rgba(16,185,129,0.25);
+  --clr-accent-glow: rgba(16,185,129,0.35);
+  --clr-accent-10: rgba(16,185,129,0.10);
+  --clr-accent-15: rgba(16,185,129,0.15);
+  --clr-accent-20: rgba(16,185,129,0.20);
+  --clr-accent-6: rgba(16,185,129,0.06);
 }
 .theme-learner {
-  --clr-accent: #f59e0b;
-  --clr-accent-hover: #fbbf24;
-  --clr-accent-dark: #d97706;
-  --clr-accent-text: #92400e;
-  --clr-accent-surface: rgba(245,158,11,0.22);
-  --clr-accent-ring: rgba(245,158,11,0.25);
-  --clr-accent-glow: rgba(245,158,11,0.35);
-  --clr-accent-10: rgba(245,158,11,0.10);
-  --clr-accent-15: rgba(245,158,11,0.15);
-  --clr-accent-20: rgba(245,158,11,0.20);
-  --clr-accent-6: rgba(245,158,11,0.06);
+  --clr-accent: #C6FF34;
+  --clr-accent-hover: #d4ff66;
+  --clr-accent-dark: #aaee00;
+  --clr-accent-text: #171717;
+  --clr-accent-surface: rgba(198,255,52,0.22);
+  --clr-accent-ring: rgba(198,255,52,0.25);
+  --clr-accent-glow: rgba(198,255,52,0.35);
+  --clr-accent-10: rgba(198,255,52,0.10);
+  --clr-accent-15: rgba(198,255,52,0.15);
+  --clr-accent-20: rgba(198,255,52,0.20);
+  --clr-accent-6: rgba(198,255,52,0.06);
 }
 .theme-lecturer {
-  --clr-accent: #0ea5e9;
-  --clr-accent-hover: #38bdf8;
-  --clr-accent-dark: #0284c7;
-  --clr-accent-text: #075985;
-  --clr-accent-surface: rgba(14,165,233,0.22);
-  --clr-accent-ring: rgba(14,165,233,0.25);
-  --clr-accent-glow: rgba(14,165,233,0.35);
-  --clr-accent-10: rgba(14,165,233,0.10);
-  --clr-accent-15: rgba(14,165,233,0.15);
-  --clr-accent-20: rgba(14,165,233,0.20);
-  --clr-accent-6: rgba(14,165,233,0.06);
+  --clr-accent: #3D7FFF;
+  --clr-accent-hover: #5C96FF;
+  --clr-accent-dark: #2A6BE0;
+  --clr-accent-text: #FFFFFF;
+  --clr-accent-surface: rgba(61,127,255,0.22);
+  --clr-accent-ring: rgba(61,127,255,0.25);
+  --clr-accent-glow: rgba(61,127,255,0.35);
+  --clr-accent-10: rgba(61,127,255,0.10);
+  --clr-accent-15: rgba(61,127,255,0.15);
+  --clr-accent-20: rgba(61,127,255,0.20);
+  --clr-accent-6: rgba(61,127,255,0.06);
 }
 `;
 

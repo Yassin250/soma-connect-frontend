@@ -114,7 +114,7 @@ export const SchoolSubjectsPage = () => {
       ENT: 'from-orange-500 to-amber-600',
       GEO: 'from-emerald-500 to-teal-600',
     };
-    return colors[code] || 'from-[#1b1e26] to-[#343b49]';
+    return colors[code] || 'from-[#0E1412] to-[#1a2020]';
   };
 
   return (
@@ -128,7 +128,7 @@ export const SchoolSubjectsPage = () => {
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#1b1e26] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#1b1e26]/20"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0E1412] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#0E1412]/20"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -142,7 +142,7 @@ export const SchoolSubjectsPage = () => {
         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Filter by Class:</span>
         <button
           onClick={() => setFilterClass('')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!filterClass ? 'bg-[#1b1e26] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!filterClass ? 'bg-[#0E1412] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
         >
           All Classes
         </button>
@@ -150,7 +150,7 @@ export const SchoolSubjectsPage = () => {
           <button
             key={cls}
             onClick={() => setFilterClass(cls)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filterClass === cls ? 'bg-[#1b1e26] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filterClass === cls ? 'bg-[#0E1412] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
           >
             {cls}
           </button>
@@ -374,7 +374,7 @@ export const SchoolSubjectsPage = () => {
                 <button
                   type="button"
                   onClick={handleAddAllocation}
-                  className="px-5 py-2 bg-[#1b1e26] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md"
+                  className="px-5 py-2 bg-[#0E1412] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md"
                 >
                   Create Allocation
                 </button>

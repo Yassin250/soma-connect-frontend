@@ -372,6 +372,13 @@ export const entityRoleService = {
       throw new Error(getApiErrorMessage(error, 'Failed to load permissions'));
     }
   },
+  allPermissions: async () => {
+    try {
+      return unwrapApiResult(await apiClient.get('/api/entity/roles/permissions'));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to load permissions'));
+    }
+  },
   create: async (payload) => {
     try {
       return unwrapApiResult(await apiClient.post('/api/entity/roles', payload));
@@ -381,7 +388,7 @@ export const entityRoleService = {
   },
   update: async (id, payload) => {
     try {
-      return unwrapApiResult(await apiClient.put(`/api/entity/roles/${id}`, payload));
+      return unwrapApiResult(await apiClient.post(`/api/entity/roles/${id}`, payload));
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to update role'));
     }
@@ -391,6 +398,13 @@ export const entityRoleService = {
       return unwrapApiResult(await apiClient.delete(`/api/entity/roles/${id}`));
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'Failed to delete role'));
+    }
+  },
+  setRoleStatus: async (id, active) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/entity/roles/${id}`, { active }));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to update role status'));
     }
   },
 };

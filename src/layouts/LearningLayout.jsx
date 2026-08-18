@@ -9,28 +9,30 @@ import { notificationService } from '../services/api';
 const initialsOf = (name) =>
   (name || 'User').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-const NAV_SECTIONS = [
+const dashboardItem = { id: 'dashboard', label: 'Dashboard', path: '/learning/dashboard' };
+
+const modules = [
   {
-    label: 'Overview',
-    items: [
-      { label: 'Dashboard', to: '/learning/dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4-1a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
-    ],
-  },
-  {
+    id: 'explore',
     label: 'Explore',
+    icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
     items: [
-      { label: 'Browse Courses', to: '/courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
+      { id: 'browse', label: 'Browse Courses', path: '/courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
+      { id: 'mycourses', label: 'My Courses', path: '/learning/my-courses', icon: 'M4 6h16M4 12h16M4 18h16' },
     ],
   },
   {
-    label: 'My Activity',
+    id: 'progress',
+    label: 'Progress',
+    icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
     items: [
-      { label: 'My Courses', to: '/learning/my-courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
-      { label: 'Grades', to: '/learning/grades', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-      { label: 'Assignments', to: '/learning/assignments', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+      { id: 'grades', label: 'Grades & Progress', path: '/learning/grades', icon: 'M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18zm4.5-6h.008v.008h-.008V12zm0 3h.008v.008h-.008V15zm0 3h.008v.008h-.008V18zm4.5-6h.008v.008h-.008V12zm0 3h.008v.008h-.008V15z' },
+      { id: 'assignments', label: 'Assignments', path: '/learning/assignments', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
     ],
   },
 ];
+
+const flattenedPages = [dashboardItem, ...modules.flatMap((m) => m.items)];
 
 const PAGE_TITLES = {
   '/learning/dashboard': 'Dashboard',
@@ -52,6 +54,16 @@ export const LearningLayout = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
+  // Expand the module that owns the current route on first render
+  const [expandedModules, setExpandedModules] = useState(() => {
+    const activeMod = modules.find((m) => m.items.some((i) => location.pathname === i.path));
+    const initial = {};
+    modules.forEach((m) => { initial[m.id] = m.id === activeMod?.id; });
+    return initial;
+  });
+
+  const isActive = (path) => location.pathname === path;
+
   const initials = initialsOf(user?.name);
   const pageTitle = PAGE_TITLES[location.pathname] || 'Learning';
 
@@ -66,6 +78,14 @@ export const LearningLayout = () => {
     setProfileOpen(false);
   }, [location.pathname]);
 
+  // Always reveal the group that owns the page we are on
+  useEffect(() => {
+    const owner = modules.find((m) => m.items.some((i) => i.path === location.pathname));
+    if (owner) {
+      setExpandedModules((prev) => (prev[owner.id] ? prev : { ...prev, [owner.id]: true }));
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     const onClick = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
@@ -73,6 +93,20 @@ export const LearningLayout = () => {
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
   }, []);
+
+  const toggleModule = (id) => {
+    if (collapsed && !mobileOpen) {
+      // Clicking a group while collapsed re-opens the rail focused on that group
+      setCollapsed(false);
+      setExpandedModules(() => {
+        const next = {};
+        modules.forEach((m) => { next[m.id] = m.id === id; });
+        return next;
+      });
+    } else {
+      setExpandedModules((prev) => ({ ...prev, [id]: !prev[id] }));
+    }
+  };
 
   const handleLogout = useCallback(() => {
     logout();
@@ -94,12 +128,12 @@ export const LearningLayout = () => {
 
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-gradient-to-b from-[#20242e] via-[#181b22] to-[#101217] flex flex-col fixed top-[72px] bottom-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
+        className={`bg-gradient-to-b from-[#171717] via-[#1a1a1a] to-[#141414] flex flex-col fixed top-[72px] bottom-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        } ${collapsed ? 'lg:w-[84px]' : 'lg:w-[335px]'} w-[335px]`}
+        } ${collapsed ? 'lg:w-[84px]' : 'lg:w-72'} w-72`}
       >
         <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-accent/10 blur-[90px] pointer-events-none" />
-        <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#39435a]/30 blur-[90px] pointer-events-none" />
+        <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#C6FF34]/30 blur-[90px] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full">
           {/* Brand */}
@@ -118,45 +152,99 @@ export const LearningLayout = () => {
           </div>
 
           {/* Nav */}
-          <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-4 learner-scroll">
-            {NAV_SECTIONS.map((section, si) => (
-              <div key={si} className="space-y-1">
-                {section.label && !collapsed && (
-                  <p className="px-3.5 pt-1 pb-0.5 text-[10px] font-black text-white/30 uppercase tracking-[0.18em]">
-                    {section.label}
-                  </p>
-                )}
-                {section.items.map((item) => {
-                  const active = location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to));
-                  return (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
-                        collapsed ? 'lg:justify-center' : ''
-                      } ${
-                        active
-                          ? 'bg-accent text-[#1b1e26] shadow-lg shadow-accent/20'
-                          : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
-                      }`}
-                    >
-                      <svg className="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d={item.icon} />
+          <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-1.5 learner-scroll">
+            <NavLink
+              to={dashboardItem.path}
+              onClick={() => setMobileOpen(false)}
+              className={({ isActive: active }) =>
+                `group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200 ${
+                  active
+                    ? 'bg-gradient-to-br from-[#C6FF34] to-[#d4ff66] text-[#171717] font-semibold shadow-sm shadow-[#C6FF34]/20'
+                    : 'text-white/60 hover:text-white hover:bg-white/[0.06] font-medium'
+                }`
+              }
+            >
+              <svg className="w-5 h-5 shrink-0 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              <span className="truncate text-[13px]">Dashboard</span>
+            </NavLink>
+
+            {modules.map((mod) => {
+              const expanded = expandedModules[mod.id];
+              const anyChildActive = mod.items.some((i) => isActive(i.path));
+              const railMode = collapsed && !mobileOpen;
+
+              return (
+                <div key={mod.id}>
+                  <button
+                    type="button"
+                    onClick={() => toggleModule(mod.id)}
+                    title={railMode ? mod.label : undefined}
+                    className={`w-full flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      railMode ? 'lg:justify-center' : 'justify-between'
+                    } ${
+                      railMode && anyChildActive
+                        ? 'bg-gradient-to-br from-[#C6FF34] to-[#d4ff66] text-[#171717] shadow-sm shadow-[#C6FF34]/20'
+                        : expanded && !railMode
+                        ? 'text-white bg-white/[0.06]'
+                        : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
+                    }`}
+                  >
+                    <span className="flex items-center gap-3 min-w-0">
+                      <svg className="w-5 h-5 shrink-0 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={mod.icon} />
                       </svg>
-                      {!collapsed && <span className="truncate text-[15px] font-bold">{item.label}</span>}
-                    </NavLink>
-                  );
-                })}
-              </div>
-            ))}
+                      {!railMode && <span className="truncate text-[13px] font-semibold">{mod.label}</span>}
+                    </span>
+                    {!railMode && (
+                      <svg
+                        className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-[#C6FF34]' : 'text-white/30'}`}
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </button>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      expanded && !railMode ? 'max-h-64 opacity-100 mt-1' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="ml-[24px] pl-3.5 border-l border-white/10 space-y-0.5 py-0.5">
+                      {mod.items.map((item) => {
+                        const active = isActive(item.path);
+                        return (
+                          <NavLink
+                            key={item.id}
+                            to={item.path}
+                            onClick={() => setMobileOpen(false)}
+                            className={`group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-all duration-200 ${
+                              active
+                                ? 'bg-gradient-to-br from-[#C6FF34] to-[#d4ff66] text-[#171717] font-semibold shadow-sm shadow-[#C6FF34]/20'
+                                : 'text-white/50 hover:text-white hover:bg-white/[0.06] font-medium'
+                            }`}
+                          >
+                            <svg className="w-4 h-4 shrink-0 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <path d={item.icon} />
+                            </svg>
+                            <span className="truncate">{item.label}</span>
+                          </NavLink>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </nav>
 
           {/* User footer */}
           {!collapsed && (
             <div className="relative z-10 border-t border-white/10 mx-3 pt-4 pb-5">
               <div className="flex items-center gap-3 px-2">
-                <span className="w-9 h-9 rounded-xl bg-accent text-[#1b1e26] text-xs font-bold flex items-center justify-center shrink-0 shadow-lg shadow-accent/20">
+                <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C6FF34] to-[#d4ff66] text-[#171717] text-xs font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#C6FF34]/30">
                   {initials}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -201,7 +289,7 @@ export const LearningLayout = () => {
                 onClick={() => setProfileOpen((o) => !o)}
                 className="group flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-xl hover:bg-gray-100 transition-colors"
               >
-                <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center ring-0 ring-accent/0 group-hover:ring-4 group-hover:ring-accent/40 transition-all duration-200 shrink-0">
+                <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#C6FF34] to-[#d4ff66] text-[#171717] text-xs font-bold flex items-center justify-center ring-0 ring-accent/0 group-hover:ring-4 group-hover:ring-accent/40 transition-all duration-200 shrink-0">
                   {initials}
                 </span>
                 <div className="hidden sm:block text-left min-w-0">
@@ -214,7 +302,7 @@ export const LearningLayout = () => {
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-[100] animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center shrink-0">{initials}</span>
+                    <span className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C6FF34] to-[#d4ff66] text-[#171717] text-xs font-bold flex items-center justify-center shrink-0">{initials}</span>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[#1b1e26] truncate">{user?.name || 'Learner'}</p>
                       <p className="text-xs text-gray-400 truncate">{user?.email || ''}</p>

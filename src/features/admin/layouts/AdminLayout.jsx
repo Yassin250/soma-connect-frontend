@@ -63,8 +63,8 @@ const ADMIN_NOTIFICATIONS = [
   },
 ];
 
-const INK = '#1b1e26';
-const LIME = '#d0f24a';
+const INK = '#120E1A';
+const LIME = '#8B5CF6';
 
 // ── Icon set (stroke) ────────────────────────────────────────────────────────
 const ICONS = {
@@ -243,7 +243,7 @@ export const AdminLayout = () => {
   };
 
   return (
-    <div className="h-screen w-full flex bg-[#f3f4f6] text-[#1b1e26] antialiased overflow-hidden">
+    <div className="h-screen w-full flex bg-[#f3f4f6] text-[#120E1A] antialiased overflow-hidden">
 
       {/* Mobile backdrop */}
       {mobileOpen && (
@@ -252,7 +252,7 @@ export const AdminLayout = () => {
 
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-[#1b1e26] flex flex-col fixed inset-y-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
+        className={`bg-[#120E1A] flex flex-col fixed inset-y-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } ${collapsed ? 'lg:w-[84px]' : 'lg:w-72'} w-72`}
       >
@@ -269,7 +269,7 @@ export const AdminLayout = () => {
             </button>
           </div>
           {!collapsed && (
-            <p className="mt-2 ml-[48px] text-[9px] font-black text-[#d0f24a] uppercase tracking-[0.25em]">Super Admin Portal</p>
+            <p className="mt-2 ml-[48px] text-[9px] font-black text-[#8B5CF6] uppercase tracking-[0.25em]">Super Admin Portal</p>
           )}
         </div>
 
@@ -284,7 +284,7 @@ export const AdminLayout = () => {
                 collapsed && !mobileOpen ? 'lg:justify-center' : ''
               } ${
                 isActive
-                  ? 'bg-[#d0f24a] text-[#1b1e26] shadow-sm'
+                      ? 'bg-[#8B5CF6] text-white shadow-sm'
                   : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
               }`
             }
@@ -311,7 +311,7 @@ export const AdminLayout = () => {
                     railMode ? 'lg:justify-center' : 'justify-between'
                   } ${
                     railMode && anyChildActive
-                      ? 'bg-[#d0f24a] text-[#1b1e26] shadow-sm'
+                  ? 'bg-[#8B5CF6] text-white shadow-sm'
                       : expanded && !railMode
                       ? 'text-white bg-white/[0.06]'
                       : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
@@ -323,7 +323,7 @@ export const AdminLayout = () => {
                   </span>
                   {!railMode && (
                     <svg
-                      className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-[#d0f24a]' : 'text-white/30'}`}
+                      className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-[#8B5CF6]' : 'text-white/30'}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -347,7 +347,7 @@ export const AdminLayout = () => {
                           onClick={() => setMobileOpen(false)}
                           className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-[12px] transition-all duration-200 ${
                             active
-                              ? 'bg-[#d0f24a] text-[#1b1e26] font-semibold shadow-sm'
+                               ? 'bg-[#8B5CF6] text-white font-semibold shadow-sm'
                               : 'text-white/50 hover:text-white hover:bg-white/[0.06] font-medium'
                           }`}
                         >
@@ -366,14 +366,14 @@ export const AdminLayout = () => {
         {/* Bottom status card */}
         {!collapsed && (
           <div className="p-3 shrink-0">
-            <div className="rounded-2xl bg-[#d0f24a] p-4 relative overflow-hidden">
+            <div className="rounded-2xl bg-[#8B5CF6] p-4 relative overflow-hidden">
               <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/20" />
               <div className="relative">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#1b1e26] animate-pulse" />
-                  <p className="text-[11px] font-bold text-[#1b1e26] uppercase tracking-wide">System Operational</p>
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <p className="text-[11px] font-bold text-white uppercase tracking-wide">System Operational</p>
                 </div>
-                <p className="text-xs text-[#1b1e26]/70 mt-1 font-medium">Environment · Rwanda</p>
+                <p className="text-xs text-white/70 mt-1 font-medium">Environment · Rwanda</p>
               </div>
             </div>
           </div>
@@ -385,13 +385,13 @@ export const AdminLayout = () => {
 
         {/* Topbar */}
         <header className="h-[72px] shrink-0 bg-white border-b border-gray-100 flex items-center gap-4 px-4 sm:px-6">
-          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-gray-500 hover:text-[#1b1e26] p-1" aria-label="Open menu">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-gray-500 hover:text-[#120E1A] p-1" aria-label="Open menu">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" /></svg>
           </button>
 
           <button
             onClick={() => setCollapsed((c) => !c)}
-            className="hidden lg:flex text-gray-400 hover:text-[#1b1e26] hover:bg-gray-100 w-9 h-9 rounded-lg items-center justify-center transition-colors"
+            className="hidden lg:flex text-gray-400 hover:text-[#120E1A] hover:bg-gray-100 w-9 h-9 rounded-lg items-center justify-center transition-colors"
             aria-label="Toggle sidebar"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" /></svg>
@@ -401,7 +401,7 @@ export const AdminLayout = () => {
             <p className="text-[11px] font-medium text-gray-400">Rwanda</p>
             <h1
               key={pageTitle}
-              className="text-base font-semibold text-[#1b1e26] leading-tight truncate animate-in fade-in slide-in-from-bottom-1 duration-300"
+              className="text-base font-semibold text-[#120E1A] leading-tight truncate animate-in fade-in slide-in-from-bottom-1 duration-300"
             >
               {pageTitle}
             </h1>
@@ -414,7 +414,7 @@ export const AdminLayout = () => {
               <input
                 type="text"
                 placeholder="Search…"
-                className="w-full rounded-xl bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-800 placeholder-gray-400 outline-none border border-transparent focus:bg-white focus:border-[#1b1e26]/15 focus:ring-4 focus:ring-[#1b1e26]/5 transition-all"
+                className="w-full rounded-xl bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-800 placeholder-gray-400 outline-none border border-transparent focus:bg-white focus:border-[#120E1A]/15 focus:ring-4 focus:ring-[#120E1A]/5 transition-all"
               />
             </div>
           </div>
@@ -425,11 +425,11 @@ export const AdminLayout = () => {
           {/* Profile */}
           <div className="relative" ref={profileRef}>
             <button onClick={() => setProfileOpen((o) => !o)} className="group flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-xl hover:bg-gray-100 transition-colors">
-              <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-white text-xs font-bold flex items-center justify-center ring-0 ring-[#d0f24a]/0 group-hover:ring-4 group-hover:ring-[#d0f24a]/40 transition-all duration-200">
+              <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] text-white text-xs font-bold flex items-center justify-center ring-0 ring-[#8B5CF6]/0 group-hover:ring-4 group-hover:ring-[#8B5CF6]/40 transition-all duration-200">
                 {initialsOf(user?.name || user?.username)}
               </span>
               <div className="hidden sm:block text-left min-w-0">
-                <p className="text-sm font-semibold text-[#1b1e26] leading-tight max-w-[200px] truncate">{user?.name || user?.username || 'Admin'}</p>
+                <p className="text-sm font-semibold text-[#120E1A] leading-tight max-w-[200px] truncate">{user?.name || user?.username || 'Admin'}</p>
                 <p className="text-[11px] text-gray-400 leading-tight max-w-[200px] truncate">{user?.email || user?.roles?.[0] || 'Administrator'}</p>
               </div>
               <svg className={`w-4 h-4 text-gray-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -438,24 +438,24 @@ export const AdminLayout = () => {
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                 <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-[#d0f24a] text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] text-white text-xs font-bold flex items-center justify-center shrink-0">
                     {initialsOf(user?.name || user?.username)}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#1b1e26] truncate">{user?.name || user?.username}</p>
+                    <p className="text-sm font-semibold text-[#120E1A] truncate">{user?.name || user?.username}</p>
                     <p className="text-xs text-gray-400 truncate">{user?.email || '—'}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => { setProfileOpen(false); navigate('/admin/account'); }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:text-[#1b1e26] hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:text-[#120E1A] hover:bg-gray-50 transition-colors"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
                   My Profile
                 </button>
                 <button
                   onClick={() => { setProfileOpen(false); navigate('/admin/account?tab=password'); }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:text-[#1b1e26] hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:text-[#120E1A] hover:bg-gray-50 transition-colors"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                   Change Password

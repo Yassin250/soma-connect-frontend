@@ -66,7 +66,7 @@ export const EmployersPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFFFFF] bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
             Career Marketplace
           </span>
           <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">Employers</h1>
@@ -78,7 +78,7 @@ export const EmployersPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Employers', value: stats.total, icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2', accent: 'border-l-[#d0f24a]', iconBg: 'bg-[#d0f24a]/20', iconColor: 'text-[#5b6b12]' },
+          { label: 'Total Employers', value: stats.total, icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2', accent: 'border-l-[#8B5CF6]', iconBg: 'bg-[#8B5CF6]/20', iconColor: 'text-[#FFFFFF]' },
           { label: 'Active', value: stats.active, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
           { label: 'Pending Verification', value: stats.pending, icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
         ].map((card, idx) => (
@@ -108,7 +108,7 @@ export const EmployersPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search employers..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#d0f24a] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#8B5CF6] transition-colors"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -118,7 +118,7 @@ export const EmployersPage = () => {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all capitalize ${
                 statusFilter === s
-                  ? 'bg-[#1b1e26] text-white border-[#1b1e26] shadow-sm'
+                  ? 'bg-[#120E1A] text-white border-[#120E1A] shadow-sm'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
             >
@@ -145,21 +145,21 @@ export const EmployersPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#1b1e26]/[0.06] bg-[#f4f6f8]">
+                <tr className="border-b border-[#120E1A]/[0.06] bg-[#f4f6f8]">
                   {['Company', 'Contact', 'Status', 'Industry', 'Jobs Posted', 'Joined'].map((h) => (
-                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45 whitespace-nowrap">{h}</th>
+                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#120E1A]/45 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {employers.map((e) => (
-                  <tr key={e.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                  <tr key={e.id} className="hover:bg-[#8B5CF6]/[0.08] transition-colors">
                     <td className="px-4 py-2.5">
                       <p className="text-[13px] font-semibold text-slate-900">{e.company || e.name}</p>
                       {e.website && <p className="text-xs text-slate-400 mt-0.5">{e.website}</p>}
                     </td>
                     <td className="px-4 py-2.5">
-                      <p className="text-[13px] text-[#1b1e26]/80">{e.contactName || e.representative}</p>
+                      <p className="text-[13px] text-[#120E1A]/80">{e.contactName || e.representative}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{e.email}</p>
                     </td>
                     <td className="px-4 py-2.5">

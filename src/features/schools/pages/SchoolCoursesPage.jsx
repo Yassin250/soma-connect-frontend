@@ -86,7 +86,7 @@ export const SchoolCoursesPage = () => {
         </div>
         <button
           onClick={() => navigate('/school/courses/new')}
-          className="bg-[#1b1e26] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98]"
+          className="bg-[#0E1412] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98]"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
@@ -104,7 +104,7 @@ export const SchoolCoursesPage = () => {
               key={f.id}
               onClick={() => setFilter(f.id)}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-150 ${
-                active ? 'bg-[#1b1e26] text-white shadow-sm' : 'text-gray-400 hover:text-[#1b1e26] hover:bg-[#f7f8fa]'
+                 active ? 'bg-[#0E1412] text-white shadow-sm shadow-emerald-500/15' : 'text-gray-400 hover:text-[#1b1e26] hover:bg-[#f7f8fa]'
               }`}
             >
               {f.label}
@@ -159,8 +159,8 @@ export const SchoolCoursesPage = () => {
                 {c.coverImageUrl ? (
                   <img src={c.coverImageUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
-                    <span className="w-7 h-7 rounded-lg bg-accent text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-[#0E1412] to-[#1a2020] flex items-center justify-center">
+                    <span className="w-7 h-7 rounded-lg bg-accent text-white text-[11px] font-bold flex items-center justify-center">
                       {(c.title || '?').charAt(0).toUpperCase()}
                     </span>
                   </div>

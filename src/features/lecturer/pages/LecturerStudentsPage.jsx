@@ -15,7 +15,7 @@ const ENROLL_BADGE = {
 const AVATAR_STYLES = [
   'bg-accent/20 text-accent-text', 'bg-rose-100 text-rose-700',
   'bg-amber-100 text-amber-700',   'bg-emerald-100 text-emerald-700',
-  'bg-[#1b1e26]/[0.06] text-[#1b1e26]/70', 'bg-violet-100 text-violet-700',
+  'bg-[#0B0E17]/[0.06] text-[#1b1e26]/70', 'bg-violet-100 text-violet-700',
   'bg-fuchsia-100 text-fuchsia-700','bg-teal-100 text-teal-700',
 ];
 
@@ -30,7 +30,7 @@ const avatarStyle = (seed) => {
 };
 
 const filterFieldClass =
-  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all';
+  'w-full text-[13px] px-3 py-2 rounded-lg border border-[#0B0E17]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-4 focus:ring-accent/20 focus:border-accent focus:outline-none transition-all';
 const filterSelectClass = `${filterFieldClass} appearance-none pr-8 cursor-pointer`;
 const filterLabelClass = 'text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]';
 
@@ -44,8 +44,8 @@ const CoursesModal = ({ student, onClose }) => {
   if (!student) return null;
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] w-full max-w-lg max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-150" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#1b1e26]/[0.06]">
+      <div className="bg-white rounded-2xl border border-[#0B0E17]/[0.06] shadow-[0_20px_60px_rgba(11,14,23,0.25)] w-full max-w-lg max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-150" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#0B0E17]/[0.06]">
           <h3 className="text-[15px] font-semibold text-[#1b1e26]">{student.studentName} — Enrolled Courses</h3>
           <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#1b1e26] hover:bg-[#f7f8fa] transition-colors">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
@@ -174,7 +174,7 @@ const LecturerStudentsPage = () => {
         return (
           <button
             onClick={() => setCoursesTarget(g)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/80 border border-[#1b1e26]/10 hover:bg-accent/20 hover:border-accent/30 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/80 border border-[#0B0E17]/10 hover:bg-accent/20 hover:border-accent/30 transition-colors"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
@@ -230,7 +230,7 @@ const LecturerStudentsPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm px-3 py-2.5">
+      <div className="bg-white rounded-xl border border-[#0B0E17]/[0.06] shadow-sm px-3 py-2.5">
         <div className="flex flex-wrap items-end gap-2.5">
           <div className="flex-1 min-w-[200px] max-w-[340px] flex flex-col gap-1">
             <label className={filterLabelClass}>Search</label>

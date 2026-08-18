@@ -9,10 +9,10 @@ const initialsOf = (name) =>
 
 const fieldLabelClass = 'block text-[10px] font-bold text-[#1b1e26]/45 uppercase tracking-[0.14em] mb-1';
 const inputClass =
-  'w-full rounded-xl bg-white border border-[#1b1e26]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none transition-all';
+  'w-full rounded-xl bg-white border border-[#0B0E17]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none transition-all';
 
 const DetailCard = ({ label, value, children }) => (
-  <div className="rounded-xl bg-[#f7f8fa] border border-[#1b1e26]/[0.05] px-4 py-3.5">
+  <div className="rounded-xl bg-[#f7f8fa] border border-[#0B0E17]/[0.05] px-4 py-3.5">
     <p className={fieldLabelClass}>{label}</p>
     {children || (
       <p className="text-sm font-semibold text-[#1b1e26] truncate">{value || '—'}</p>
@@ -86,7 +86,7 @@ export const LecturerAccountPage = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-5">
-        <span className="w-20 h-20 rounded-[1.75rem] bg-[#1b1e26] text-accent text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#1b1e26]/15">
+        <span className="w-20 h-20 rounded-[1.75rem] bg-gradient-to-br from-[#3D7FFF] to-[#63C7FF] text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#3D7FFF]/40">
           {initialsOf(user?.name || user?.username)}
         </span>
         <div className="min-w-0">
@@ -102,8 +102,8 @@ export const LecturerAccountPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden">
-        <div className="bg-[#f7f8fa] border-b border-[#1b1e26]/[0.05] p-2 flex items-center gap-1.5">
+      <div className="bg-white rounded-3xl border border-[#0B0E17]/[0.06] shadow-sm overflow-hidden">
+        <div className="bg-[#f7f8fa] border-b border-[#0B0E17]/[0.05] p-2 flex items-center gap-1.5">
           {TABS.map((t) => {
             const active = activeTab === t.id;
             return (
@@ -113,7 +113,7 @@ export const LecturerAccountPage = () => {
                 onClick={() => setTab(t.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   active
-                    ? 'bg-[#1b1e26] text-white shadow-sm'
+                    ? 'bg-[#0B0E17] text-white shadow-sm'
                     : 'text-gray-500 hover:text-[#1b1e26] hover:bg-white'
                 }`}
               >

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { BrandLockup } from '../../../components/shared/Brand';
 import { ButtonLoader } from '../../../components/shared/ButtonLoader';
 import { authService } from '../../../services/api';
 
+const Wordmark = ({ dark = false }) => <span style={{ '--clr-accent': '#8B5CF6' }}><BrandLockup dark={dark} /></span>;
+
 const inputClass =
-  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#32292F]/5 focus:border-[#32292F]/20';
+  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#120E1A]/5 focus:border-[#120E1A]/20';
 const labelClass = 'text-[13px] font-semibold text-gray-700';
 
 const Field = ({ label, icon, children }) => (
@@ -51,7 +53,6 @@ export const LearnerRegisterPage = () => {
         password: form.password,
         confirmPassword: form.confirmPassword,
       });
-      // Auto-redirect to login after successful registration
       setTimeout(() => goToLogin(), 1500);
     } catch (err) {
       setError(err.message || 'Could not create your account');
@@ -61,39 +62,62 @@ export const LearnerRegisterPage = () => {
 
   return (
     <div className="h-screen w-full flex bg-white antialiased overflow-hidden">
-      {/* Left brand panel */}
-      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
-        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#99E1D9]/20 blur-[100px]" />
-        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#39435a]/40 blur-[100px]" />
+
+      {/* Left — full-bleed dark brand panel with diagonal edge */}
+      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#120E1A] via-[#1a1025] to-[#140d1e] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
+        {/* Ambient glow — violet brand accent up top, cool depth toward the middle */}
+        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#8B5CF6]/20 blur-[100px]" />
+        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#120E1A]/40 blur-[100px]" />
+
+        {/* Floating glass shapes near the diagonal */}
         <div className="absolute top-[16%] right-[7%] w-44 h-44 rounded-[2.5rem] border border-white/10 rotate-[18deg]" />
-        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#99E1D9]/25 rotate-12" />
+        <div className="absolute top-[29%] right-[15%] w-24 h-24 rounded-[1.5rem] bg-white/[0.05] backdrop-blur-md -rotate-6" />
+        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#8B5CF6]/25 rotate-12" />
+        <div className="absolute bottom-24 left-6 w-24 h-24 rounded-full border border-white/[0.08]" />
+
         <div className="relative z-10">
-          <Link to="/" aria-label="Soma Connect home"><BrandLockup /></Link>
+          <Link to="/" className="inline-block" aria-label="Go to Soma Connect landing page">
+            <Wordmark />
+          </Link>
         </div>
-        <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7, ease: 'easeOut' }} className="relative z-10 max-w-xl space-y-6">
-          <h1 className="text-[2.75rem] xl:text-[3.5rem] font-semibold tracking-tight leading-[1.12]">Start learning today.</h1>
+
+        <motion.div
+          initial={{ x: -40, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="relative z-10 max-w-xl space-y-6"
+        >
+          <h1 className="text-[2.75rem] xl:text-[3.5rem] font-semibold tracking-tight leading-[1.12]">
+            Start learning today.
+          </h1>
           <p className="text-white/60 text-base lg:text-lg leading-relaxed max-w-md">
             Create your free account, enroll in industry-built programs, and prove your skills with AI-verified work.
           </p>
         </motion.div>
+
         <div className="relative z-10">
           <p className="text-xs text-white/35">© {year} Soma Connect Platform. All rights reserved.</p>
         </div>
       </div>
 
-      {/* Right form panel — centering lives on an inner min-h-full wrapper so
-          tall content scrolls naturally instead of clipping at the top (the
-          classic justify-center + overflow trap) or leaving dead space below. */}
-      <div className="w-full md:w-[48%] bg-white overflow-y-auto">
-        <div className="min-h-full flex flex-col justify-center p-8 sm:p-12 lg:px-24">
+      {/* Right — form panel, fills remaining height */}
+      <div className="w-full md:w-[48%] flex flex-col justify-center p-8 sm:p-16 lg:px-24 bg-white overflow-y-auto">
+        {/* Mobile-only brand mark (left panel is hidden below md) */}
         <div className="md:hidden mb-10">
-          <Link to="/" aria-label="Soma Connect home"><BrandLockup dark /></Link>
+          <Link to="/" className="inline-block" aria-label="Go to Soma Connect landing page">
+            <Wordmark dark />
+          </Link>
         </div>
 
-        <motion.div initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7, ease: 'easeOut' }} className="w-full max-w-md mx-auto">
+        <motion.div
+          initial={{ x: 40, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="w-full max-w-md mx-auto"
+        >
           <div className="space-y-1.5 mb-8">
             <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">Create your account</h3>
-            <h1 className="text-[28px] leading-tight font-semibold text-[#32292F] tracking-tight">Join as a learner</h1>
+            <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">Join as a learner</h1>
             <p className="text-sm text-gray-500">Free to start — enroll in any program in minutes.</p>
           </div>
 
@@ -128,25 +152,24 @@ export const LearnerRegisterPage = () => {
 
             <button
               type="submit" disabled={submitting} aria-busy={submitting}
-              className={`w-full py-3.5 bg-[#99E1D9] hover:bg-[#b0ebe4] text-[#32292F] text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${submitting ? 'opacity-95' : ''}`}
+              className={`w-full py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${submitting ? 'opacity-95' : ''}`}
             >
               <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
-                {submitting && <ButtonLoader size={18} className="text-[#32292F]" />}
+                {submitting && <ButtonLoader size={18} className="text-white" />}
                 <span>{submitting ? 'Creating account…' : 'Create free account'}</span>
               </span>
             </button>
 
             <p className="text-center text-sm text-gray-500">
               Already have an account?{' '}
-              <Link to={next ? `/login?next=${encodeURIComponent(next)}` : '/login'} className="text-[#32292F] hover:underline font-bold">Sign in</Link>
+              <Link to={next ? `/login?next=${encodeURIComponent(next)}` : '/login'} className="text-[#120E1A] hover:underline font-bold">Sign in</Link>
             </p>
             <p className="text-center text-xs text-gray-400 pt-2 border-t border-gray-100">
               Registering an institution?{' '}
-              <Link to="/register/institution" className="text-[#32292F]/70 hover:text-[#32292F] hover:underline font-semibold">Register a school</Link>
+              <Link to="/register/institution" className="text-[#120E1A]/70 hover:text-[#120E1A] hover:underline font-semibold">Register a school</Link>
             </p>
           </form>
         </motion.div>
-        </div>
       </div>
     </div>
   );

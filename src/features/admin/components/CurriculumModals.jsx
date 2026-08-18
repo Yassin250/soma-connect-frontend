@@ -8,8 +8,8 @@ const humanize = (v) =>
   String(v || '').replace(/[_-]+/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
 const inputClass =
-  'w-full rounded-xl bg-[#f7f8fa] border border-[#1b1e26]/10 px-3.5 py-2.5 text-[13px] text-[#1b1e26] placeholder-gray-400 focus:bg-white focus:border-[#d0f24a] focus:ring-2 focus:ring-[#d0f24a]/25 focus:outline-none transition-all';
-const labelClass = 'block text-[10px] font-bold text-[#1b1e26]/45 uppercase tracking-[0.14em] mb-1.5';
+  'w-full rounded-xl bg-[#f7f8fa] border border-[#120E1A]/10 px-3.5 py-2.5 text-[13px] text-[#120E1A] placeholder-gray-400 focus:bg-white focus:border-[#8B5CF6] focus:ring-2 focus:ring-[#8B5CF6]/25 focus:outline-none transition-all';
+const labelClass = 'block text-[10px] font-bold text-[#120E1A]/45 uppercase tracking-[0.14em] mb-1.5';
 
 // Shared modal shell — ink/lime, portalled, esc-to-close, backdrop-dismiss.
 const ModalShell = ({ title, subtitle, icon, onClose, children, maxW = '480px' }) => {
@@ -20,9 +20,9 @@ const ModalShell = ({ title, subtitle, icon, onClose, children, maxW = '480px' }
   }, [onClose]);
 
   return createPortal(
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#120E1A]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
       <div
-        className="relative w-full bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] p-6 sm:p-7 animate-in zoom-in-95 fade-in duration-200"
+        className="relative w-full bg-white rounded-3xl border border-[#120E1A]/[0.06] shadow-[0_20px_60px_rgba(18,14,26,0.25)] p-6 sm:p-7 animate-in zoom-in-95 fade-in duration-200"
         style={{ maxWidth: maxW }}
         onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true"
       >
@@ -30,10 +30,10 @@ const ModalShell = ({ title, subtitle, icon, onClose, children, maxW = '480px' }
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
         </button>
         <div className="mb-5 pr-8">
-          <span className="w-11 h-11 rounded-2xl bg-[#d0f24a]/25 text-[#1b1e26] flex items-center justify-center mb-3">
+          <span className="w-11 h-11 rounded-2xl bg-[#8B5CF6]/25 text-[#120E1A] flex items-center justify-center mb-3">
             {icon}
           </span>
-          <h3 className="text-lg font-bold text-[#1b1e26] tracking-tight">{title}</h3>
+          <h3 className="text-lg font-bold text-[#120E1A] tracking-tight">{title}</h3>
           {subtitle && <p className="text-[13px] text-gray-500 mt-1">{subtitle}</p>}
         </div>
         {children}
@@ -131,8 +131,8 @@ export const ModuleFormModal = ({ open, editing, onClose, onSubmit }) => {
         {error && <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-xl px-3.5 py-2.5">{error}</p>}
 
         <div className="pt-1 flex justify-end gap-2.5">
-          <button type="button" onClick={onClose} className="px-5 py-2 rounded-xl text-[13px] font-semibold text-[#1b1e26]/70 border border-[#1b1e26]/10 hover:bg-[#f3f4f6] transition-colors">Cancel</button>
-          <button type="submit" disabled={saving} className="px-6 py-2 rounded-xl text-[13px] font-bold bg-[#1b1e26] text-white hover:bg-black transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60">
+          <button type="button" onClick={onClose} className="px-5 py-2 rounded-xl text-[13px] font-semibold text-[#120E1A]/70 border border-[#120E1A]/10 hover:bg-[#f3f4f6] transition-colors">Cancel</button>
+          <button type="submit" disabled={saving} className="px-6 py-2 rounded-xl text-[13px] font-bold bg-[#120E1A] text-white hover:bg-black transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60">
             {saving ? 'Saving…' : editing ? 'Save changes' : 'Create module'}
           </button>
         </div>
@@ -222,17 +222,17 @@ export const LessonFormModal = ({ open, editing, onClose, onSubmit }) => {
           onClick={() => setRequired((v) => !v)}
           className="flex items-center gap-2.5 group"
         >
-          <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${required ? 'bg-[#d0f24a] border-[#d0f24a] text-[#1b1e26]' : 'bg-white border-[#1b1e26]/15 text-transparent'}`}>
+          <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${required ? 'bg-[#8B5CF6] border-[#8B5CF6] text-white' : 'bg-white border-[#120E1A]/15 text-transparent'}`}>
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </span>
-          <span className="text-[13px] font-medium text-[#1b1e26]/80">Required to complete the module</span>
+          <span className="text-[13px] font-medium text-[#120E1A]/80">Required to complete the module</span>
         </button>
 
         {error && <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-xl px-3.5 py-2.5">{error}</p>}
 
         <div className="pt-1 flex justify-end gap-2.5">
-          <button type="button" onClick={onClose} className="px-5 py-2 rounded-xl text-[13px] font-semibold text-[#1b1e26]/70 border border-[#1b1e26]/10 hover:bg-[#f3f4f6] transition-colors">Cancel</button>
-          <button type="submit" disabled={saving} className="px-6 py-2 rounded-xl text-[13px] font-bold bg-[#1b1e26] text-white hover:bg-black transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60">
+          <button type="button" onClick={onClose} className="px-5 py-2 rounded-xl text-[13px] font-semibold text-[#120E1A]/70 border border-[#120E1A]/10 hover:bg-[#f3f4f6] transition-colors">Cancel</button>
+          <button type="submit" disabled={saving} className="px-6 py-2 rounded-xl text-[13px] font-bold bg-[#120E1A] text-white hover:bg-black transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60">
             {saving ? 'Saving…' : editing ? 'Save changes' : 'Create lesson'}
           </button>
         </div>
@@ -267,9 +267,9 @@ export const ConfirmDeleteModal = ({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1b1e26]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#120E1A]/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} role="presentation">
       <div
-        className="relative w-full max-w-sm bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] p-5 animate-in zoom-in-95 fade-in duration-200"
+        className="relative w-full max-w-sm bg-white rounded-3xl border border-[#120E1A]/[0.06] shadow-[0_20px_60px_rgba(18,14,26,0.25)] p-5 animate-in zoom-in-95 fade-in duration-200"
         onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true"
       >
         <button type="button" onClick={onClose} aria-label="Close" className="absolute top-3 right-3 w-7 h-7 rounded-lg flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 transition-colors">
@@ -280,17 +280,17 @@ export const ConfirmDeleteModal = ({
           <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center mb-3">
             <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
           </div>
-          <h3 className="text-base font-bold text-[#1b1e26]">{title}</h3>
-          <p className="text-[13px] text-[#1b1e26]/60 leading-snug mt-1 max-w-xs">
+          <h3 className="text-base font-bold text-[#120E1A]">{title}</h3>
+          <p className="text-[13px] text-[#120E1A]/60 leading-snug mt-1 max-w-xs">
             {message}
             {itemName && (
-              <><strong className="text-[#1b1e26]/80"> {itemName}</strong>.</>
+              <><strong className="text-[#120E1A]/80"> {itemName}</strong>.</>
             )}
           </p>
         </div>
 
-        <div className="mt-4 pt-3.5 border-t border-[#1b1e26]/8 flex justify-end gap-2.5">
-          <button type="button" onClick={onClose} disabled={busy} className="px-4 py-2 rounded-xl text-[12px] font-semibold text-[#1b1e26]/60 border border-[#1b1e26]/12 hover:bg-[#f3f4f6] hover:text-[#1b1e26]/80 transition-colors disabled:opacity-50">Cancel</button>
+        <div className="mt-4 pt-3.5 border-t border-[#120E1A]/8 flex justify-end gap-2.5">
+          <button type="button" onClick={onClose} disabled={busy} className="px-4 py-2 rounded-xl text-[12px] font-semibold text-[#120E1A]/60 border border-[#120E1A]/12 hover:bg-[#f3f4f6] hover:text-[#120E1A]/80 transition-colors disabled:opacity-50">Cancel</button>
           <button type="button" onClick={confirm} disabled={busy} className="px-5 py-2 rounded-xl text-[12px] font-bold bg-red-500 text-white hover:bg-red-600 transition-colors active:scale-[0.97] shadow-sm disabled:opacity-50 flex items-center gap-1.5">
             {busy ? (
               <>

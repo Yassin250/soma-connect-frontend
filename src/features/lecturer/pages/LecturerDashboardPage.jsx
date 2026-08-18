@@ -166,13 +166,16 @@ export const LecturerDashboardPage = () => {
             key={s.label}
             className={`group rounded-2xl p-5 border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
               s.featured
-                ? 'bg-[#1b1e26] border-[#1b1e26] text-white'
-                : 'bg-white border-[#1b1e26]/[0.06] shadow-sm'
+                ? 'bg-gradient-to-br from-[#3D7FFF] to-[#63C7FF] border-transparent text-white relative overflow-hidden'
+                : 'bg-white border-[#0B0E17]/[0.06] shadow-sm'
             }`}
           >
-            <div className="flex items-start justify-between">
+            {s.featured && (
+              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/[0.08] blur-[50px] pointer-events-none" />
+            )}
+            <div className="flex items-start justify-between relative">
               <span className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                s.featured ? 'bg-accent text-[#1b1e26]' : 'bg-accent/20 text-[#1b1e26]'
+                s.featured ? 'bg-white/20 text-white' : 'bg-[#3D7FFF]/20 text-[#3D7FFF]'
               }`}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={s.icon} />
@@ -197,9 +200,9 @@ export const LecturerDashboardPage = () => {
             <button
               key={a.path}
               onClick={() => navigate(a.path)}
-              className="group flex items-center gap-3.5 rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-4 transition-all duration-200 hover:border-accent hover:shadow-md w-full text-left"
+              className="group flex items-center gap-3.5 rounded-2xl bg-white border border-[#0B0E17]/[0.06] shadow-sm p-4 transition-all duration-200 hover:border-[#3D7FFF] hover:shadow-md w-full text-left"
             >
-              <span className="w-11 h-11 rounded-xl bg-[#f3f4f6] group-hover:bg-accent/25 text-[#1b1e26] flex items-center justify-center shrink-0 transition-colors">
+              <span className="w-11 h-11 rounded-xl bg-[#f3f4f6] group-hover:bg-gradient-to-br group-hover:from-[#3D7FFF]/25 group-hover:to-[#63C7FF]/25 text-[#1b1e26] flex items-center justify-center shrink-0 transition-all">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={a.icon} />
                 </svg>
@@ -228,9 +231,9 @@ export const LecturerDashboardPage = () => {
               const total = subs.length;
               const pct = total > 0 ? Math.round((graded / total) * 100) : 0;
               return (
-                <div key={course.id} className="group rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div key={course.id} className="group rounded-2xl bg-white border border-[#0B0E17]/[0.06] shadow-sm p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-[10px] font-bold px-2 py-1 bg-accent/20 text-[#1b1e26] rounded uppercase tracking-wider">
+                    <span className="text-[10px] font-bold px-2 py-1 bg-[#3D7FFF]/20 text-[#3D7FFF] rounded uppercase tracking-wider">
                       {course.code || 'Course'}
                     </span>
                   </div>
@@ -243,7 +246,7 @@ export const LecturerDashboardPage = () => {
                         <span className="font-semibold text-[#1b1e26]">{pct}%</span>
                       </div>
                       <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-accent rounded-full" style={{ width: `${pct}%` }} />
+                        <div className="h-full bg-gradient-to-r from-[#3D7FFF] to-[#63C7FF] rounded-full" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   )}
@@ -259,7 +262,7 @@ export const LecturerDashboardPage = () => {
           <h2 className="text-sm font-semibold text-[#1b1e26] mb-3">Pending Review</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {pendingGrading.slice(0, 6).map((sub) => (
-              <div key={sub.id} className="rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-4 transition-all duration-200 hover:shadow-md">
+              <div key={sub.id} className="rounded-2xl bg-white border border-[#0B0E17]/[0.06] shadow-sm p-4 transition-all duration-200 hover:shadow-md">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-sm font-semibold text-[#1b1e26]">{sub.studentName || sub.studentId}</p>
@@ -275,8 +278,8 @@ export const LecturerDashboardPage = () => {
         </div>
       )}
 
-      <div className="rounded-2xl border border-dashed border-[#1b1e26]/15 bg-white/60 p-5 flex items-center gap-4">
-        <span className="w-10 h-10 rounded-xl bg-accent/20 text-[#1b1e26] flex items-center justify-center shrink-0">
+      <div className="rounded-2xl border border-dashed border-[#0B0E17]/15 bg-white/60 p-5 flex items-center gap-4">
+        <span className="w-10 h-10 rounded-xl bg-[#3D7FFF]/20 text-[#3D7FFF] flex items-center justify-center shrink-0">
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>

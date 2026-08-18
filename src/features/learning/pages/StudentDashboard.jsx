@@ -8,7 +8,7 @@ import { notificationService } from '../../../services/api';
 
 const API_BASE_URL = 'http://localhost:5050/api/student';
 
-const INK = '#1b1e26';
+const INK = '#171717';
 
 /* ── shared motion helpers ── */
 const fadeUp = {
@@ -99,7 +99,7 @@ export const StudentDashboard = () => {
           </div>
           <h2 className="text-[15px] font-semibold text-gray-900 mb-2">Error loading dashboard</h2>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button onClick={() => window.location.reload()} className="px-5 py-2 bg-[#1b1e26] text-white rounded-xl font-semibold hover:bg-black transition-colors">
+          <button onClick={() => window.location.reload()} className="px-5 py-2 bg-[#171717] text-white rounded-xl font-semibold hover:bg-black transition-colors">
             Try Again
           </button>
         </div>
@@ -120,7 +120,7 @@ export const StudentDashboard = () => {
           <p className="text-gray-600 mb-6">
             Your account isn't linked to a partner school, so there's no cohort dashboard to show here. Head to your own learning dashboard instead.
           </p>
-          <Link to="/learning/dashboard" className="inline-block px-5 py-2 bg-[#1b1e26] text-white rounded-xl font-semibold hover:bg-black transition-colors">
+          <Link to="/learning/dashboard" className="inline-block px-5 py-2 bg-[#171717] text-white rounded-xl font-semibold hover:bg-black transition-colors">
             Go to My Learning
           </Link>
         </div>
@@ -216,11 +216,11 @@ export const StudentDashboard = () => {
       </AnimatePresence>
 
       <aside className={`fixed lg:sticky top-0 z-50 lg:z-10 h-screen w-72 shrink-0 flex flex-col justify-between p-6 overflow-hidden
-        bg-gradient-to-b from-[#20242e] via-[#181b22] to-[#101217] text-white transition-transform duration-300
+        bg-gradient-to-b from-[#171717] via-[#1a1a1a] to-[#141414] text-white transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* ambient glow */}
         <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-accent/15 blur-[90px] pointer-events-none" />
-        <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#39435a]/40 blur-[90px] pointer-events-none" />
+        <div className="absolute bottom-10 -right-16 w-64 h-64 rounded-full bg-[#C6FF34]/40 blur-[90px] pointer-events-none" />
 
         <div className="relative z-10 space-y-9">
           {/* Logo & School context */}
@@ -305,10 +305,10 @@ export const StudentDashboard = () => {
           {/* ── HERO BANNER ── */}
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white px-7 sm:px-10 pt-9 pb-24 sm:pb-28"
+            className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#171717] via-[#1a1a1a] to-[#141414] text-white px-7 sm:px-10 pt-9 pb-24 sm:pb-28"
           >
             <div className="absolute -top-24 -left-16 w-96 h-96 rounded-full bg-accent/20 blur-[120px] pointer-events-none" />
-            <div className="absolute top-1/2 -right-20 w-80 h-80 rounded-full bg-[#39435a]/40 blur-[110px] pointer-events-none" />
+            <div className="absolute top-1/2 -right-20 w-80 h-80 rounded-full bg-[#C6FF34]/40 blur-[110px] pointer-events-none" />
             <div className="absolute top-[18%] right-[8%] w-40 h-40 rounded-[2rem] border border-white/10 rotate-[18deg] pointer-events-none hidden sm:block" />
             <div className="absolute top-[30%] right-[4%] w-10 h-10 rounded-2xl bg-accent/25 rotate-12 pointer-events-none hidden sm:block" />
 
@@ -355,7 +355,7 @@ export const StudentDashboard = () => {
               <motion.div
                 key={s.label}
                 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.08 }}
-                className="bg-white rounded-2xl p-5 shadow-[0_12px_40px_rgba(27,30,38,0.10)] border border-gray-100"
+                className="bg-white rounded-2xl p-5 shadow-[0_12px_40px_rgba(23,23,23,0.10)] border border-gray-100"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm ${iconTileStyles[s.tone]}`}>
@@ -382,7 +382,7 @@ export const StudentDashboard = () => {
                     <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
                       <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-3">
-                          <span className="w-10 h-10 rounded-xl bg-[#1b1e26] text-accent flex items-center justify-center shrink-0">
+                          <span className="w-10 h-10 rounded-xl bg-[#171717] text-accent flex items-center justify-center shrink-0">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                           </span>
                           <div>
@@ -433,7 +433,7 @@ export const StudentDashboard = () => {
                                   {isCompleted ? `Completed · ${mod.type}` : isLocked ? 'Unlocks after previous module' : `${mod.type} content`}
                                 </p>
                               </div>
-                              {isCurrent && <span className="text-xs px-3 py-1.5 rounded-lg bg-[#1b1e26] text-white font-semibold shrink-0">Continue →</span>}
+                              {isCurrent && <span className="text-xs px-3 py-1.5 rounded-lg bg-[#171717] text-white font-semibold shrink-0">Continue →</span>}
                               {isCompleted && <span className="text-xs px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-600 font-semibold shrink-0">Done</span>}
                               {isLocked && <span className="text-xs px-2.5 py-1 rounded-lg bg-gray-200 text-gray-500 font-semibold shrink-0">Locked</span>}
                             </div>
@@ -466,7 +466,7 @@ export const StudentDashboard = () => {
                             <p className="text-sm font-semibold text-[#1b1e26] truncate">{a.courseCode} – {a.title}</p>
                             <p className="text-xs text-gray-500">{daysLeft !== null ? `Due in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}` : 'No due date'}</p>
                           </div>
-                          <button onClick={() => navigate(`/student/assignment/${a.id}`)} className="text-xs px-3 py-1.5 rounded-lg bg-[#1b1e26] text-white font-semibold hover:bg-black transition-colors shrink-0">Submit →</button>
+                          <button onClick={() => navigate(`/student/assignment/${a.id}`)} className="text-xs px-3 py-1.5 rounded-lg bg-[#171717] text-white font-semibold hover:bg-black transition-colors shrink-0">Submit →</button>
                         </div>
                       );
                     })}
@@ -520,7 +520,7 @@ export const StudentDashboard = () => {
                   </motion.div>
 
                   {/* Job matches teaser */}
-                  <motion.div {...fadeUp} transition={{ delay: 0.35 }} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#20242e] to-[#101217] text-white p-6 shadow-sm">
+                  <motion.div {...fadeUp} transition={{ delay: 0.35 }} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#171717] to-[#141414] text-white p-6 shadow-sm">
                     <div className="absolute -bottom-10 -right-8 w-40 h-40 rounded-full bg-accent/15 blur-[70px] pointer-events-none" />
                     <div className="relative z-10">
                       <p className="text-sm font-bold text-white mb-1">Job matches</p>
@@ -619,7 +619,7 @@ export const StudentDashboard = () => {
                               {attempt ? (
                                 <span className={`text-xs px-2 py-1 rounded-lg font-semibold ${attempt.score >= 70 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>Score: {attempt.score}%</span>
                               ) : (
-                                <button className="text-xs px-3 py-1.5 rounded-lg bg-[#1b1e26] text-white font-semibold hover:bg-black transition-colors">Take Quiz</button>
+                                <button className="text-xs px-3 py-1.5 rounded-lg bg-[#171717] text-white font-semibold hover:bg-black transition-colors">Take Quiz</button>
                               )}
                             </div>
                           );
@@ -669,7 +669,7 @@ export const StudentDashboard = () => {
                           )}
                         </div>
                         {!submission && (
-                          <button onClick={(e) => { e.stopPropagation(); navigate(`/student/assignment/${assignment.id}`); }} className="mt-4 text-xs px-4 py-2 rounded-xl bg-[#1b1e26] text-white font-semibold hover:bg-black transition-colors">
+                          <button onClick={(e) => { e.stopPropagation(); navigate(`/student/assignment/${assignment.id}`); }} className="mt-4 text-xs px-4 py-2 rounded-xl bg-[#171717] text-white font-semibold hover:bg-black transition-colors">
                             Submit Assignment
                           </button>
                         )}
@@ -690,7 +690,7 @@ export const StudentDashboard = () => {
                     { title: 'Junior dev · Norrsken Kigali', match: Math.max(uniqueSkills.length - 1, 0), tag: 'Good match', tone: 'bg-accent/20 text-accent-text' },
                   ].map((job, i) => (
                     <div key={i} className="flex items-center gap-4 px-4 py-4 border-b border-gray-50 last:border-b-0">
-                      <span className="w-11 h-11 rounded-xl bg-[#1b1e26] text-accent flex items-center justify-center shrink-0">
+                      <span className="w-11 h-11 rounded-xl bg-[#171717] text-accent flex items-center justify-center shrink-0">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0h-2" /><path d="M9 7h1m-1 4h1m4-4h1m-1 4h1" /></svg>
                       </span>
                       <div className="flex-1 min-w-0">

@@ -185,7 +185,7 @@ export const SchoolClassesPage = () => {
         </div>
         <button
           onClick={() => { setShowForm(true); setShowSections(false); }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#1b1e26] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#1b1e26]/20"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0E1412] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#0E1412]/20"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -223,7 +223,7 @@ export const SchoolClassesPage = () => {
                   : 'border-slate-200 hover:border-accent'
               }`}
             >
-              <div className="h-32 bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center text-white">
+              <div className="h-32 bg-gradient-to-br from-[#0E1412] to-[#1a2020] flex items-center justify-center text-white">
                 <div className="text-center">
                   <p className="text-xl font-semibold">{cls.code}</p>
                   <p className="text-white/70 text-sm mt-1">{cls.level}</p>
@@ -264,7 +264,7 @@ export const SchoolClassesPage = () => {
             </div>
             <button
               onClick={() => setShowSectionForm(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#1b1e26] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#1b1e26]/20"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#0E1412] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-black transition-all shadow-lg shadow-[#0E1412]/20"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -367,7 +367,7 @@ export const SchoolClassesPage = () => {
               </div>
               <div className="border-t border-slate-100 pt-5 mt-6 flex items-center justify-end gap-3">
                 <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-sm">Cancel</button>
-                <button type="button" onClick={handleAddClass} className="px-5 py-2 bg-[#1b1e26] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md">Create Class</button>
+                <button type="button" onClick={handleAddClass} className="px-5 py-2 bg-[#0E1412] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md">Create Class</button>
               </div>
             </div>
           </div>
@@ -402,7 +402,7 @@ export const SchoolClassesPage = () => {
               </div>
               <div className="border-t border-slate-100 pt-5 mt-6 flex items-center justify-end gap-3">
                 <button type="button" onClick={() => setShowSectionForm(false)} className="px-5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-sm">Cancel</button>
-                <button type="button" onClick={handleAddSection} className="px-5 py-2 bg-[#1b1e26] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md">Create Section</button>
+                <button type="button" onClick={handleAddSection} className="px-5 py-2 bg-[#0E1412] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md">Create Section</button>
               </div>
             </div>
           </div>

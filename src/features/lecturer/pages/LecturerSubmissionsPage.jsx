@@ -130,14 +130,14 @@ const LecturerSubmissionsPage = () => {
                     <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
                       <div>
                         <label className="text-xs font-semibold text-gray-500 block mb-1">Score (0–100)</label>
-                        <input type="number" min="0" max="100" value={gradeForm.score} onChange={(e) => setGradeForm((p) => ({ ...p, score: e.target.value }))} className="w-24 rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-[#1b1e26]/30" />
+                        <input type="number" min="0" max="100" value={gradeForm.score} onChange={(e) => setGradeForm((p) => ({ ...p, score: e.target.value }))} className="w-24 rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-[#0B0E17]/30" />
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-gray-500 block mb-1">Feedback</label>
-                        <textarea value={gradeForm.feedback} onChange={(e) => setGradeForm((p) => ({ ...p, feedback: e.target.value }))} rows={2} className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-[#1b1e26]/30 resize-none" placeholder="Optional feedback…" />
+                        <textarea value={gradeForm.feedback} onChange={(e) => setGradeForm((p) => ({ ...p, feedback: e.target.value }))} rows={2} className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-[#0B0E17]/30 resize-none" placeholder="Optional feedback…" />
                       </div>
                       <div className="flex gap-2">
-                        <button onClick={() => handleGrade(s.id)} disabled={!gradeForm.score} className="px-4 py-1.5 rounded-lg bg-[#1b1e26] text-white text-xs font-semibold hover:bg-black disabled:opacity-50">Submit grade</button>
+                        <button onClick={() => handleGrade(s.id)} disabled={!gradeForm.score} className="px-4 py-1.5 rounded-lg bg-[#0B0E17] text-white text-xs font-semibold hover:bg-black disabled:opacity-50">Submit grade</button>
                         <button onClick={() => { setGradingId(null); setGradeForm({ score: '', feedback: '' }); }} className="px-4 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-500 hover:text-[#1b1e26]">Cancel</button>
                       </div>
                     </div>

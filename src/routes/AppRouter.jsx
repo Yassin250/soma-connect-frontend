@@ -47,6 +47,7 @@ import { EntityRolesPage } from '../features/schools/pages/EntityRolesPage';
 import { SchoolStudentsPage } from '../features/schools/pages/SchoolStudentsPage';
 import { SchoolAttendancePage } from '../features/schools/pages/SchoolAttendancePage';
 import { SchoolCoursesPage } from '../features/schools/pages/SchoolCoursesPage';
+import { SchoolPermissionsPage } from '../features/schools/pages/SchoolPermissionsPage';
 import { SchoolPlagiarismPage } from '../features/schools/pages/SchoolPlagiarismPage';
 import { SchoolLibraryPage } from '../features/schools/pages/SchoolLibraryPage';
 import { SchoolFeesPage } from '../features/schools/pages/SchoolFeesPage';
@@ -203,6 +204,7 @@ export const AppRouter = () => {
           <Route path="/school/assessments" element={<SchoolRoute><SchoolAssessmentsPage /></SchoolRoute>} />
           <Route path="/school/staff" element={<SchoolRoute><EntityUsersPage /></SchoolRoute>} />
           <Route path="/school/roles" element={<SchoolRoute><EntityRolesPage /></SchoolRoute>} />
+          <Route path="/school/permissions" element={<SchoolRoute><SchoolPermissionsPage /></SchoolRoute>} />
           <Route path="/school/students" element={<SchoolRoute><SchoolStudentsPage /></SchoolRoute>} />
           <Route path="/school/attendance" element={<SchoolRoute><SchoolAttendancePage /></SchoolRoute>} />
           <Route path="/school/courses" element={<SchoolRoute><SchoolCoursesPage /></SchoolRoute>} />

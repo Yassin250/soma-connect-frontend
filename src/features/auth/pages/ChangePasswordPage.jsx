@@ -6,7 +6,7 @@ import { authService } from '../../../services/api';
 import { useAuth } from '../../../context/AuthContext';
 
 const inputWrap =
-  'relative border-b border-gray-300 py-2 flex items-center focus-within:border-[#99E1D9] transition-colors';
+  'relative border-b border-gray-300 py-2 flex items-center focus-within:border-[#8B5CF6] transition-colors';
 const inputBase =
   'w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none pl-8 pr-10';
 
@@ -76,14 +76,14 @@ const ChangePasswordPage = () => {
 
   return (
     <div className="min-h-screen w-full flex bg-white font-sans antialiased">
-      <div className="hidden md:flex relative flex-col justify-center items-center w-3/5 bg-[#32292F] text-white p-20 [clip-path:polygon(0_0,100%_0,88%_100%,0_100%)] z-10 overflow-hidden">
+      <div className="hidden md:flex relative flex-col justify-center items-center w-3/5 bg-[#120E1A] text-white p-20 [clip-path:polygon(0_0,100%_0,88%_100%,0_100%)] z-10 overflow-hidden">
         <div className="absolute top-[20%] right-[20%] w-32 h-32 bg-white/10 rounded-3xl rotate-12 backdrop-blur-md animate-[pulse_6s_ease-in-out_infinite]" />
-        <div className="absolute bottom-[20%] left-[10%] w-20 h-20 bg-[#99E1D9]/20 rounded-full backdrop-blur-md animate-[bounce_8s_ease-in-out_infinite]" />
+        <div className="absolute bottom-[20%] left-[10%] w-20 h-20 bg-[#8B5CF6]/20 rounded-full backdrop-blur-md animate-[bounce_8s_ease-in-out_infinite]" />
         <div className="absolute top-12 left-12">
           <img src={logo} alt="SomaConnect" className="h-12 w-auto object-contain brightness-0 invert" />
         </div>
         <div className="max-w-md text-left transform -translate-x-10 space-y-6 relative z-20">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#99E1D9] mb-3">Secure your account</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#8B5CF6] mb-3">Secure your account</p>
           <h2 className="text-5xl font-extrabold tracking-tight leading-tight">One quick step before you start.</h2>
           <p className="text-white/80 text-base leading-relaxed font-medium mt-4">
             Choose a new password to replace the temporary one you signed in with.
@@ -160,7 +160,7 @@ const ChangePasswordPage = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2 bg-[#32292F] hover:bg-black text-white text-[13px] font-semibold rounded-xl shadow-sm transition-colors disabled:opacity-70"
+            className="w-full py-2 bg-[#120E1A] hover:bg-black text-white text-[13px] font-semibold rounded-xl shadow-sm transition-colors disabled:opacity-70"
           >
             {isSubmitting ? 'Saving…' : 'Change password'}
           </button>

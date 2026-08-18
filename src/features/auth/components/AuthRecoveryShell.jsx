@@ -19,20 +19,20 @@ export const AuthRecoveryShell = ({ copy, stepKey, stepIndex, stepCount, childre
     <div className="h-screen w-full flex bg-white antialiased overflow-hidden">
 
       {/* Left — full-bleed dark brand panel with diagonal edge (same as LoginPage) */}
-      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#20242e] via-[#181b22] to-[#101217] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
+      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#120E1A] via-[#1a1025] to-[#140d1e] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
         {/* Ambient glow — lime brand accent up top, cool depth toward the middle */}
-        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#99E1D9]/20 blur-[100px]" />
-        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#39435a]/40 blur-[100px]" />
+        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#8B5CF6]/20 blur-[100px]" />
+        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#120E1A]/40 blur-[100px]" />
 
         {/* Floating glass shapes near the diagonal */}
         <div className="absolute top-[16%] right-[7%] w-44 h-44 rounded-[2.5rem] border border-white/10 rotate-[18deg]" />
         <div className="absolute top-[29%] right-[15%] w-24 h-24 rounded-[1.5rem] bg-white/[0.05] backdrop-blur-md -rotate-6" />
-        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#99E1D9]/25 rotate-12" />
+        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#8B5CF6]/25 rotate-12" />
         <div className="absolute bottom-24 left-6 w-24 h-24 rounded-full border border-white/[0.08]" />
 
         <div className="relative z-10">
           <Link to="/" className="inline-block" aria-label="Go to Soma Connect landing page">
-            <BrandLockup />
+            <span style={{ '--clr-accent': '#8B5CF6' }}><BrandLockup /></span>
           </Link>
         </div>
 
@@ -47,7 +47,7 @@ export const AuthRecoveryShell = ({ copy, stepKey, stepIndex, stepCount, childre
               transition={{ duration: 0.35, ease: 'easeOut' }}
               className="space-y-6"
             >
-              <p className="text-[11px] font-semibold text-[#99E1D9]/80 uppercase tracking-[0.22em]">
+              <p className="text-[11px] font-semibold text-[#8B5CF6]/80 uppercase tracking-[0.22em]">
                 {copy.eyebrow}
               </p>
               <h1 className="text-[2.75rem] xl:text-[3.5rem] font-semibold tracking-tight leading-[1.12]">
@@ -66,9 +66,9 @@ export const AuthRecoveryShell = ({ copy, stepKey, stepIndex, stepCount, childre
                 key={i}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   i === stepIndex
-                    ? 'w-10 bg-[#99E1D9]'
+                    ? 'w-10 bg-[#8B5CF6]'
                     : i < stepIndex
-                    ? 'w-5 bg-[#99E1D9]/40'
+                    ? 'w-5 bg-[#8B5CF6]/40'
                     : 'w-5 bg-white/15'
                 }`}
               />
@@ -86,7 +86,7 @@ export const AuthRecoveryShell = ({ copy, stepKey, stepIndex, stepCount, childre
         {/* Mobile-only brand mark (left panel is hidden below md) */}
         <div className="md:hidden mb-10">
           <Link to="/" className="inline-block" aria-label="Go to Soma Connect landing page">
-            <BrandLockup dark />
+            <span style={{ '--clr-accent': '#8B5CF6' }}><BrandLockup dark /></span>
           </Link>
         </div>
 

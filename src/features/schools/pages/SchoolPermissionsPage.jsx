@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { adminService } from '../../../services/api';
+import { entityRoleService } from '../../../services/api';
 import { useToast } from '../../../context/ToastContext';
 import { DataTable } from '../../../components/shared/DataTable';
 
@@ -10,7 +10,7 @@ const columns = [
     sortable: true,
     sortValue: (p) => p.name || '',
     render: (p) => (
-      <span className="text-[13px] font-medium text-[#120E1A]">{p.name}</span>
+      <span className="text-[13px] font-medium text-[#1b1e26]">{p.name}</span>
     ),
   },
   {
@@ -26,7 +26,7 @@ const columns = [
     sortable: true,
     sortValue: (p) => p.category || '',
     render: (p) => (
-      <span className="px-2.5 py-1 bg-[#8B5CF6]/25 text-white rounded-full text-[11px] font-semibold">
+      <span className="px-2.5 py-1 bg-[#10B981]/20 text-[#10B981] rounded-full text-[11px] font-semibold">
         {p.category || 'General'}
       </span>
     ),
@@ -58,7 +58,7 @@ const columns = [
   },
 ];
 
-export const PermissionsPage = () => {
+export const SchoolPermissionsPage = () => {
   const [permissions, setPermissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -78,7 +78,7 @@ export const PermissionsPage = () => {
       setIsLoading(true);
       setError('');
       try {
-        const data = await adminService.getPermissions();
+        const data = await entityRoleService.allPermissions();
         if (!cancelled) setPermissions(Array.isArray(data) ? data : []);
       } catch (err) {
         if (!cancelled) {
@@ -118,16 +118,16 @@ export const PermissionsPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[19px] font-medium text-[#120E1A] tracking-tight">Permissions</h1>
-        <p className="text-[12px] text-gray-500 mt-0.5">Fine-grained privileges that power every role.</p>
+        <h1 className="text-[19px] font-medium text-[#1b1e26] tracking-tight">Permissions</h1>
+        <p className="text-[12px] text-gray-500 mt-0.5">Fine-grained privileges for entity roles.</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-[#120E1A]/[0.06] shadow-sm p-4 w-fit max-w-full">
+      <div className="bg-white rounded-2xl border border-[#1b1e26]/[0.06] shadow-sm p-4 w-fit max-w-full">
         <div className="flex flex-wrap items-end gap-3.5">
           <div className="w-[160px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Category</label>
+            <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">Category</label>
             <select
-              className="w-full text-[13px] px-3.5 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all cursor-pointer"
+              className="w-full text-[13px] px-3.5 py-2.5 rounded-xl border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] hover:border-[#1b1e26]/20 focus:bg-white focus:ring-4 focus:ring-[#10B981]/20 focus:border-[#10B981] focus:outline-none transition-all cursor-pointer"
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
             >
@@ -138,9 +138,9 @@ export const PermissionsPage = () => {
             </select>
           </div>
           <div className="w-[160px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Status</label>
+            <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">Status</label>
             <select
-              className="w-full text-[13px] px-3.5 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all cursor-pointer"
+              className="w-full text-[13px] px-3.5 py-2.5 rounded-xl border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] hover:border-[#1b1e26]/20 focus:bg-white focus:ring-4 focus:ring-[#10B981]/20 focus:border-[#10B981] focus:outline-none transition-all cursor-pointer"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -150,40 +150,40 @@ export const PermissionsPage = () => {
             </select>
           </div>
           <div className="w-[180px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">From</label>
+            <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">From</label>
             <div className="relative">
-              <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-4 h-4 text-[#1b1e26]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="17" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               <input
                 type="date"
                 aria-label="Created from"
-                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all"
+                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] hover:border-[#1b1e26]/20 focus:bg-white focus:ring-4 focus:ring-[#10B981]/20 focus:border-[#10B981] focus:outline-none transition-all"
                 value={filterDateFrom}
                 onChange={(e) => setFilterDateFrom(e.target.value)}
               />
             </div>
           </div>
           <div className="w-[180px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">To</label>
+            <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">To</label>
             <div className="relative">
-              <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-4 h-4 text-[#1b1e26]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="17" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               <input
                 type="date"
                 aria-label="Created to"
-                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all"
+                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] hover:border-[#1b1e26]/20 focus:bg-white focus:ring-4 focus:ring-[#10B981]/20 focus:border-[#10B981] focus:outline-none transition-all"
                 value={filterDateTo}
                 onChange={(e) => setFilterDateTo(e.target.value)}
               />
             </div>
           </div>
 
-          <span className="hidden sm:block w-px h-10 bg-[#120E1A]/[0.07] mx-0.5" />
+          <span className="hidden sm:block w-px h-10 bg-[#1b1e26]/[0.07] mx-0.5" />
 
           <button
-            className="shrink-0 h-10 px-5 rounded-full bg-[#8B5CF6] text-white text-[13px] font-semibold hover:bg-[#C4B5FD] shadow-sm transition-colors active:scale-[0.98]"
+            className="shrink-0 h-10 px-5 rounded-full bg-[#10B981] text-white text-[13px] font-semibold hover:bg-[#34D399] shadow-sm transition-colors active:scale-[0.98]"
           >
             Apply
           </button>
@@ -215,4 +215,4 @@ export const PermissionsPage = () => {
   );
 };
 
-export default PermissionsPage;
+export default SchoolPermissionsPage;

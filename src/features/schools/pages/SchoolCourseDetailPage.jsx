@@ -95,7 +95,7 @@ export const SchoolCourseDetailPage = () => {
           )}
           <button
             onClick={() => navigate(`/school/courses/${id}/edit`)}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#1b1e26] text-white hover:bg-black transition-colors active:scale-[0.98] shadow-sm"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#0E1412] text-white hover:bg-black transition-colors active:scale-[0.98] shadow-sm"
           >
             Edit course
           </button>

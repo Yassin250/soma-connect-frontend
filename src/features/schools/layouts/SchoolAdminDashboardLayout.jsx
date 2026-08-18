@@ -11,18 +11,19 @@ const modules = [
   {
     id: 'academic',
     label: 'Academic',
-    icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+    icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
     items: [
-      { id: 'courses', label: 'Courses', path: '/school/courses' },
+      { id: 'courses', label: 'Courses', path: '/school/courses', icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z' },
     ],
   },
   {
     id: 'records',
-    label: 'People & Access',
-    icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
+    label: 'User Management',
+    icon: 'M17 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0',
     items: [
-      { id: 'staff', label: 'Users', path: '/school/staff' },
-      { id: 'roles', label: 'Roles & Permissions', path: '/school/roles' },
+      { id: 'staff', label: 'Users', path: '/school/staff', icon: 'M17 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0' },
+      { id: 'roles', label: 'Roles', path: '/school/roles', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4' },
+      { id: 'permissions', label: 'Permissions', path: '/school/permissions', icon: 'M7.5 15.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM11 12l6-6 3 3-6 6M14 9l3 3' },
     ],
   },
   {
@@ -30,8 +31,8 @@ const modules = [
     label: 'Learning & Integrity',
     icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
     items: [
-      { id: 'plagiarism', label: 'Plagiarism Oversight', path: '/school/plagiarism' },
-      { id: 'library', label: 'Digital Library', path: '/school/library' },
+      { id: 'plagiarism', label: 'Plagiarism Oversight', path: '/school/plagiarism', icon: 'M11 11a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35M11 8v6M8 11h6' },
+      { id: 'library', label: 'Digital Library', path: '/school/library', icon: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' },
     ],
   },
 ];
@@ -184,12 +185,13 @@ export const SchoolAdminDashboardLayout = () => {
 
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-[#1b1e26] flex flex-col fixed inset-y-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
+        className={`bg-[#0E1412] flex flex-col fixed inset-y-0 left-0 z-50 lg:static lg:z-auto transition-all duration-300 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } ${collapsed ? 'lg:w-[84px]' : 'lg:w-72'} w-72`}
       >
         {/* Brand */}
-        <div className="px-5 pt-5 pb-3 shrink-0">
+        <div className="px-5 pt-5 pb-3 shrink-0 relative overflow-hidden">
+          <div className="absolute -top-12 -left-12 w-40 h-40 rounded-full bg-gradient-to-br from-[#10B981]/20 to-[#6EE7B7]/10 blur-3xl pointer-events-none" />
           <div className="flex items-center justify-between">
             <BrandLockup hideText={collapsed} size={36} />
             <button
@@ -213,7 +215,7 @@ export const SchoolAdminDashboardLayout = () => {
             className={({ isActive: active }) =>
               `group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200 ${
                 active
-                  ? 'bg-accent text-[#1b1e26] font-semibold shadow-sm'
+                  ? 'bg-gradient-to-br from-[#10B981] to-[#6EE7B7] text-white font-semibold shadow-sm shadow-emerald-500/20'
                   : 'text-white/60 hover:text-white hover:bg-white/[0.06] font-medium'
               }`
             }
@@ -221,7 +223,7 @@ export const SchoolAdminDashboardLayout = () => {
             <svg className="w-5 h-5 shrink-0 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span className="truncate text-[13px]">Dashboard</span>
+            <span className="text-[13px]">Dashboard</span>
           </NavLink>
 
           {modules.map((mod) => {
@@ -240,7 +242,7 @@ export const SchoolAdminDashboardLayout = () => {
                     railMode ? 'lg:justify-center' : 'justify-between'
                   } ${
                     railMode && anyChildActive
-                      ? 'bg-accent text-[#1b1e26] shadow-sm'
+                      ? 'bg-gradient-to-br from-[#10B981] to-[#6EE7B7] text-white shadow-sm shadow-emerald-500/20'
                       : expanded && !railMode
                       ? 'text-white bg-white/[0.06]'
                       : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
@@ -250,7 +252,7 @@ export const SchoolAdminDashboardLayout = () => {
                     <svg className="w-5 h-5 shrink-0 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d={mod.icon} />
                     </svg>
-                    {!railMode && <span className="truncate text-[13px] font-semibold">{mod.label}</span>}
+                    {!railMode && <span className="text-[13px] font-semibold">{mod.label}</span>}
                   </span>
                   {!railMode && (
                     <svg
@@ -277,13 +279,15 @@ export const SchoolAdminDashboardLayout = () => {
                           to={item.path}
                           onClick={() => setMobileOpen(false)}
                           className={`group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-all duration-200 ${
-                            active
-                              ? 'bg-accent text-[#1b1e26] font-semibold shadow-sm'
-                              : 'text-white/50 hover:text-white hover:bg-white/[0.06] font-medium'
-                          }`}
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${active ? 'bg-[#1b1e26]' : 'bg-white/20 group-hover:bg-accent'}`} />
-                          <span className="truncate">{item.label}</span>
+                              active
+                               ? 'bg-gradient-to-br from-[#10B981] to-[#6EE7B7] text-white font-semibold shadow-sm shadow-emerald-500/20'
+                               : 'text-white/50 hover:text-white hover:bg-white/[0.06] font-medium'
+                           }`}
+                         >
+                            <svg className="w-4 h-4 shrink-0 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <path d={item.icon} />
+                            </svg>
+                           <span>{item.label}</span>
                         </NavLink>
                       );
                     })}
@@ -297,14 +301,14 @@ export const SchoolAdminDashboardLayout = () => {
         {/* Bottom entity card */}
         {!collapsed && (
           <div className="p-3.5 shrink-0">
-            <div className="rounded-2xl bg-accent p-4 relative overflow-hidden">
+            <div className="rounded-2xl bg-gradient-to-br from-[#10B981] to-[#6EE7B7] p-4 relative overflow-hidden">
               <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/20" />
               <div className="relative">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#1b1e26] animate-pulse" />
-                  <p className="text-[11px] font-bold text-[#1b1e26] uppercase tracking-wide truncate">{entityName}</p>
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <p className="text-[11px] font-bold text-white uppercase tracking-wide truncate">{entityName}</p>
                 </div>
-                <p className="text-xs text-[#1b1e26]/70 mt-1 font-medium">
+                <p className="text-xs text-white/70 mt-1 font-medium">
                   {user?.entityType ? `${user.entityType.charAt(0)}${user.entityType.slice(1).toLowerCase()} institution` : 'Entity portal'}
                 </p>
               </div>
@@ -318,13 +322,13 @@ export const SchoolAdminDashboardLayout = () => {
 
         {/* Topbar */}
         <header className="h-[72px] shrink-0 bg-white border-b border-gray-100 flex items-center gap-4 px-4 sm:px-6">
-          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-gray-500 hover:text-[#1b1e26] p-1" aria-label="Open menu">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-gray-500 hover:text-[#0E1412] p-1" aria-label="Open menu">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" /></svg>
           </button>
 
           <button
             onClick={() => setCollapsed((c) => !c)}
-            className="hidden lg:flex text-gray-400 hover:text-[#1b1e26] hover:bg-gray-100 w-9 h-9 rounded-lg items-center justify-center transition-colors"
+            className="hidden lg:flex text-gray-400 hover:text-[#0E1412] hover:bg-gray-100 w-9 h-9 rounded-lg items-center justify-center transition-colors"
             aria-label="Toggle sidebar"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" /></svg>
@@ -347,7 +351,7 @@ export const SchoolAdminDashboardLayout = () => {
               <input
                 type="text"
                 placeholder="Search students, staff, courses…"
-                className="w-full rounded-xl bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-800 placeholder-gray-400 outline-none border border-transparent focus:bg-white focus:border-[#1b1e26]/15 focus:ring-4 focus:ring-[#1b1e26]/5 transition-all"
+                className="w-full rounded-xl bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-800 placeholder-gray-400 outline-none border border-transparent focus:bg-white focus:border-[#0E1412]/15 focus:ring-4 focus:ring-[#0E1412]/5 transition-all"
               />
             </div>
           </div>
@@ -358,7 +362,7 @@ export const SchoolAdminDashboardLayout = () => {
           {/* Profile */}
           <div className="relative" ref={profileRef}>
             <button onClick={() => setProfileOpen((o) => !o)} className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-xl hover:bg-gray-100 transition-colors">
-              <span className="w-9 h-9 rounded-full bg-[#1b1e26] text-white text-xs font-bold flex items-center justify-center">
+              <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10B981] to-[#6EE7B7] text-white text-xs font-bold flex items-center justify-center">
                 {initialsOf(user?.name || user?.username)}
               </span>
               <div className="hidden sm:block text-left">
@@ -371,7 +375,7 @@ export const SchoolAdminDashboardLayout = () => {
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                 <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-[#1b1e26] text-accent text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-10 h-10 rounded-full bg-gradient-to-br from-[#10B981] to-[#6EE7B7] text-white text-xs font-bold flex items-center justify-center shrink-0">
                     {initialsOf(user?.name || user?.username)}
                   </span>
                   <div className="min-w-0">

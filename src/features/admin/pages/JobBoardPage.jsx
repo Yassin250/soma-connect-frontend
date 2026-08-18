@@ -11,8 +11,8 @@ const STATUS_STYLE = {
 };
 
 const TYPE_STYLE = {
-  'full-time': 'bg-[#d0f24a]/20 text-[#5b6b12] border-[#d0f24a]/50',
-  'part-time': 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/70 border-[#1b1e26]/10',
+  'full-time': 'bg-[#8B5CF6]/20 text-white border-[#8B5CF6]/50',
+  'part-time': 'bg-[#120E1A]/[0.06] text-[#120E1A]/70 border-[#120E1A]/10',
   contract: 'bg-amber-50 text-amber-700 border-amber-200',
   internship: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   remote: 'bg-purple-50 text-purple-700 border-purple-200',
@@ -75,7 +75,7 @@ export const JobBoardPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#5b6b12] bg-[#d0f24a]/20 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
             Career Marketplace
           </span>
           <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">Job Board</h1>
@@ -87,7 +87,7 @@ export const JobBoardPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Listings', value: stats.total, icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', accent: 'border-l-[#d0f24a]', iconBg: 'bg-[#d0f24a]/20', iconColor: 'text-[#5b6b12]' },
+          { label: 'Total Listings', value: stats.total, icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', accent: 'border-l-[#8B5CF6]', iconBg: 'bg-[#8B5CF6]/20', iconColor: 'text-white' },
           { label: 'Published', value: stats.published, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
           { label: 'Featured', value: stats.featured, icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', accent: 'border-l-purple-500', iconBg: 'bg-purple-50', iconColor: 'text-purple-600' },
         ].map((card, idx) => (
@@ -117,7 +117,7 @@ export const JobBoardPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search jobs..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#d0f24a] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#8B5CF6] transition-colors"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -127,7 +127,7 @@ export const JobBoardPage = () => {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all capitalize ${
                 statusFilter === s
-                  ? 'bg-[#1b1e26] text-white border-[#1b1e26] shadow-sm'
+                  ? 'bg-[#120E1A] text-white border-[#120E1A] shadow-sm'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
             >
@@ -154,20 +154,20 @@ export const JobBoardPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#1b1e26]/[0.06] bg-[#f4f6f8]">
+                <tr className="border-b border-[#120E1A]/[0.06] bg-[#f4f6f8]">
                   {['Title', 'Employer', 'Type', 'Status', 'Location', 'Posted'].map((h) => (
-                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#1b1e26]/45 whitespace-nowrap">{h}</th>
+                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#120E1A]/45 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {jobs.map((j) => (
-                  <tr key={j.id} className="hover:bg-[#d0f24a]/[0.08] transition-colors">
+                  <tr key={j.id} className="hover:bg-[#8B5CF6]/[0.08] transition-colors">
                     <td className="px-4 py-2.5">
                       <p className="text-[13px] font-semibold text-slate-900">{j.title}</p>
                       {j.department && <p className="text-xs text-slate-400 mt-0.5">{j.department}</p>}
                     </td>
-                    <td className="px-4 py-2.5 text-[13px] text-[#1b1e26]/80">{j.employer || j.company}</td>
+                    <td className="px-4 py-2.5 text-[13px] text-[#120E1A]/80">{j.employer || j.company}</td>
                     <td className="px-4 py-2.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${TYPE_STYLE[j.type] || TYPE_STYLE['full-time']}`}>
                         {j.type || 'full-time'}

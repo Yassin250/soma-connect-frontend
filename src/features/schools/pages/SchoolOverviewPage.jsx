@@ -107,13 +107,14 @@ export const SchoolOverviewPage = () => {
             key={s.label}
             className={`group rounded-2xl p-5 border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
               s.featured
-                ? 'bg-[#1b1e26] border-[#1b1e26] text-white'
+                ? 'bg-gradient-to-br from-[#10B981] to-[#6EE7B7] border-transparent text-white relative overflow-hidden'
                 : 'bg-white border-[#1b1e26]/[0.06] shadow-sm'
             }`}
           >
+            {s.featured && <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/10 pointer-events-none" />}
             <div className="flex items-start justify-between">
               <span className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                s.featured ? 'bg-accent text-[#1b1e26]' : 'bg-accent/20 text-[#1b1e26]'
+                s.featured ? 'bg-white/20 text-white' : 'bg-[#10B981]/20 text-[#10B981]'
               }`}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={s.icon} />
@@ -139,9 +140,9 @@ export const SchoolOverviewPage = () => {
             <Link
               key={a.path}
               to={a.path}
-              className="group flex items-center gap-3.5 rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-4 transition-all duration-200 hover:border-accent hover:shadow-md"
+              className="group flex items-center gap-3.5 rounded-2xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-4 transition-all duration-200 hover:border-[#10B981] hover:shadow-md hover:shadow-emerald-500/10"
             >
-              <span className="w-11 h-11 rounded-xl bg-[#f3f4f6] group-hover:bg-accent/25 text-[#1b1e26] flex items-center justify-center shrink-0 transition-colors">
+              <span className="w-11 h-11 rounded-xl bg-[#f3f4f6] group-hover:bg-[#10B981]/15 text-[#1b1e26] flex items-center justify-center shrink-0 transition-colors">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={a.icon} />
                 </svg>
@@ -159,8 +160,8 @@ export const SchoolOverviewPage = () => {
       </div>
 
       {/* Coming-soon strip */}
-      <div className="rounded-2xl border border-dashed border-[#1b1e26]/15 bg-white/60 p-5 flex items-center gap-4">
-        <span className="w-10 h-10 rounded-xl bg-accent/20 text-[#1b1e26] flex items-center justify-center shrink-0">
+      <div className="rounded-2xl border border-dashed border-[#0E1412]/15 bg-white/60 p-5 flex items-center gap-4">
+        <span className="w-10 h-10 rounded-xl bg-[#10B981]/20 text-[#10B981] flex items-center justify-center shrink-0">
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>

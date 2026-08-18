@@ -93,7 +93,7 @@ export const LecturerNotificationsPage = () => {
           </p>
         </div>
         {unreadCount > 0 && (
-          <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1b1e26] text-white text-xs font-semibold hover:bg-black transition-colors active:scale-[0.97]">
+          <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B0E17] text-white text-xs font-semibold hover:bg-black transition-colors active:scale-[0.97]">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Mark all read
           </button>
@@ -107,7 +107,7 @@ export const LecturerNotificationsPage = () => {
             onClick={() => setFilter(t.id)}
             className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
               filter === t.id
-                ? 'bg-[#1b1e26] text-white shadow-md'
+                ? 'bg-[#0B0E17] text-white shadow-md'
                 : 'bg-white text-[#1b1e26]/55 border border-gray-200 hover:text-[#1b1e26] hover:border-gray-300'
             }`}
           >
@@ -131,7 +131,7 @@ export const LecturerNotificationsPage = () => {
             <svg className="w-7 h-7 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
           <p className="text-sm text-gray-500 mb-4">{error}</p>
-          <button onClick={load} className="px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors">Try again</button>
+          <button onClick={load} className="px-5 py-2.5 rounded-xl bg-[#0B0E17] text-white text-sm font-semibold hover:bg-black transition-colors">Try again</button>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-12 text-center">
@@ -156,7 +156,7 @@ export const LecturerNotificationsPage = () => {
                   transition={{ delay: i * 0.025, duration: 0.25 }}
                   className={`rounded-2xl bg-white p-5 transition-all hover:shadow-sm ${
                     !n.read
-                      ? 'border-l-4 border-l-[#1b1e26] border-t border-r border-b border-gray-100 shadow-[0_4px_20px_rgba(27,30,38,0.06)]'
+                      ? 'border-l-4 border-l-[#0B0E17] border-t border-r border-b border-gray-100 shadow-[0_4px_20px_rgba(11,14,23,0.06)]'
                       : 'border border-gray-100'
                   }`}
                 >
@@ -172,7 +172,7 @@ export const LecturerNotificationsPage = () => {
                       {n.body && <p className="text-xs text-gray-500 mt-1 leading-relaxed">{n.body}</p>}
                       <div className="flex items-center gap-3 mt-3">
                         {n.link && (
-                          <Link to={n.link} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1b1e26] text-white text-[11px] font-semibold hover:bg-black transition-colors">
+                          <Link to={n.link} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0B0E17] text-white text-[11px] font-semibold hover:bg-black transition-colors">
                             View
                           </Link>
                         )}

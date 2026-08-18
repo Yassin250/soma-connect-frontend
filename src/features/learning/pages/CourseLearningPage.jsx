@@ -202,7 +202,7 @@ const RichTextBlocks = ({ blocks }) => (
       if (b.type === 'h1') {
         // Full-width banner heading — the reference's coloured course band.
         return (
-          <div key={i} className="rounded-xl bg-[#1b1e26] px-6 py-4 clear-both">
+          <div key={i} className="rounded-xl bg-[#171717] px-6 py-4 clear-both">
             <h2 className="text-lg font-semibold text-white tracking-tight">
               <span className="inline-block w-2 h-2 rounded-full bg-accent mr-2.5 align-middle" />
               {b.text}
@@ -232,7 +232,7 @@ const RichTextBlocks = ({ blocks }) => (
       if (b.type === 'callout') {
         return (
           <div key={i} className="clear-both flex items-start gap-3 rounded-xl border border-accent/60 bg-accent/10 px-4 py-4">
-            <span className="w-6 h-6 rounded-full bg-[#1b1e26] text-accent flex items-center justify-center shrink-0 mt-0.5">
+            <span className="w-6 h-6 rounded-full bg-[#171717] text-accent flex items-center justify-center shrink-0 mt-0.5">
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 16v-4m0-4h.01" strokeLinecap="round" /><circle cx="12" cy="12" r="9" /></svg>
             </span>
             <p className="text-[14px] text-[#1b1e26]/80 leading-relaxed font-medium"><Inline text={b.text} /></p>
@@ -342,11 +342,11 @@ const AssignmentSubmit = ({ courseId, itemId, onDone }) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={8}
-        className="w-full rounded-xl border border-gray-200 p-4 text-sm text-[#1b1e26] outline-none focus:border-[#1b1e26]/30 focus:ring-2 focus:ring-[#1b1e26]/5 transition-all resize-y"
+        className="w-full rounded-xl border border-gray-200 p-4 text-sm text-[#1b1e26] outline-none focus:border-[#171717]/30 focus:ring-2 focus:ring-[#171717]/5 transition-all resize-y"
         placeholder="Type your assignment here…"
       />
       <div className="mt-4 flex justify-end">
-        <button onClick={handleSubmit} disabled={!content.trim() || submitting} className="px-6 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50">
+        <button onClick={handleSubmit} disabled={!content.trim() || submitting} className="px-6 py-2.5 rounded-xl bg-[#171717] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50">
           {submitting ? 'Submitting…' : 'Submit assignment'}
         </button>
       </div>
@@ -458,7 +458,7 @@ const AttachmentCard = ({ url, name }) => (
 );
 
 const TONE_BG = {
-  default: 'from-[#1b1e26] to-[#343b49]',
+  default: 'from-[#171717] to-[#1c1c1c]',
   reading: 'from-sky-600 to-indigo-700',
   quiz: 'from-violet-600 to-fuchsia-700',
   assignment: 'from-amber-500 to-orange-600',
@@ -665,7 +665,7 @@ export const CourseLearningPage = () => {
           <h2 className="text-lg font-semibold text-[#1b1e26]">Course unavailable</h2>
           <p className="text-sm text-gray-500 mt-1 mb-5">{error || 'This course could not be loaded.'}</p>
           <div className="flex items-center justify-center gap-2.5">
-            <Link to="/learning/dashboard" className="inline-block px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors">My courses</Link>
+            <Link to="/learning/dashboard" className="inline-block px-5 py-2.5 rounded-xl bg-[#171717] text-white text-sm font-semibold hover:bg-black transition-colors">My courses</Link>
             <Link to="/" className="inline-block px-5 py-2.5 rounded-xl border border-gray-200 bg-white text-[#1b1e26] text-sm font-semibold hover:bg-gray-50 transition-colors">Back to home</Link>
           </div>
           <button onClick={signOut} className="mt-4 text-xs font-semibold text-gray-400 hover:text-[#1b1e26] underline underline-offset-2 transition-colors">
@@ -695,7 +695,7 @@ export const CourseLearningPage = () => {
               : `Your enrollment in ${course.title} has ended.`}
           </p>
           <div className="flex items-center justify-center gap-2.5">
-            <Link to="/learning/dashboard" className="inline-block px-5 py-2.5 rounded-xl bg-[#1b1e26] text-white text-sm font-semibold hover:bg-black transition-colors">My courses</Link>
+            <Link to="/learning/dashboard" className="inline-block px-5 py-2.5 rounded-xl bg-[#171717] text-white text-sm font-semibold hover:bg-black transition-colors">My courses</Link>
             <Link to="/" className="inline-block px-5 py-2.5 rounded-xl border border-gray-200 bg-white text-[#1b1e26] text-sm font-semibold hover:bg-gray-50 transition-colors">Back to home</Link>
           </div>
         </div>
@@ -779,7 +779,7 @@ export const CourseLearningPage = () => {
                           className="w-full px-3.5 py-3 flex items-center gap-2.5 text-left hover:bg-gray-50/70 transition-colors"
                         >
                           <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0 ${
-                            st.complete ? 'bg-accent text-[#1b1e26]' : st.locked ? 'bg-gray-100 text-gray-400' : 'bg-[#1b1e26] text-accent'
+                            st.complete ? 'bg-accent text-[#1b1e26]' : st.locked ? 'bg-gray-100 text-gray-400' : 'bg-[#171717] text-accent'
                           }`}>
                             {st.complete ? (
                               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -794,7 +794,7 @@ export const CourseLearningPage = () => {
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 tabular-nums ${
                             st.complete ? 'bg-accent text-[#1b1e26]'
                               : st.locked ? 'bg-gray-100 text-gray-400'
-                              : 'bg-[#1b1e26]/[0.05] text-[#1b1e26]/60'
+                              : 'bg-[#171717]/[0.05] text-[#1b1e26]/60'
                           }`}>
                             {st.locked ? 'Locked' : `${st.total ? Math.round(((st.completed || 0) / st.total) * 100) : 0}%`}
                           </span>
@@ -818,7 +818,7 @@ export const CourseLearningPage = () => {
                                     }`}
                                   >
                                     <span className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                                      isDone ? 'bg-accent text-[#1b1e26]' : isActive ? 'bg-[#1b1e26] text-white' : 'bg-gray-100 text-gray-400'
+                                      isDone ? 'bg-accent text-[#1b1e26]' : isActive ? 'bg-[#171717] text-white' : 'bg-gray-100 text-gray-400'
                                     }`}>
                                       {isDone ? (
                                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -856,7 +856,7 @@ export const CourseLearningPage = () => {
         <main className="flex-1 min-w-0 overflow-y-auto flex flex-col">
           <div className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-10 py-8">
             {progress === 100 ? (
-              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 rounded-2xl bg-gradient-to-br from-[#1b1e26] to-[#343b49] text-white p-6 flex items-center gap-4">
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 rounded-2xl bg-gradient-to-br from-[#171717] to-[#1c1c1c] text-white p-6 flex items-center gap-4">
                 <span className="w-12 h-12 rounded-2xl bg-accent text-[#1b1e26] flex items-center justify-center shrink-0">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
@@ -936,7 +936,7 @@ export const CourseLearningPage = () => {
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
                   <button onClick={goNext} disabled={!hasNext}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1b1e26] text-white text-[13px] font-semibold hover:bg-black transition-colors disabled:opacity-40 disabled:pointer-events-none">
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#171717] text-white text-[13px] font-semibold hover:bg-black transition-colors disabled:opacity-40 disabled:pointer-events-none">
                     Next
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>

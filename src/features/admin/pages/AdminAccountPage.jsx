@@ -7,14 +7,14 @@ import { authService } from '../../../services/api';
 const initialsOf = (name) =>
   (name || 'User').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-const fieldLabelClass = 'block text-[10px] font-bold text-[#1b1e26]/45 uppercase tracking-[0.14em] mb-1';
+const fieldLabelClass = 'block text-[10px] font-bold text-[#120E1A]/45 uppercase tracking-[0.14em] mb-1';
 const inputClass =
-  'w-full rounded-xl bg-white border border-[#1b1e26]/10 px-3.5 py-2.5 text-sm text-[#1b1e26] placeholder-gray-400 focus:border-[#d0f24a] focus:ring-4 focus:ring-[#d0f24a]/20 focus:outline-none transition-all';
+  'w-full rounded-xl bg-white border border-[#120E1A]/10 px-3.5 py-2.5 text-sm text-[#120E1A] placeholder-gray-400 focus:border-[#8B5CF6] focus:ring-4 focus:ring-[#8B5CF6]/20 focus:outline-none transition-all';
 
 const DetailCard = ({ label, value }) => (
-  <div className="rounded-xl bg-[#f7f8fa] border border-[#1b1e26]/[0.05] px-4 py-3.5">
+  <div className="rounded-xl bg-[#f7f8fa] border border-[#120E1A]/[0.05] px-4 py-3.5">
     <p className={fieldLabelClass}>{label}</p>
-    <p className="text-sm font-semibold text-[#1b1e26] truncate">{value || '—'}</p>
+    <p className="text-sm font-semibold text-[#120E1A] truncate">{value || '—'}</p>
   </div>
 );
 
@@ -86,11 +86,11 @@ export const AdminAccountPage = () => {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Identity header */}
       <div className="flex items-center gap-5">
-        <span className="w-20 h-20 rounded-[1.75rem] bg-[#1b1e26] text-[#d0f24a] text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#1b1e26]/15">
+        <span className="w-20 h-20 rounded-[1.75rem] bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg shadow-[#8B5CF6]/40">
           {initialsOf(user?.name || user?.username)}
         </span>
         <div className="min-w-0">
-          <h1 className="text-[19px] font-medium text-[#1b1e26] tracking-tight leading-tight truncate">
+          <h1 className="text-[19px] font-medium text-[#120E1A] tracking-tight leading-tight truncate">
             {user?.name || user?.username || 'Administrator'}
           </h1>
           <p className="text-[12px] text-gray-500 mt-0.5 flex items-center gap-1.5 truncate">
@@ -103,9 +103,9 @@ export const AdminAccountPage = () => {
       </div>
 
       {/* Card with tab bar */}
-      <div className="bg-white rounded-3xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#120E1A]/[0.06] shadow-sm overflow-hidden">
         {/* Tab track */}
-        <div className="bg-[#f7f8fa] border-b border-[#1b1e26]/[0.05] p-2 flex items-center gap-1.5">
+        <div className="bg-[#f7f8fa] border-b border-[#120E1A]/[0.05] p-2 flex items-center gap-1.5">
           {TABS.map((t) => {
             const active = activeTab === t.id;
             return (
@@ -115,8 +115,8 @@ export const AdminAccountPage = () => {
                 onClick={() => setTab(t.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   active
-                    ? 'bg-[#1b1e26] text-white shadow-sm'
-                    : 'text-gray-500 hover:text-[#1b1e26] hover:bg-white'
+                    ? 'bg-[#120E1A] text-white shadow-sm'
+                    : 'text-gray-500 hover:text-[#120E1A] hover:bg-white'
                 }`}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -132,7 +132,7 @@ export const AdminAccountPage = () => {
         {activeTab === 'overview' && (
           <div className="p-6 sm:p-8 space-y-5 animate-in fade-in slide-in-from-bottom-1 duration-300" key="overview">
             <div>
-              <h2 className="text-lg font-semibold text-[#1b1e26] tracking-tight">Personal details</h2>
+              <h2 className="text-lg font-semibold text-[#120E1A] tracking-tight">Personal details</h2>
               <p className="text-sm text-gray-400 mt-0.5">Your platform console account identity.</p>
             </div>
 
@@ -150,7 +150,7 @@ export const AdminAccountPage = () => {
         {activeTab === 'password' && (
           <div className="p-6 sm:p-8 animate-in fade-in slide-in-from-bottom-1 duration-300" key="password">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-[#1b1e26] tracking-tight">Change password</h2>
+              <h2 className="text-lg font-semibold text-[#120E1A] tracking-tight">Change password</h2>
               <p className="text-sm text-gray-400 mt-0.5">Update your credentials to keep the console secure.</p>
             </div>
 
@@ -230,7 +230,7 @@ export const AdminAccountPage = () => {
                 <button
                   type="submit"
                   disabled={pwLoading}
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#d0f24a] text-[#1b1e26] hover:bg-[#c4e83a] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#8B5CF6] text-white hover:bg-[#C4B5FD] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
                 >
                   {pwLoading ? 'Updating…' : 'Update Password'}
                 </button>

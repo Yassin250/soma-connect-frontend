@@ -83,7 +83,7 @@ const LecturerCoursesPage = () => {
         </div>
         <button
           onClick={() => navigate('/lecturer/courses/new')}
-          className="bg-[#1b1e26] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98]"
+          className="bg-[#0B0E17] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98]"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
@@ -92,7 +92,7 @@ const LecturerCoursesPage = () => {
         </button>
       </div>
 
-      <div className="inline-flex rounded-xl bg-white border border-[#1b1e26]/[0.06] shadow-sm p-1 gap-1">
+      <div className="inline-flex rounded-xl bg-white border border-[#0B0E17]/[0.06] shadow-sm p-1 gap-1">
         {FILTERS.map((f) => {
           const active = filter === f.id;
           return (
@@ -100,12 +100,12 @@ const LecturerCoursesPage = () => {
               key={f.id}
               onClick={() => setFilter(f.id)}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-150 ${
-                active ? 'bg-[#1b1e26] text-white shadow-sm' : 'text-gray-400 hover:text-[#1b1e26] hover:bg-[#f7f8fa]'
+                active ? 'bg-[#0B0E17] text-white shadow-sm' : 'text-gray-400 hover:text-[#1b1e26] hover:bg-[#f7f8fa]'
               }`}
             >
               {f.label}
               <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                active ? 'bg-accent text-[#1b1e26]' : 'bg-[#1b1e26]/[0.06] text-[#1b1e26]/50'
+                active ? 'bg-accent text-[#1b1e26]' : 'bg-[#0B0E17]/[0.06] text-[#1b1e26]/50'
               }`}>
                 {counts[f.id] || 0}
               </span>
@@ -119,7 +119,7 @@ const LecturerCoursesPage = () => {
           {[0, 1, 2].map((i) => <div key={i} className="h-64 bg-gray-200/70 rounded-2xl" />)}
         </div>
       ) : visible.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-[#1b1e26]/15 p-14 text-center">
+        <div className="bg-white rounded-2xl border border-dashed border-[#0B0E17]/15 p-14 text-center">
           <span className="w-14 h-14 rounded-2xl bg-accent/20 text-[#1b1e26] flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
@@ -147,13 +147,13 @@ const LecturerCoursesPage = () => {
           {visible.map((c) => (
             <div
               key={c.id}
-              className="group bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col"
+              className="group bg-white rounded-xl border border-[#0B0E17]/[0.06] shadow-sm overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col"
             >
               <Link to={`/lecturer/courses/${c.id}/edit`} className="relative block h-[68px] shrink-0">
                 {c.coverImageUrl ? (
                   <img src={c.coverImageUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#1b1e26] to-[#343b49] flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-[#0B0E17] to-[#1a1f2e] flex items-center justify-center">
                     <span className="w-7 h-7 rounded-lg bg-accent text-[#1b1e26] text-[11px] font-bold flex items-center justify-center">
                       {(c.title || '?').charAt(0).toUpperCase()}
                     </span>
@@ -176,11 +176,11 @@ const LecturerCoursesPage = () => {
                 )}
 
                 <div className="flex flex-wrap gap-1 mt-2">
-                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
+                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#0B0E17]/[0.06]">
                     {c.moduleCount} module{c.moduleCount === 1 ? '' : 's'}
                   </span>
                   {c.estimatedHours && (
-                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#1b1e26]/[0.06]">
+                    <span className="px-1.5 py-0.5 rounded-md text-[9px] font-semibold bg-[#f7f8fa] text-[#1b1e26]/70 border border-[#0B0E17]/[0.06]">
                       {c.estimatedHours}h
                     </span>
                   )}
@@ -191,7 +191,7 @@ const LecturerCoursesPage = () => {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#1b1e26]/[0.05]">
+                <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#0B0E17]/[0.05]">
                   <span className="text-[10px] text-gray-400 truncate">You</span>
                   <RowActionMenu
                     primary={{ label: 'Edit', icon: DockIcons.edit, onClick: () => navigate(`/lecturer/courses/${c.id}/edit`)}}

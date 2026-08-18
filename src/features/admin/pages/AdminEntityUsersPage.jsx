@@ -5,13 +5,13 @@ import { useToast } from '../../../context/ToastContext';
 import { DataTable } from '../../../components/shared/DataTable';
 
 const filterFieldClass =
-  'w-full text-[12.5px] px-3 py-1.5 rounded-lg border border-[#1b1e26]/10 bg-[#f7f8fa] text-[#1b1e26] focus:bg-white focus:ring-2 focus:ring-[#d0f24a]/25 focus:border-[#d0f24a] focus:outline-none transition-all';
+  'w-full text-[12.5px] px-3 py-1.5 rounded-lg border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] focus:bg-white focus:ring-2 focus:ring-[#8B5CF6]/25 focus:border-[#8B5CF6] focus:outline-none transition-all';
 
 // Deterministic avatar tint from the name — same palette used across user tables.
 const AVATAR_STYLES = [
-  'bg-[#d0f24a]/20 text-[#5b6b12]', 'bg-rose-100 text-rose-700',
+  'bg-[#8B5CF6]/20 text-[#FFFFFF]', 'bg-rose-100 text-rose-700',
   'bg-amber-100 text-amber-700', 'bg-emerald-100 text-emerald-700',
-  'bg-[#1b1e26]/[0.06] text-[#1b1e26]/70', 'bg-violet-100 text-violet-700',
+  'bg-[#120E1A]/[0.06] text-[#120E1A]/70', 'bg-violet-100 text-violet-700',
   'bg-fuchsia-100 text-fuchsia-700', 'bg-teal-100 text-teal-700',
 ];
 const initialsOf = (name) =>
@@ -25,7 +25,7 @@ const avatarStyle = (seed) => {
 
 const STATUS_STYLES = {
   Active: { pill: 'bg-emerald-50 text-emerald-700', dot: 'bg-emerald-500' },
-  Inactive: { pill: 'bg-[#1b1e26]/[0.05] text-[#1b1e26]/45', dot: 'bg-[#1b1e26]/30' },
+  Inactive: { pill: 'bg-[#120E1A]/[0.05] text-[#120E1A]/45', dot: 'bg-[#120E1A]/30' },
   Locked: { pill: 'bg-amber-50 text-amber-700', dot: 'bg-amber-500' },
 };
 const StatusPill = ({ status }) => {
@@ -120,7 +120,7 @@ export const AdminEntityUsersPage = () => {
               {initialsOf(label)}
             </span>
             <div className="min-w-0">
-              <p className="text-[13px] font-medium text-[#1b1e26]/90 truncate max-w-[220px]">{label}</p>
+              <p className="text-[13px] font-medium text-[#120E1A]/90 truncate max-w-[220px]">{label}</p>
               <p className="text-[11px] text-gray-400 truncate">{u.username ? `@${u.username}` : '—'}</p>
             </div>
           </div>
@@ -129,17 +129,17 @@ export const AdminEntityUsersPage = () => {
     },
     {
       key: 'email', header: 'Email', sortable: true, sortValue: (u) => u.email || '',
-      render: (u) => <span className="text-[13px] text-[#1b1e26]/70 truncate max-w-[240px] inline-block align-middle">{u.email || '—'}</span>,
+      render: (u) => <span className="text-[13px] text-[#120E1A]/70 truncate max-w-[240px] inline-block align-middle">{u.email || '—'}</span>,
     },
     {
       key: 'roles', header: 'Roles', sortable: true, sortValue: (u) => roleNamesOf(u).join(', '),
       render: (u) => {
         const roles = roleNamesOf(u);
-        if (roles.length === 0) return <span className="text-[13px] text-[#1b1e26]/30">—</span>;
+        if (roles.length === 0) return <span className="text-[13px] text-[#120E1A]/30">—</span>;
         return (
           <div className="flex flex-wrap gap-1">
             {roles.slice(0, 3).map((r) => (
-              <span key={r} className="px-2 py-0.5 rounded-full bg-[#d0f24a]/20 text-[#5b6b12] text-[10px] font-semibold">{r}</span>
+              <span key={r} className="px-2 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#FFFFFF] text-[10px] font-semibold">{r}</span>
             ))}
             {roles.length > 3 && <span className="text-[10px] text-gray-400">+{roles.length - 3}</span>}
           </div>
@@ -158,7 +158,7 @@ export const AdminEntityUsersPage = () => {
       <div>
         <button
           onClick={() => navigate('/admin/entities')}
-          className="flex w-fit items-center gap-1.5 text-[12px] font-medium text-[#1b1e26]/50 hover:text-[#1b1e26] transition-colors mb-3"
+          className="flex w-fit items-center gap-1.5 text-[12px] font-medium text-[#120E1A]/50 hover:text-[#120E1A] transition-colors mb-3"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Back to Entities
@@ -166,7 +166,7 @@ export const AdminEntityUsersPage = () => {
         <span className="block text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">
           Institution{entity?.code ? ` · ${entity.code}` : ''}
         </span>
-        <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#1b1e26]">
+        <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#120E1A]">
           {entity ? `${entity.name} — Users` : 'Users'}
         </h1>
         <p className="text-[12px] text-gray-500 mt-0.5">
@@ -177,11 +177,11 @@ export const AdminEntityUsersPage = () => {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white rounded-xl border border-[#1b1e26]/[0.06] shadow-sm px-3 py-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-2">
+      <div className="bg-white rounded-xl border border-[#120E1A]/[0.06] shadow-sm px-3 py-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-2">
         <div className="w-[260px] flex flex-col gap-1">
-          <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">Search</label>
+          <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Search</label>
           <div className="relative">
-            <svg className="w-4 h-4 text-[#1b1e26]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" />
             </svg>
             <input
@@ -195,7 +195,7 @@ export const AdminEntityUsersPage = () => {
         </div>
 
         <div className="w-[170px] flex flex-col gap-1">
-          <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">Role</label>
+          <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Role</label>
           <select className={`${filterFieldClass} cursor-pointer`} value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
             <option value="ALL">All roles</option>
             {roleOptions.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
@@ -203,7 +203,7 @@ export const AdminEntityUsersPage = () => {
         </div>
 
         <div className="w-[140px] flex flex-col gap-1">
-          <label className="text-[10px] font-semibold text-[#1b1e26]/45 uppercase tracking-[0.12em]">Status</label>
+          <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Status</label>
           <select className={`${filterFieldClass} cursor-pointer`} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="ALL">All</option>
             <option value="Active">Active</option>
@@ -216,7 +216,7 @@ export const AdminEntityUsersPage = () => {
         <button
           type="button"
           onClick={() => { setSearch(''); setRoleFilter('ALL'); setStatusFilter('ALL'); }}
-          className="text-[#1b1e26]/60 text-[12.5px] font-medium px-4 py-1.5 rounded-lg border border-[#1b1e26]/10 hover:bg-[#f7f8fa] transition-colors"
+          className="text-[#120E1A]/60 text-[12.5px] font-medium px-4 py-1.5 rounded-lg border border-[#120E1A]/10 hover:bg-[#f7f8fa] transition-colors"
         >
           Reset
         </button>
