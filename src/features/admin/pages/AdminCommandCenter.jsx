@@ -164,13 +164,13 @@ export const AdminCommandCenter = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.16em] text-[#120E1A]/50 bg-[#8B5CF6]/40 px-2.5 py-1 rounded-full">
+          <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.16em] text-[#0A0A0A]/50 bg-[#3D7FFF]/40 px-2.5 py-1 rounded-full">
             Global Oversight
           </span>
-          <h1 className="text-[19px] font-medium tracking-tight text-[#120E1A] mt-3">Command Center</h1>
+          <h1 className="text-[19px] font-medium tracking-tight text-[#0A0A0A] mt-3">Command Center</h1>
           <p className="text-[12px] text-gray-500 mt-1">Real-time platform health, growth, and user distribution.</p>
         </div>
-        <div className="flex items-center gap-2.5 text-xs font-semibold bg-[#8B5CF6] text-[white] rounded-2xl px-4 py-2.5 shadow-sm relative overflow-hidden">
+        <div className="flex items-center gap-2.5 text-xs font-semibold bg-[#3D7FFF] text-[white] rounded-2xl px-4 py-2.5 shadow-sm relative overflow-hidden">
           <span className="absolute -right-3 -bottom-3 w-14 h-14 rounded-full bg-white/25 pointer-events-none" />
           <span className="relative flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[white] animate-pulse shrink-0" />
@@ -188,17 +188,17 @@ export const AdminCommandCenter = () => {
           <div
             key={card.label}
             className={`relative rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md ${
-              card.accent ? 'bg-[#120E1A] border-[#120E1A]' : 'bg-white border-gray-100 shadow-sm'
+              card.accent ? 'bg-[#0A0A0A] border-[#0A0A0A]' : 'bg-white border-gray-100 shadow-sm'
             }`}
           >
             <div className="flex items-start justify-between">
-              <span className={`w-11 h-11 rounded-xl flex items-center justify-center ${card.accent ? 'bg-[#8B5CF6] text-white' : 'bg-[#f3f4f6] text-[#120E1A]'}`}>
+              <span className={`w-11 h-11 rounded-xl flex items-center justify-center ${card.accent ? 'bg-[#3D7FFF] text-white' : 'bg-[#f3f4f6] text-[#0A0A0A]'}`}>
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d={card.icon} />
                 </svg>
               </span>
             </div>
-            <p className={`text-3xl font-bold tabular-nums mt-4 ${card.accent ? 'text-white' : 'text-[#120E1A]'}`}>{card.value}</p>
+            <p className={`text-3xl font-bold tabular-nums mt-4 ${card.accent ? 'text-white' : 'text-[#0A0A0A]'}`}>{card.value}</p>
             <p className={`text-sm font-medium mt-0.5 ${card.accent ? 'text-white/80' : 'text-gray-600'}`}>{card.label}</p>
             <p className={`text-xs mt-2 ${card.accent ? 'text-white/50' : 'text-gray-400'}`}>{card.sub}</p>
           </div>
@@ -210,8 +210,8 @@ export const AdminCommandCenter = () => {
         {/* Activity feed */}
         <div className="lg:col-span-2 bg-white border border-gray-100 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
-            <h3 className="text-sm font-semibold text-[#120E1A]">Recent Activity</h3>
-            <Link to="/admin/audit-logs" className="text-xs font-medium text-gray-400 hover:text-[#120E1A] transition-colors">View all</Link>
+            <h3 className="text-sm font-semibold text-[#0A0A0A]">Recent Activity</h3>
+            <Link to="/admin/audit-logs" className="text-xs font-medium text-gray-400 hover:text-[#0A0A0A] transition-colors">View all</Link>
           </div>
           <div className="divide-y divide-gray-50">
             {recentActivity.length === 0 ? (
@@ -219,11 +219,11 @@ export const AdminCommandCenter = () => {
             ) : (
               recentActivity.map((act) => (
                 <div key={act.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-gray-50/60 transition-colors">
-                  <span className="w-9 h-9 rounded-xl bg-[#8B5CF6]/25 text-[#120E1A] flex items-center justify-center shrink-0">
+                  <span className="w-9 h-9 rounded-xl bg-[#3D7FFF]/25 text-[#0A0A0A] flex items-center justify-center shrink-0">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#120E1A] truncate">{act.action}</p>
+                    <p className="text-sm font-medium text-[#0A0A0A] truncate">{act.action}</p>
                     <p className="text-xs text-gray-400">{act.time}</p>
                   </div>
                   <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 bg-gray-100 px-2 py-1 rounded-full shrink-0">{act.type}</span>
@@ -236,7 +236,7 @@ export const AdminCommandCenter = () => {
         {/* Quick actions */}
         <div className="space-y-5">
           <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
-            <h3 className="text-sm font-semibold text-[#120E1A] mb-4">Admin Fast-Track</h3>
+            <h3 className="text-sm font-semibold text-[#0A0A0A] mb-4">Admin Fast-Track</h3>
             <div className="space-y-1.5">
               {quickLinks.map((link) => (
                 <Link
@@ -244,23 +244,23 @@ export const AdminCommandCenter = () => {
                   to={link.to}
                   className="group flex items-center gap-3.5 p-2.5 rounded-xl hover:bg-[#f3f4f6] transition-colors"
                 >
-                  <span className="w-10 h-10 rounded-xl bg-[#f3f4f6] group-hover:bg-[#8B5CF6] text-[#120E1A] group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <span className="w-10 h-10 rounded-xl bg-[#f3f4f6] group-hover:bg-[#3D7FFF] text-[#0A0A0A] group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={link.icon} /></svg>
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#120E1A]">{link.label}</p>
+                    <p className="text-sm font-semibold text-[#0A0A0A]">{link.label}</p>
                     <p className="text-[11px] text-gray-400 truncate">{link.desc}</p>
                   </div>
-                  <svg className="w-4 h-4 text-gray-300 group-hover:text-[#120E1A] ml-auto transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <svg className="w-4 h-4 text-gray-300 group-hover:text-[#0A0A0A] ml-auto transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </Link>
               ))}
             </div>
           </div>
 
           {/* Lime highlight */}
-          <div className="rounded-2xl bg-[#8B5CF6] p-6 relative overflow-hidden shadow-[0_8px_32px_rgba(139,92,246,0.25)]">
+          <div className="rounded-2xl bg-[#3D7FFF] p-6 relative overflow-hidden shadow-[0_8px_32px_rgba(61,127,255,0.25)]">
             <div className="absolute -bottom-10 -right-8 w-32 h-32 rounded-full bg-white/20 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-[#C4B5FD]/40 blur-2xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-[#63C7FF]/40 blur-2xl pointer-events-none" />
             <div className="relative">
               <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/60">Access control</p>
               <p className="text-xl font-bold text-white mt-2 leading-snug">
@@ -268,7 +268,7 @@ export const AdminCommandCenter = () => {
               </p>
               <Link
                 to="/admin/roles"
-                className="inline-flex items-center gap-2 mt-5 bg-[#120E1A] text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-black transition-all duration-200 hover:gap-2.5 shadow-md"
+                className="inline-flex items-center gap-2 mt-5 bg-[#0A0A0A] text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-black transition-all duration-200 hover:gap-2.5 shadow-md"
               >
                 Review access
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

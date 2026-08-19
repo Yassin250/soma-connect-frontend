@@ -4,13 +4,19 @@
 // self-registered learner has none and gets their own "My Courses" dashboard.
 export const dashboardPathForRoles = (user) => {
   const primaryRole = user?.roles?.[0]?.toUpperCase();
+  // A signed-in institution admin whose entity is pending or was rejected is
+  // held on the blocked screen — they cannot use the school portal until a
+  // super admin approves it.
+  if (primaryRole === 'ENTITY_ADMIN' || primaryRole === 'SCHOOL_ADMIN') {
+    if (user?.entityApprovalStatus === 'PENDING' || user?.entityApprovalStatus === 'REJECTED') {
+      return '/school/blocked';
+    }
+    return '/school/dashboard';
+  }
   switch (primaryRole) {
     case 'SUPER_ADMIN':
     case 'ADMIN':
       return '/admin/dashboard';
-    case 'ENTITY_ADMIN':
-    case 'SCHOOL_ADMIN':
-      return '/school/dashboard';
     case 'STUDENT':
       return '/learning/dashboard';
     case 'LECTURER':

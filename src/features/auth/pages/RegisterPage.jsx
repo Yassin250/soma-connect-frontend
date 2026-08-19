@@ -8,7 +8,7 @@ import { entityRegistrationService } from '../../../services/api';
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const MIN_LOADER_MS = 600;
 
-const Wordmark = ({ dark = false }) => <span style={{ '--clr-accent': '#8B5CF6' }}><BrandLockup dark={dark} /></span>;
+const Wordmark = ({ dark = false }) => <span style={{ '--clr-accent': '#3D7FFF' }}><BrandLockup dark={dark} /></span>;
 
 const ENTITY_CARDS = [
   {
@@ -56,7 +56,7 @@ const ENTITY_PLACEHOLDERS = {
 };
 
 const inputClass =
-  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 px-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:border-[#120E1A]/20 focus:ring-4 focus:ring-[#120E1A]/5';
+  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 px-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:border-[#0A0A0A]/20 focus:ring-4 focus:ring-[#0A0A0A]/5';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ export const RegisterPage = () => {
   const [registrationId, setRegistrationId] = useState(null);
   const [emailForOtp, setEmailForOtp] = useState('');
   const [otpValues, setOtpValues] = useState(Array(6).fill(''));
-  const [timeLeft, setTimeLeft] = useState(32);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [otpStatus, setOtpStatus] = useState('idle'); // 'idle', 'error', 'success'
   const inputRefs = useRef([]);
 
@@ -152,7 +152,7 @@ export const RegisterPage = () => {
       setRegistrationId(response.registrationId);
       setEmailForOtp(response.contactPersonEmail || payload.contactPersonEmail);
       setOtpValues(Array(6).fill(''));
-      setTimeLeft(32);
+      setTimeLeft(60);
       setOtpStatus('idle');
       setStep('VERIFY_OTP');
       setSuccessMessage('OTP sent successfully. Check your email.');
@@ -227,7 +227,7 @@ export const RegisterPage = () => {
     try {
       await entityRegistrationService.resendOtp({ registrationId });
       setOtpValues(Array(6).fill(''));
-      setTimeLeft(32);
+      setTimeLeft(60);
       inputRefs.current[0]?.focus();
       setSuccessMessage('OTP resent successfully.');
     } catch (error) {
@@ -339,7 +339,7 @@ export const RegisterPage = () => {
   };
 
   const getOtpInputClasses = () => {
-    const baseClasses = 'w-11 h-14 sm:w-12 border rounded-xl text-center text-xl font-semibold text-[#120E1A] caret-[#120E1A] outline-none transition-all duration-200';
+    const baseClasses = 'w-11 h-14 sm:w-12 border rounded-xl text-center text-xl font-semibold text-[#0A0A0A] caret-[#0A0A0A] outline-none transition-all duration-200';
 
     if (otpStatus === 'error') {
       return `${baseClasses} border-red-400 bg-red-50 text-red-600 animate-shake shadow-[0_0_10px_rgba(239,68,68,0.15)]`;
@@ -348,7 +348,7 @@ export const RegisterPage = () => {
       return `${baseClasses} border-emerald-500 bg-emerald-50 text-emerald-700 shadow-[0_0_14px_rgba(16,185,129,0.35)] scale-105`;
     }
 
-    return `${baseClasses} border-gray-200 bg-gray-50/60 hover:border-[#8B5CF6] hover:bg-[#8B5CF6]/10 focus:bg-white focus:border-[#120E1A] focus:ring-4 focus:ring-[#8B5CF6]/40`;
+    return `${baseClasses} border-gray-200 bg-gray-50/60 hover:border-[#3D7FFF] hover:bg-[#3D7FFF]/10 focus:bg-white focus:border-[#0A0A0A] focus:ring-4 focus:ring-[#3D7FFF]/40`;
   };
 
   return (
@@ -366,12 +366,12 @@ export const RegisterPage = () => {
       `}</style>
 
     <div className="h-screen w-full flex bg-white antialiased overflow-hidden">
-      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#120E1A] via-[#1a1025] to-[#140d1e] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
-        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#8B5CF6]/20 blur-[100px]" />
-        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#120E1A]/40 blur-[100px]" />
+      <div className="hidden md:flex md:w-[52%] relative flex-col justify-between bg-gradient-to-br from-[#0A0A0A] via-[#0d0d12] to-[#08080a] text-white p-12 lg:p-20 overflow-hidden [clip-path:polygon(0_0,100%_0,90%_100%,0_100%)] z-10">
+        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-[#3D7FFF]/20 blur-[100px]" />
+        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#0A0A0A]/40 blur-[100px]" />
         <div className="absolute top-[16%] right-[7%] w-44 h-44 rounded-[2.5rem] border border-white/10 rotate-[18deg]" />
         <div className="absolute top-[29%] right-[15%] w-24 h-24 rounded-[1.5rem] bg-white/[0.05] backdrop-blur-md -rotate-6" />
-        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#8B5CF6]/25 rotate-12" />
+        <div className="absolute top-[23%] right-[3%] w-11 h-11 rounded-2xl bg-[#3D7FFF]/25 rotate-12" />
         <div className="absolute bottom-24 left-6 w-24 h-24 rounded-full border border-white/[0.08]" />
 
         <div className="relative z-10">
@@ -420,7 +420,7 @@ export const RegisterPage = () => {
                 transition={{ duration: 0.25 }}
               >
                 <div className="space-y-1.5 mb-8">
-                  <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">Choose entity type</h1>
+                  <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">Choose entity type</h1>
                   <p className="text-sm text-gray-500">Step 1 of 3 — select one of the cards below.</p>
                 </div>
 
@@ -430,14 +430,14 @@ export const RegisterPage = () => {
                       key={card.key}
                       type="button"
                       onClick={() => setSelectedType(card.key)}
-                      className="group text-left p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#120E1A] hover:bg-[#8B5CF6]/[0.06] transition-all duration-200"
+                      className="group text-left p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#0A0A0A] hover:bg-[#3D7FFF]/[0.06] transition-all duration-200"
                     >
-                      <span className="w-9 h-9 rounded-xl bg-gray-100 group-hover:bg-[#8B5CF6] flex items-center justify-center transition-colors">
-                        <svg className="w-5 h-5 text-[#120E1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <span className="w-9 h-9 rounded-xl bg-gray-100 group-hover:bg-[#3D7FFF] flex items-center justify-center transition-colors">
+                        <svg className="w-5 h-5 text-[#0A0A0A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d={card.icon} />
                         </svg>
                       </span>
-                      <p className="mt-3 text-sm font-semibold text-[#120E1A]">{card.title}</p>
+                      <p className="mt-3 text-sm font-semibold text-[#0A0A0A]">{card.title}</p>
                       <p className="text-[11px] text-gray-500 leading-snug mt-0.5">{card.desc}</p>
                     </button>
                   ))}
@@ -460,18 +460,18 @@ export const RegisterPage = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedType(null)}
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-500 hover:text-[#120E1A] transition-colors mb-2"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-500 hover:text-[#0A0A0A] transition-colors mb-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Back to cards
                   </button>
-                  <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">Entity details</h1>
+                  <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">Entity details</h1>
                   <p className="text-sm text-gray-500">Step 2 of 3 — fill initial details and set password.</p>
                 </div>
 
-                <div className="px-4 py-2 rounded-xl bg-[#8B5CF6]/20 border border-[#8B5CF6]/40 text-sm font-semibold text-[#120E1A]">
+                <div className="px-4 py-2 rounded-xl bg-[#3D7FFF]/20 border border-[#3D7FFF]/40 text-sm font-semibold text-[#0A0A0A]">
                   Selected Type: {selectedType}
                 </div>
 
@@ -551,14 +551,14 @@ export const RegisterPage = () => {
                   type="submit"
                   disabled={isSubmitting || !canSubmitStart}
                   aria-busy={isSubmitting}
-                  className={`w-full py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
+                  className={`w-full py-3.5 bg-[#3D7FFF] hover:bg-[#5C96FF] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
                     isSubmitting ? 'btn-loading-glow opacity-95' : ''
                   }`}
                 >
                   <span className="inline-flex items-center justify-center gap-2.5 min-h-[20px]">
                     {isSubmitting && <ButtonLoader size={18} className="text-white" />}
                     <span className={isSubmitting ? 'opacity-90' : ''}>
-                      {isSubmitting ? 'Sending OTP...' : 'Continue to OTP'}
+                      {isSubmitting ? 'Sending OTP...' : 'Continue'}
                     </span>
                   </span>
                 </button>
@@ -579,10 +579,10 @@ export const RegisterPage = () => {
                   <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                     Registration Verification
                   </h3>
-                  <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">Verify OTP</h1>
+                  <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">Verify OTP</h1>
                   <p className="text-sm text-gray-500 leading-relaxed">
                     Enter the 6-digit code sent to{' '}
-                    <span className="font-semibold text-[#120E1A] break-all">{emailForOtp}</span>.
+                    <span className="font-semibold text-[#0A0A0A] break-all">{emailForOtp}</span>.
                   </p>
                 </div>
 
@@ -614,7 +614,7 @@ export const RegisterPage = () => {
                   onClick={handleVerifyOtpClick}
                   disabled={isSubmitting || otpValues.join('').length < 6 || otpStatus === 'success'}
                   aria-busy={isSubmitting}
-                  className={`w-full py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:opacity-70 ${
+                  className={`w-full py-3.5 bg-[#3D7FFF] hover:bg-[#5C96FF] text-white text-sm font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:opacity-70 ${
                     isSubmitting ? 'btn-loading-glow' : ''
                   }`}
                 >
@@ -630,9 +630,9 @@ export const RegisterPage = () => {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={isSubmitting || timeLeft > 0}
-                  className="w-full py-3 border border-gray-300 text-[#120E1A] text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all disabled:opacity-70"
+                  className="w-full py-3 border border-gray-300 text-[#0A0A0A] text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all disabled:opacity-70"
                 >
-                  {timeLeft > 0 ? `Resend in ${timeLeft}s` : 'Resend OTP'}
+                  {timeLeft > 0 ? `Resend in ${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, '0')}` : 'Resend OTP'}
                 </button>
               </motion.form>
             ) : null}
@@ -648,7 +648,7 @@ export const RegisterPage = () => {
                 className="space-y-5"
               >
                 <div className="space-y-1.5">
-                  <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">Complete profile</h1>
+                  <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">Complete profile</h1>
                   <p className="text-sm text-gray-500">Fill the remaining entity details.</p>
                 </div>
 
@@ -688,7 +688,7 @@ export const RegisterPage = () => {
                   type="submit"
                   disabled={isSubmitting || !canSubmitComplete}
                   aria-busy={isSubmitting}
-                  className={`w-full py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
+                  className={`w-full py-3.5 bg-[#3D7FFF] hover:bg-[#5C96FF] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
                     isSubmitting ? 'btn-loading-glow opacity-95' : ''
                   }`}
                 >
@@ -718,7 +718,7 @@ export const RegisterPage = () => {
             <p className="text-sm text-gray-500 text-center mb-3">Already have an account?</p>
             <Link
               to="/login"
-              className="w-full inline-flex items-center justify-center py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-2xl transition-all"
+              className="w-full inline-flex items-center justify-center py-3.5 bg-[#3D7FFF] hover:bg-[#5C96FF] text-white text-sm font-bold rounded-2xl transition-all"
             >
               Log in
             </Link>
@@ -755,11 +755,11 @@ export const RegisterPage = () => {
               </motion.div>
 
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-[#120E1A]">
-                  Registration Complete! 🎉
+                <h2 className="text-2xl font-bold text-[#0A0A0A]">
+                  Registration Received!
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
-                  Your account has been successfully created. You can now log in with your credentials.
+                  Your institution has been registered and is now pending approval. A platform administrator will review it shortly — you can sign in once it is approved.
                 </p>
               </div>
 

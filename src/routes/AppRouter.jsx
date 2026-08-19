@@ -63,6 +63,7 @@ import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage';
 import ChangePasswordPage from '../features/auth/pages/ChangePasswordPage';
 import { RegisterPage } from '../features/auth/pages/RegisterPage';
 import { LearnerRegisterPage } from '../features/auth/pages/LearnerRegisterPage';
+import { BlockedScreen } from '../features/auth/pages/BlockedScreen';
 import { AdminLayout } from '../features/admin/layouts/AdminLayout';
 import { LearningLayout } from '../layouts/LearningLayout';
 import { LandingPage } from '../features/marketing/pages/LandingPage';
@@ -159,6 +160,9 @@ export const AppRouter = () => {
 
         {/* Forced first-login password change — needs a session but no role gate */}
         <Route path="/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
+
+        {/* Pending / rejected institution admins can sign in but are held here */}
+        <Route path="/school/blocked" element={<ProtectedRoute><BlockedScreen /></ProtectedRoute>} />
 
         <Route element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route path="/admin/dashboard" element={<AdminRoute><AdminCommandCenter /></AdminRoute>} />

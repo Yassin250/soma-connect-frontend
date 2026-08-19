@@ -8,7 +8,7 @@ import { AddSystemParameterModal } from '../components/AddSystemParameterModal';
 
 const STATUS_STYLES = {
   Active: { pill: 'bg-emerald-50 text-emerald-700', dot: 'bg-emerald-500' },
-  Inactive: { pill: 'bg-[#120E1A]/[0.05] text-[#120E1A]/45', dot: 'bg-[#120E1A]/30' },
+  Inactive: { pill: 'bg-[#0A0A0A]/[0.05] text-[#0A0A0A]/45', dot: 'bg-[#0A0A0A]/30' },
 };
 
 const StatusPill = ({ active }) => {
@@ -117,21 +117,21 @@ export const SystemParametersPage = () => {
       header: 'Name',
       sortable: true,
       sortValue: (p) => p.name || '',
-      render: (p) => <span className="font-medium text-[#120E1A]">{p.name}</span>,
+      render: (p) => <span className="font-medium text-[#0A0A0A]">{p.name}</span>,
     },
     {
       key: 'value',
       header: 'Value',
       sortable: true,
       sortValue: (p) => p.value || '',
-      render: (p) => <span className="text-[#120E1A]/80 font-mono text-[12px]">{p.value || '—'}</span>,
+      render: (p) => <span className="text-[#0A0A0A]/80 font-mono text-[12px]">{p.value || '—'}</span>,
     },
     {
       key: 'description',
       header: 'Description',
       sortable: true,
       sortValue: (p) => p.description || '',
-      render: (p) => <span className="text-[#120E1A]/55">{p.description || '—'}</span>,
+      render: (p) => <span className="text-[#0A0A0A]/55">{p.description || '—'}</span>,
     },
     {
       key: 'status',
@@ -197,7 +197,7 @@ export const SystemParametersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
-          <h1 className="text-[19px] font-medium text-[#120E1A] tracking-tight">System Parameters</h1>
+          <h1 className="text-[19px] font-medium text-[#0A0A0A] tracking-tight">System Parameters</h1>
           <p className="text-[12px] text-gray-500 mt-1">
             Configure platform-wide settings and key-value parameters.
           </p>
@@ -207,7 +207,7 @@ export const SystemParametersPage = () => {
             setEditingParameter(null);
             setIsModalOpen(true);
           }}
-          className="bg-[#120E1A] text-white text-[13px] font-semibold px-5 py-2 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm"
+          className="bg-[#0A0A0A] text-white text-[13px] font-semibold px-5 py-2 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 8V4m0 16v-4M4 12h4m12 0h-4" strokeLinecap="round" strokeLinejoin="round" />
@@ -216,12 +216,12 @@ export const SystemParametersPage = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#120E1A]/[0.06] shadow-sm px-3 py-2.5">
+      <div className="bg-white rounded-xl border border-[#0A0A0A]/[0.06] shadow-sm px-3 py-2.5">
         <div className="flex flex-wrap items-end gap-2.5">
           <div className="flex-1 min-w-[220px] max-w-[420px] flex flex-col gap-1">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Search</label>
+            <label className="text-[10px] font-semibold text-[#0A0A0A]/45 uppercase tracking-[0.12em]">Search</label>
             <div className="relative">
-              <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-[#0A0A0A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" />
               </svg>
@@ -230,13 +230,13 @@ export const SystemParametersPage = () => {
                 placeholder="Name, value, or description..."
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                className="w-full text-[13px] px-3 py-2 rounded-lg border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] pl-9 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all"
+                className="w-full text-[13px] px-3 py-2 rounded-lg border border-[#0A0A0A]/10 bg-[#f7f8fa] text-[#0A0A0A] pl-9 focus:bg-white focus:ring-4 focus:ring-[#3D7FFF]/20 focus:border-[#3D7FFF] focus:outline-none transition-all"
               />
             </div>
           </div>
           <button
             onClick={fetchParameters}
-            className="shrink-0 h-[34px] px-5 rounded-full bg-[#8B5CF6] text-white text-[13px] font-semibold hover:bg-[#C4B5FD] shadow-sm transition-colors active:scale-[0.98]"
+            className="shrink-0 h-[34px] px-5 rounded-full bg-[#3D7FFF] text-white text-[13px] font-semibold hover:bg-[#63C7FF] shadow-sm transition-colors active:scale-[0.98]"
           >
             Refresh
           </button>

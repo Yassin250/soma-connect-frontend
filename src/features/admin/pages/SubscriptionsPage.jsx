@@ -4,14 +4,14 @@ import { useToast } from '../../../context/ToastContext';
 
 const PLAN_COLORS = {
   free: 'bg-slate-100 text-slate-600 border-slate-200',
-  basic: 'bg-[#120E1A]/[0.06] text-[#120E1A]/70 border-[#120E1A]/10',
-  premium: 'bg-[#8B5CF6]/20 text-[#FFFFFF] border-[#8B5CF6]/50',
+  basic: 'bg-[#0A0A0A]/[0.06] text-[#0A0A0A]/70 border-[#0A0A0A]/10',
+  premium: 'bg-[#3D7FFF]/20 text-[#FFFFFF] border-[#3D7FFF]/50',
   enterprise: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
 const STATUS_COLORS = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  trialing: 'bg-[#8B5CF6]/20 text-[#FFFFFF] border-[#8B5CF6]/50',
+  trialing: 'bg-[#3D7FFF]/20 text-[#FFFFFF] border-[#3D7FFF]/50',
   past_due: 'bg-amber-50 text-amber-700 border-amber-200',
   canceled: 'bg-red-50 text-red-700 border-red-200',
   expired: 'bg-slate-50 text-slate-500 border-slate-200',
@@ -63,7 +63,7 @@ export const SubscriptionsPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFFFFF] bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFFFFF] bg-[#3D7FFF]/20 px-2.5 py-1 rounded">
             Billing &amp; Plans
           </span>
           <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
@@ -86,7 +86,7 @@ export const SubscriptionsPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Subscriptions', value: stats.total, icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z', accent: 'border-l-[#8B5CF6]', iconBg: 'bg-[#8B5CF6]/20', iconColor: 'text-[#FFFFFF]' },
+          { label: 'Total Subscriptions', value: stats.total, icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z', accent: 'border-l-[#3D7FFF]', iconBg: 'bg-[#3D7FFF]/20', iconColor: 'text-[#FFFFFF]' },
           { label: 'Active Plans', value: stats.active, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
           { label: 'Monthly Revenue', value: `RWF${stats.revenue.toLocaleString()}`, icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
         ].map((card, idx) => (
@@ -122,9 +122,9 @@ export const SubscriptionsPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#120E1A]/[0.06] bg-[#f4f6f8]">
+                <tr className="border-b border-[#0A0A0A]/[0.06] bg-[#f4f6f8]">
                   {['Institution', 'Plan', 'Status', 'Amount', 'Billing', 'Next Billing'].map((h) => (
-                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#120E1A]/45 whitespace-nowrap">
+                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0A0A0A]/45 whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -132,7 +132,7 @@ export const SubscriptionsPage = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {subscriptions.map((sub) => (
-                  <tr key={sub.id} className="hover:bg-[#8B5CF6]/[0.08] transition-colors">
+                  <tr key={sub.id} className="hover:bg-[#3D7FFF]/[0.08] transition-colors">
                     <td className="px-4 py-2.5">
                       <p className="text-[13px] font-semibold text-slate-900">{sub.schoolName || sub.institution}</p>
                       <p className="text-xs text-slate-400">{sub.email || sub.domain}</p>

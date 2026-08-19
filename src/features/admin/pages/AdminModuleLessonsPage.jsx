@@ -14,7 +14,7 @@ const TYPE_META = {
   READING: { d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13', tint: 'bg-sky-50 text-sky-500' },
   QUIZ: { d: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', tint: 'bg-violet-50 text-violet-500' },
   ASSIGNMENT: { d: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', tint: 'bg-amber-50 text-amber-500' },
-  FILE: { d: 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z', tint: 'bg-[#120E1A]/[0.06] text-[#120E1A]/60' },
+  FILE: { d: 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z', tint: 'bg-[#0A0A0A]/[0.06] text-[#0A0A0A]/60' },
   LINK: { d: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1', tint: 'bg-emerald-50 text-emerald-500' },
 };
 const metaFor = (t) => TYPE_META[t] || TYPE_META.FILE;
@@ -91,7 +91,7 @@ export const AdminModuleLessonsPage = () => {
     {
       key: 'order', header: '#', width: '56px', sortable: true, sortValue: (l) => l.sortOrder ?? l._order,
       render: (l) => (
-        <span className="w-7 h-7 rounded-lg bg-[#120E1A]/[0.06] text-[#120E1A]/50 text-[11px] font-bold flex items-center justify-center">
+        <span className="w-7 h-7 rounded-lg bg-[#0A0A0A]/[0.06] text-[#0A0A0A]/50 text-[11px] font-bold flex items-center justify-center">
           {l._order}
         </span>
       ),
@@ -105,31 +105,31 @@ export const AdminModuleLessonsPage = () => {
             <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${meta.tint}`}>
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={meta.d} /></svg>
             </span>
-            <p className="font-medium text-[#120E1A] truncate max-w-[340px]">{l.title || 'Untitled lesson'}</p>
+            <p className="font-medium text-[#0A0A0A] truncate max-w-[340px]">{l.title || 'Untitled lesson'}</p>
           </div>
         );
       },
     },
     {
       key: 'type', header: 'Type', sortable: true, sortValue: (l) => l.itemType || '',
-      render: (l) => <span className="text-[13px] text-[#120E1A]/70">{humanize(l.itemType)}</span>,
+      render: (l) => <span className="text-[13px] text-[#0A0A0A]/70">{humanize(l.itemType)}</span>,
     },
     {
       key: 'duration', header: 'Duration', sortable: true, sortValue: (l) => l.durationMinutes ?? 0,
       render: (l) => (
-        <span className="text-[13px] text-[#120E1A]/60">{l.durationMinutes ? `${l.durationMinutes} min` : '—'}</span>
+        <span className="text-[13px] text-[#0A0A0A]/60">{l.durationMinutes ? `${l.durationMinutes} min` : '—'}</span>
       ),
     },
     {
       key: 'required', header: 'Required', sortable: true, sortValue: (l) => (l.required ? 1 : 0),
       render: (l) => (
         l.required ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-[#8B5CF6]/25 text-[#FFFFFF]">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-[#3D7FFF]/25 text-[#FFFFFF]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF]" />
             Required
           </span>
         ) : (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-[#120E1A]/[0.05] text-[#120E1A]/45">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-[#0A0A0A]/[0.05] text-[#0A0A0A]/45">
             Optional
           </span>
         )
@@ -140,9 +140,9 @@ export const AdminModuleLessonsPage = () => {
       render: (l) => (
         l.contentUrl
           ? (/^https?:\/\//i.test(l.contentUrl)
-              ? <a href={l.contentUrl} target="_blank" rel="noreferrer" className="text-[13px] text-[#FFFFFF] hover:text-[#120E1A] hover:underline truncate max-w-[220px] inline-block align-middle">{l.contentUrl}</a>
-              : <span className="text-[13px] text-[#120E1A]/50 truncate max-w-[220px] inline-block align-middle">{l.contentUrl}</span>)
-          : <span className="text-[13px] text-[#120E1A]/30">—</span>
+              ? <a href={l.contentUrl} target="_blank" rel="noreferrer" className="text-[13px] text-[#FFFFFF] hover:text-[#0A0A0A] hover:underline truncate max-w-[220px] inline-block align-middle">{l.contentUrl}</a>
+              : <span className="text-[13px] text-[#0A0A0A]/50 truncate max-w-[220px] inline-block align-middle">{l.contentUrl}</span>)
+          : <span className="text-[13px] text-[#0A0A0A]/30">—</span>
       ),
     },
     {
@@ -167,7 +167,7 @@ export const AdminModuleLessonsPage = () => {
         <div>
           <button
             onClick={() => navigate(`/admin/courses/${id}/modules`)}
-            className="flex w-fit items-center gap-1.5 text-[12px] font-medium text-[#120E1A]/50 hover:text-[#120E1A] transition-colors mb-3"
+            className="flex w-fit items-center gap-1.5 text-[12px] font-medium text-[#0A0A0A]/50 hover:text-[#0A0A0A] transition-colors mb-3"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Back to Modules
@@ -175,7 +175,7 @@ export const AdminModuleLessonsPage = () => {
           <span className="block text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">
             {course?.title || 'Course'}{module ? ` · ${humanize(module.moduleType)}` : ''}
           </span>
-          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#120E1A]">
+          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#0A0A0A]">
             {module ? `${module.title} — Lessons` : 'Lessons'}
           </h1>
           <p className="text-[12px] text-gray-500 mt-0.5">
@@ -187,7 +187,7 @@ export const AdminModuleLessonsPage = () => {
         <button
           onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}
           disabled={!module}
-          className="bg-[#120E1A] text-white text-[13px] font-semibold px-4 py-2 rounded-lg hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98] shrink-0 disabled:opacity-50"
+          className="bg-[#0A0A0A] text-white text-[13px] font-semibold px-4 py-2 rounded-lg hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98] shrink-0 disabled:opacity-50"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
           Add Lesson

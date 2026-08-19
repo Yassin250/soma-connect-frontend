@@ -3,8 +3,8 @@ import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
 
 const TYPE_CONFIG = {
-  AUTH: { dot: 'bg-[#120E1A]', badge: 'bg-[#120E1A]/[0.06] text-[#120E1A] ring-[#120E1A]/10', label: 'Auth' },
-  USER: { dot: 'bg-[#FFFFFF]', badge: 'bg-[#8B5CF6]/25 text-[#FFFFFF] ring-[#8B5CF6]/40', label: 'User' },
+  AUTH: { dot: 'bg-[#0A0A0A]', badge: 'bg-[#0A0A0A]/[0.06] text-[#0A0A0A] ring-[#0A0A0A]/10', label: 'Auth' },
+  USER: { dot: 'bg-[#FFFFFF]', badge: 'bg-[#3D7FFF]/25 text-[#FFFFFF] ring-[#3D7FFF]/40', label: 'User' },
   SCHOOL: { dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 ring-emerald-200', label: 'School' },
   ROLE: { dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700 ring-amber-200', label: 'Role' },
   PERMISSION: { dot: 'bg-lime-600', badge: 'bg-lime-50 text-lime-700 ring-lime-200', label: 'Permission' },
@@ -103,17 +103,17 @@ export const AuditLogsPage = () => {
 
   return (
     <div className="space-y-7 antialiased max-w-[1400px]">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-[#120E1A]/[0.08] pb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-[#0A0A0A]/[0.08] pb-6">
         <div>
-          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.16em] text-[#FFFFFF] bg-[#8B5CF6]/40 px-2.5 py-1 rounded-full">
+          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.16em] text-[#FFFFFF] bg-[#3D7FFF]/40 px-2.5 py-1 rounded-full">
             Security &amp; Compliance
           </span>
-          <h1 className="text-[19px] font-medium tracking-tight mt-3 text-[#120E1A]">Audit Logs</h1>
+          <h1 className="text-[19px] font-medium tracking-tight mt-3 text-[#0A0A0A]">Audit Logs</h1>
           <p className="text-[12px] text-gray-500 mt-1">
             Chronological record of administrative actions and system events.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs font-semibold bg-[#8B5CF6] text-[#FFFFFF] rounded-full px-4 py-2 shadow-sm">
+        <div className="flex items-center gap-2 text-xs font-semibold bg-[#3D7FFF] text-[#FFFFFF] rounded-full px-4 py-2 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-[#FFFFFF] animate-pulse" />
           {total} events tracked
         </div>
@@ -129,7 +129,7 @@ export const AuditLogsPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search events, admins, actions..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#120E1A]/10 rounded-xl text-xs font-medium text-[#120E1A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/50 focus:border-[#8B5CF6] transition-shadow"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#0A0A0A]/10 rounded-xl text-xs font-medium text-[#0A0A0A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3D7FFF]/50 focus:border-[#3D7FFF] transition-shadow"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -139,8 +139,8 @@ export const AuditLogsPage = () => {
               onClick={() => setTypeFilter(t)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all ${
                 typeFilter === t
-                  ? 'bg-[#120E1A] text-[#8B5CF6] border-[#120E1A] shadow-sm'
-                  : 'bg-white text-gray-500 border-[#120E1A]/10 hover:border-[#8B5CF6] hover:text-[#120E1A]'
+                  ? 'bg-[#0A0A0A] text-[#3D7FFF] border-[#0A0A0A] shadow-sm'
+                  : 'bg-white text-gray-500 border-[#0A0A0A]/10 hover:border-[#3D7FFF] hover:text-[#0A0A0A]'
               }`}
             >
               {t === 'ALL' ? 'All' : TYPE_CONFIG[t]?.label || t}
@@ -149,9 +149,9 @@ export const AuditLogsPage = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-[#120E1A]/[0.06] rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(18,14,26,0.04),0_8px_24px_rgba(18,14,26,0.04)]">
+      <div className="bg-white border border-[#0A0A0A]/[0.06] rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(18,14,26,0.04),0_8px_24px_rgba(18,14,26,0.04)]">
         {isLoading ? (
-          <div className="divide-y divide-[#120E1A]/[0.04]">
+          <div className="divide-y divide-[#0A0A0A]/[0.04]">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="p-4 flex items-start gap-3.5">
                 <div className="w-2 h-2 rounded-full mt-1.5 skeleton-shimmer" />
@@ -164,16 +164,16 @@ export const AuditLogsPage = () => {
           </div>
         ) : logs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <span className="w-14 h-14 rounded-2xl bg-[#8B5CF6]/20 text-[#120E1A]/70 flex items-center justify-center mb-4 ring-1 ring-[#8B5CF6]/30">
+            <span className="w-14 h-14 rounded-2xl bg-[#3D7FFF]/20 text-[#0A0A0A]/70 flex items-center justify-center mb-4 ring-1 ring-[#3D7FFF]/30">
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
               </svg>
             </span>
-            <p className="text-sm font-semibold text-[#120E1A]">No audit logs found</p>
+            <p className="text-sm font-semibold text-[#0A0A0A]">No audit logs found</p>
             <p className="text-xs text-gray-400 mt-1.5">Try adjusting your search or filter criteria.</p>
           </div>
         ) : (
-          <div className="divide-y divide-[#120E1A]/[0.05]">
+          <div className="divide-y divide-[#0A0A0A]/[0.05]">
             {logs.map((log) => {
               const cfg = getTypeConfig(log.type);
               const isOpen = selectedLog?.id === log.id;
@@ -181,15 +181,15 @@ export const AuditLogsPage = () => {
                 <div
                   key={log.id}
                   onClick={() => setSelectedLog(isOpen ? null : log)}
-                  className={`p-4 flex items-start justify-between cursor-pointer transition-colors hover:bg-[#8B5CF6]/[0.08] ${
-                    isOpen ? 'bg-[#8B5CF6]/[0.12]' : ''
+                  className={`p-4 flex items-start justify-between cursor-pointer transition-colors hover:bg-[#3D7FFF]/[0.08] ${
+                    isOpen ? 'bg-[#3D7FFF]/[0.12]' : ''
                   }`}
                 >
                   <div className="flex items-start gap-3.5 min-w-0 flex-1">
                     <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${cfg.dot}`} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium text-[#120E1A] truncate">
+                        <span className="text-sm font-medium text-[#0A0A0A] truncate">
                           {log.action || log.event}
                         </span>
                         <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full ring-1 ${cfg.badge}`}>
@@ -220,11 +220,11 @@ export const AuditLogsPage = () => {
         )}
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-[#120E1A]/[0.05] bg-[#fafbfc]/60">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-[#0A0A0A]/[0.05] bg-[#fafbfc]/60">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[#120E1A]/10 bg-white text-[#120E1A] hover:bg-[#8B5CF6]/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[#0A0A0A]/10 bg-white text-[#0A0A0A] hover:bg-[#3D7FFF]/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
               Previous
             </button>
@@ -234,7 +234,7 @@ export const AuditLogsPage = () => {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[#120E1A]/10 bg-white text-[#120E1A] hover:bg-[#8B5CF6]/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[#0A0A0A]/10 bg-white text-[#0A0A0A] hover:bg-[#3D7FFF]/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
               Next
             </button>
@@ -243,12 +243,12 @@ export const AuditLogsPage = () => {
       </div>
 
       {selectedLog && (
-        <div className="bg-white border border-[#120E1A]/[0.08] rounded-2xl p-5 space-y-3 shadow-sm">
+        <div className="bg-white border border-[#0A0A0A]/[0.08] rounded-2xl p-5 space-y-3 shadow-sm">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500">Event Details</h4>
             <button
               onClick={() => setSelectedLog(null)}
-              className="text-xs font-semibold text-gray-400 hover:text-[#120E1A] transition-colors"
+              className="text-xs font-semibold text-gray-400 hover:text-[#0A0A0A] transition-colors"
             >
               Close
             </button>
@@ -256,15 +256,15 @@ export const AuditLogsPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
             <div className="space-y-1">
               <span className="text-gray-400 font-medium">Event ID</span>
-              <p className="font-mono text-[#120E1A] font-semibold break-all">{selectedLog.id}</p>
+              <p className="font-mono text-[#0A0A0A] font-semibold break-all">{selectedLog.id}</p>
             </div>
             <div className="space-y-1">
               <span className="text-gray-400 font-medium">Timestamp</span>
-              <p className="font-mono text-[#120E1A] font-semibold">{formatTimestamp(selectedLog.timestamp || selectedLog.createdAt)}</p>
+              <p className="font-mono text-[#0A0A0A] font-semibold">{formatTimestamp(selectedLog.timestamp || selectedLog.createdAt)}</p>
             </div>
             <div className="space-y-1">
               <span className="text-gray-400 font-medium">Admin</span>
-              <p className="font-semibold text-[#120E1A]">{selectedLog.adminName || 'N/A'}</p>
+              <p className="font-semibold text-[#0A0A0A]">{selectedLog.adminName || 'N/A'}</p>
             </div>
             <div className="space-y-1">
               <span className="text-gray-400 font-medium">Type</span>
@@ -273,9 +273,9 @@ export const AuditLogsPage = () => {
               </span>
             </div>
           </div>
-          <div className="space-y-1 pt-3 border-t border-[#120E1A]/[0.06]">
+          <div className="space-y-1 pt-3 border-t border-[#0A0A0A]/[0.06]">
             <span className="text-xs text-gray-400 font-medium">Action</span>
-            <p className="text-sm font-bold text-[#120E1A]">{selectedLog.action || selectedLog.event}</p>
+            <p className="text-sm font-bold text-[#0A0A0A]">{selectedLog.action || selectedLog.event}</p>
           </div>
           {selectedLog.description && (
             <div className="space-y-1">
@@ -286,7 +286,7 @@ export const AuditLogsPage = () => {
           {selectedLog.metadata && (
             <div className="space-y-1">
               <span className="text-xs text-gray-400 font-medium">Metadata</span>
-              <pre className="text-xs bg-[#fafbfc] border border-[#120E1A]/[0.06] rounded-lg p-3 font-mono text-gray-600 overflow-x-auto">
+              <pre className="text-xs bg-[#fafbfc] border border-[#0A0A0A]/[0.06] rounded-lg p-3 font-mono text-gray-600 overflow-x-auto">
                 {typeof selectedLog.metadata === 'string' ? selectedLog.metadata : JSON.stringify(selectedLog.metadata, null, 2)}
               </pre>
             </div>

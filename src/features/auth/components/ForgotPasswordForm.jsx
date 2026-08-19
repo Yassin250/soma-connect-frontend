@@ -33,12 +33,12 @@ const slideVariants = {
 
 // Same field recipe as LoginForm: filled rounded-2xl input with a leading icon.
 const inputClass =
-  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#120E1A]/5 focus:border-[#120E1A]/20';
+  'w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-[#0A0A0A]/5 focus:border-[#0A0A0A]/20';
 const inputWithEyeClass = `${inputClass.replace('pr-4', 'pr-11')}`;
 const labelClass = 'text-[13px] font-semibold text-gray-700';
 const iconWrapClass = 'absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none';
 const primaryBtnClass =
-  'w-full py-3.5 bg-[#8B5CF6] hover:bg-[#C4B5FD] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70';
+  'w-full py-3.5 bg-[#3D7FFF] hover:bg-[#63C7FF] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70';
 
 /**
  * @param {(step: string) => void} onStepChange  Notifies the parent page (left panel copy).
@@ -159,7 +159,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
           <span
             key={s}
             className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === stepIndex ? 'w-8 bg-[#120E1A]' : i < stepIndex ? 'w-4 bg-[#8B5CF6]' : 'w-4 bg-gray-200'
+              i === stepIndex ? 'w-8 bg-[#0A0A0A]' : i < stepIndex ? 'w-4 bg-[#3D7FFF]' : 'w-4 bg-gray-200'
             }`}
           />
         ))}
@@ -182,7 +182,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
               <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                 Account recovery
               </h3>
-              <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">
+              <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">
                 Forgot password
               </h1>
               <p className="text-sm text-gray-500">Enter your email and we'll send a reset link.</p>
@@ -227,7 +227,7 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
               <button
                 type="button"
                 onClick={() => { setErrorMessage(''); setStep('reset'); }}
-                className="text-sm font-semibold text-[#120E1A] hover:underline block mx-auto"
+                className="text-sm font-semibold text-[#0A0A0A] hover:underline block mx-auto"
               >
                 I already have a reset token
               </button>
@@ -252,14 +252,14 @@ export const ForgotPasswordForm = ({ onStepChange, initialStep = 'email', initia
               <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                 Final step
               </h3>
-              <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">
+              <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">
                 Set new password
               </h1>
               <p className="text-sm text-gray-500">Paste your reset token and choose a strong password.</p>
             </div>
 
             {info && (
-              <p className="text-xs text-[#120E1A] bg-[#8B5CF6]/15 border border-[#8B5CF6]/50 rounded-xl px-3.5 py-2.5">
+              <p className="text-xs text-[#0A0A0A] bg-[#3D7FFF]/15 border border-[#3D7FFF]/50 rounded-xl px-3.5 py-2.5">
                 {info}
               </p>
             )}

@@ -9,7 +9,7 @@ const CHANNEL_ICONS = {
 };
 
 const CHANNEL_COLORS = {
-  subscriptions: { bg: 'bg-[#8B5CF6]', text: 'text-[#FFFFFF]' },
+  subscriptions: { bg: 'bg-[#3D7FFF]', text: 'text-[#FFFFFF]' },
   payouts: { bg: 'bg-emerald-50', text: 'text-emerald-600' },
   adjustments: { bg: 'bg-amber-50', text: 'text-amber-600' },
 };
@@ -76,7 +76,7 @@ export const RevenuePage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFFFFF] bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFFFFF] bg-[#3D7FFF]/20 px-2.5 py-1 rounded">
             Financials
           </span>
           <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
@@ -110,7 +110,7 @@ export const RevenuePage = () => {
                   <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
                     <span className="text-[9px] font-bold text-slate-500">{formatRWF(m.amount || 0)}</span>
                     <div
-                      className="w-full bg-[#8B5CF6] rounded-t-md transition-all"
+                      className="w-full bg-[#3D7FFF] rounded-t-md transition-all"
                       style={{ height: `${Math.max(pct, 2)}%` }}
                     />
                     <span className="text-[9px] font-mono text-slate-400">{m.month || MONTHS[idx] || idx + 1}</span>

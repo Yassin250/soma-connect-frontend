@@ -963,6 +963,20 @@ export const platformEntityService = {
       throw new Error(getApiErrorMessage(error, 'Failed to update entity status'));
     }
   },
+  approve: async (id) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/admin/entities/${id}/approve`));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to approve entity'));
+    }
+  },
+  reject: async (id, reason) => {
+    try {
+      return unwrapApiResult(await apiClient.post(`/api/admin/entities/${id}/reject`, { reason }));
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Failed to reject entity'));
+    }
+  },
   create: async (data) => {
     try {
       return unwrapApiResult(await apiClient.post('/api/admin/entities', data));

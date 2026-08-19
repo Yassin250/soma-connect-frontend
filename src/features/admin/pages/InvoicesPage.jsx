@@ -7,7 +7,7 @@ const STATUS_STYLE = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
   overdue: 'bg-red-50 text-red-700 border-red-200',
   cancelled: 'bg-slate-50 text-slate-500 border-slate-200',
-  draft: 'bg-[#8B5CF6]/20 text-white border-[#8B5CF6]/50',
+  draft: 'bg-[#3D7FFF]/20 text-white border-[#3D7FFF]/50',
 };
 
 export const InvoicesPage = () => {
@@ -69,7 +69,7 @@ export const InvoicesPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-[#3D7FFF]/20 px-2.5 py-1 rounded">
             Financials
           </span>
           <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
@@ -83,7 +83,7 @@ export const InvoicesPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Invoices', value: stats.total, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', accent: 'border-l-[#8B5CF6]', iconBg: 'bg-[#8B5CF6]/20', iconColor: 'text-white' },
+          { label: 'Total Invoices', value: stats.total, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', accent: 'border-l-[#3D7FFF]', iconBg: 'bg-[#3D7FFF]/20', iconColor: 'text-white' },
           { label: 'Paid', value: stats.paid, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', accent: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
           { label: 'Outstanding', value: stats.outstanding, icon: 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z', accent: 'border-l-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
         ].map((card, idx) => (
@@ -113,7 +113,7 @@ export const InvoicesPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search invoices..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#8B5CF6] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#3D7FFF] transition-colors"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -123,7 +123,7 @@ export const InvoicesPage = () => {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all capitalize ${
                 statusFilter === s
-                  ? 'bg-[#120E1A] text-white border-[#120E1A] shadow-sm'
+                  ? 'bg-[#0A0A0A] text-white border-[#0A0A0A] shadow-sm'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
             >
@@ -150,20 +150,20 @@ export const InvoicesPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#120E1A]/[0.06] bg-[#f4f6f8]">
+                <tr className="border-b border-[#0A0A0A]/[0.06] bg-[#f4f6f8]">
                   {['Invoice', 'Institution', 'Amount', 'Status', 'Issued', 'Due'].map((h) => (
-                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#120E1A]/45 whitespace-nowrap">{h}</th>
+                    <th key={h} className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0A0A0A]/45 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {invoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-[#8B5CF6]/[0.08] transition-colors">
+                  <tr key={inv.id} className="hover:bg-[#3D7FFF]/[0.08] transition-colors">
                     <td className="px-4 py-2.5">
                       <p className="text-[13px] font-semibold text-slate-900">{inv.number || `#${inv.id}`}</p>
                       {inv.description && <p className="text-xs text-slate-400 mt-0.5">{inv.description}</p>}
                     </td>
-                    <td className="px-4 py-2.5 text-[13px] text-[#120E1A]/80">{inv.institution || inv.schoolName}</td>
+                    <td className="px-4 py-2.5 text-[13px] text-[#0A0A0A]/80">{inv.institution || inv.schoolName}</td>
                     <td className="px-4 py-2.5">
                       <span className="text-[13px] font-bold text-slate-900">{formatRWF(inv.amount)}</span>
                     </td>

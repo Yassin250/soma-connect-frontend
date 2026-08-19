@@ -4,7 +4,7 @@ import { notificationService } from '../../../services/api';
 
 const TYPE_CONFIG = {
   alert: { dot: 'bg-red-500', badge: 'bg-red-50 text-red-700 border-red-200', label: 'Alert' },
-  update: { dot: 'bg-[#8B5CF6]', badge: 'bg-[#8B5CF6]/20 text-white border-[#8B5CF6]/50', label: 'Update' },
+  update: { dot: 'bg-[#3D7FFF]', badge: 'bg-[#3D7FFF]/20 text-white border-[#3D7FFF]/50', label: 'Update' },
   reminder: { dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200', label: 'Reminder' },
   achievement: { dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', label: 'Achievement' },
   info: { dot: 'bg-slate-500', badge: 'bg-slate-50 text-slate-600 border-slate-200', label: 'Info' },
@@ -58,7 +58,7 @@ export const NotificationsPage = () => {
     <div className="space-y-8 antialiased">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-[#8B5CF6]/20 px-2.5 py-1 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-[#3D7FFF]/20 px-2.5 py-1 rounded">
             Communication
           </span>
           <h1 className="text-[19px] font-medium tracking-tight mt-2 text-slate-900">
@@ -94,7 +94,7 @@ export const NotificationsPage = () => {
               onClick={() => setFilter(t)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all ${
                 filter === t
-                  ? 'bg-[#120E1A] text-white border-[#120E1A] shadow-sm'
+                  ? 'bg-[#0A0A0A] text-white border-[#0A0A0A] shadow-sm'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
             >
@@ -126,10 +126,10 @@ export const NotificationsPage = () => {
                   key={n.id}
                   onClick={() => toggleRead(n.id, n.read)}
                   className={`p-5 flex items-start gap-4 cursor-pointer transition-all hover:bg-slate-50 ${
-                    !n.read ? 'bg-[#8B5CF6]/10 border-l-2 border-l-[#8B5CF6]' : ''
+                    !n.read ? 'bg-[#3D7FFF]/10 border-l-2 border-l-[#3D7FFF]' : ''
                   }`}
                 >
-                  <div className={`p-2 rounded-xl ${cfg.badge.split(' ').slice(0, 2).join(' ')} ${!n.read ? 'ring-2 ring-[#8B5CF6]/40' : ''}`}>
+                  <div className={`p-2 rounded-xl ${cfg.badge.split(' ').slice(0, 2).join(' ')} ${!n.read ? 'ring-2 ring-[#3D7FFF]/40' : ''}`}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       {n.type === 'alert' && <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />}
                       {n.type === 'update' && <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />}
@@ -145,7 +145,7 @@ export const NotificationsPage = () => {
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider border ${cfg.badge}`}>
                         {cfg.label}
                       </span>
-                      {!n.read && <span className="w-2 h-2 rounded-full bg-[#8B5CF6]" />}
+                      {!n.read && <span className="w-2 h-2 rounded-full bg-[#3D7FFF]" />}
                     </div>
                     <p className="text-xs text-slate-500 mt-1">{n.message}</p>
                     <p className="text-[10px] text-slate-400 font-mono mt-1.5">{n.time}</p>

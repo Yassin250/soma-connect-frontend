@@ -41,7 +41,7 @@ export const LoginForm = ({ onToggleMode }) => {
   
   // OTP specific state
   const [otpValues, setOtpValues] = useState(Array(6).fill(''));
-  const [timeLeft, setTimeLeft] = useState(32);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [otpStatus, setOtpStatus] = useState('idle'); // 'idle', 'error', 'success'
   const inputRefs = useRef([]);
 
@@ -81,6 +81,8 @@ export const LoginForm = ({ onToggleMode }) => {
       // The school area is keyed on schoolId, but the backend identifies an entity
       // admin's institution as entityId — bridge the two so SchoolRoute/data calls work.
       schoolId: response.schoolId || response.entityId || null,
+      entityApprovalStatus: response.entityApprovalStatus || null,
+      entityRejectionReason: response.entityRejectionReason || null,
     };
 
     login(response.token, authUser);
@@ -92,6 +94,16 @@ export const LoginForm = ({ onToggleMode }) => {
     // the backend's PasswordChangeFilter 403s every other call until they do.
     if (response.isPasswordChanged === false) {
       navigate('/change-password', { replace: true });
+      return;
+    }
+
+    // A pending / rejected institution can still sign in, but its admins are
+    // held on the blocked screen instead of the school portal until a super
+    // admin approves it.
+    const primaryRole = (authUser.roles?.[0] || '').toUpperCase();
+    const isEntityAdmin = primaryRole === 'ENTITY_ADMIN' || primaryRole === 'SCHOOL_ADMIN';
+    if (isEntityAdmin && (authUser.entityApprovalStatus === 'PENDING' || authUser.entityApprovalStatus === 'REJECTED')) {
+      navigate('/school/blocked', { replace: true });
       return;
     }
 
@@ -115,12 +127,13 @@ export const LoginForm = ({ onToggleMode }) => {
       if (response?.otpRequired) {
         setOtpRequired(true);
         setPendingUsername(response.username || data.email);
-        setTimeLeft(32);
+        setTimeLeft(60);
         setOtpValues(Array(6).fill(''));
         setOtpStatus('idle');
         setIsSubmitting(false);
         return;
       }
+
       // On success we navigate away; keep the loader spinning through the unmount.
       saveAuthAndRedirect(response);
     } catch (error) {
@@ -177,7 +190,7 @@ export const LoginForm = ({ onToggleMode }) => {
     setOtpValues(Array(6).fill(''));
     try {
       await authService.resendOtp(pendingUsername);
-      setTimeLeft(32);
+      setTimeLeft(60);
       inputRefs.current[0]?.focus();
     } catch (error) {
       setErrorMessage(error?.message || 'Could not resend the code');
@@ -230,16 +243,16 @@ export const LoginForm = ({ onToggleMode }) => {
 
   // Dynamic styling based on the verification status
   const getOtpInputClasses = () => {
-    const baseClasses = "w-11 h-14 sm:w-12 border rounded-xl text-center text-xl font-semibold text-[#120E1A] caret-[#120E1A] outline-none transition-all duration-200";
+    const baseClasses = "w-11 h-14 sm:w-12 border rounded-xl text-center text-xl font-semibold text-[#0A0A0A] caret-[#0A0A0A] outline-none transition-all duration-200";
 
     if (otpStatus === 'error') {
       return `${baseClasses} border-red-400 bg-red-50 text-red-600 animate-shake shadow-[0_0_10px_rgba(239,68,68,0.15)]`;
     }
     if (otpStatus === 'success') {
-      return `${baseClasses} border-[#8B5CF6] bg-[#8B5CF6]/20 text-[#120E1A] shadow-[0_0_14px_rgba(139,92,246,0.5)] scale-105`;
+      return `${baseClasses} border-[#3D7FFF] bg-[#3D7FFF]/20 text-[#0A0A0A] shadow-[0_0_14px_rgba(61,127,255,0.5)] scale-105`;
     }
 
-    return `${baseClasses} border-gray-200 bg-gray-50/60 hover:border-[#8B5CF6] hover:bg-[#8B5CF6]/10 focus:bg-white focus:border-[#120E1A] focus:ring-4 focus:ring-[#8B5CF6]/40`;
+    return `${baseClasses} border-gray-200 bg-gray-50/60 hover:border-[#3D7FFF] hover:bg-[#3D7FFF]/10 focus:bg-white focus:border-[#0A0A0A] focus:ring-4 focus:ring-[#3D7FFF]/40`;
   };
 const toggleView = () => {
     setView(prev => prev === 'login' ? 'register' : 'login');
@@ -263,7 +276,7 @@ const toggleView = () => {
           // --- STANDARD LOGIN VIEW ---
           <form onSubmit={handleSubmit(onSubmitCredentials)} className="space-y-5">
             <div className="space-y-1.5 mb-8">
-              <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">Welcome back!</h1>
+              <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">Welcome back!</h1>
               <p className="text-sm text-gray-500">Enter your details to access your dashboard.</p>
             </div>
 
@@ -287,7 +300,7 @@ const toggleView = () => {
                   {...register('email', { required: 'Email is required' })}
                   type="text"
                   placeholder="Enter your username"
-                  className={`w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border transition-all focus:bg-white focus:ring-4 focus:ring-[#120E1A]/5 ${errors.email ? 'border-red-300' : 'border-transparent focus:border-[#120E1A]/20'}`}
+                  className={`w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none border transition-all focus:bg-white focus:ring-4 focus:ring-[#0A0A0A]/5 ${errors.email ? 'border-red-300' : 'border-transparent focus:border-[#0A0A0A]/20'}`}
                 />
               </div>
               {errors.email && <p className="text-red-500 text-[11px] font-medium">Username is required</p>}
@@ -297,7 +310,7 @@ const toggleView = () => {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label htmlFor="login-password" className="text-[13px] font-semibold text-gray-700">Password</label>
-                <Link to="/forgot-password" className="text-[13px] font-medium text-gray-500 hover:text-[#120E1A] transition-colors">
+                <Link to="/forgot-password" className="text-[13px] font-medium text-gray-500 hover:text-[#0A0A0A] transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -312,7 +325,7 @@ const toggleView = () => {
                   {...register('password', { required: 'Password is required' })}
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className={`w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-11 text-sm text-gray-900 placeholder-gray-400 outline-none border transition-all focus:bg-white focus:ring-4 focus:ring-[#120E1A]/5 ${errors.password ? 'border-red-300' : 'border-transparent focus:border-[#120E1A]/20'}`}
+                  className={`w-full rounded-2xl bg-[#f3f4f6] py-3.5 pl-11 pr-11 text-sm text-gray-900 placeholder-gray-400 outline-none border transition-all focus:bg-white focus:ring-4 focus:ring-[#0A0A0A]/5 ${errors.password ? 'border-red-300' : 'border-transparent focus:border-[#0A0A0A]/20'}`}
                 />
                 <button
                   type="button"
@@ -343,7 +356,7 @@ const toggleView = () => {
 
             <label className="flex items-center gap-2.5 cursor-pointer select-none pt-1">
               <input type="checkbox" className="peer sr-only" />
-              <span className="w-5 h-5 rounded-full border-2 border-[#120E1A]/20 bg-white text-transparent peer-checked:bg-[#8B5CF6] peer-checked:border-[#8B5CF6] peer-checked:text-white transition-all duration-150 flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full border-2 border-[#0A0A0A]/20 bg-white text-transparent peer-checked:bg-[#3D7FFF] peer-checked:border-[#3D7FFF] peer-checked:text-white transition-all duration-150 flex items-center justify-center">
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                   <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -355,7 +368,7 @@ const toggleView = () => {
               type="submit"
               disabled={isSubmitting}
               aria-busy={isSubmitting}
-              className={`w-full py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
+              className={`w-full py-3.5 bg-[#3D7FFF] hover:bg-[#5C96FF] text-white text-sm font-bold rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed ${
                 isSubmitting ? 'btn-loading-glow opacity-95' : ''
               }`}
             >
@@ -372,7 +385,7 @@ const toggleView = () => {
               <Link
                 to="/register"
                 onClick={onToggleMode}
-                className="text-[#120E1A] hover:underline font-bold"
+                className="text-[#0A0A0A] hover:underline font-bold"
               >
                 Create an account
               </Link>
@@ -387,12 +400,12 @@ const toggleView = () => {
               <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em]">
                 Two-Factor Authentication
               </h3>
-              <h1 className="text-[28px] leading-tight font-semibold text-[#120E1A] tracking-tight">
+              <h1 className="text-[28px] leading-tight font-semibold text-[#0A0A0A] tracking-tight">
                 Security verification
               </h1>
               <p className="text-sm text-gray-500 leading-relaxed pt-1">
                 Enter the 6-digit code sent to{' '}
-                <span className="font-medium text-[#120E1A] break-all">{pendingUsername}</span>
+                <span className="font-medium text-[#0A0A0A] break-all">{pendingUsername}</span>
               </p>
             </div>
 
@@ -430,7 +443,7 @@ const toggleView = () => {
               onClick={handleVerifyOtpClick}
               disabled={isSubmitting || otpValues.join('').length < 6 || otpStatus === 'success'}
               aria-busy={isSubmitting}
-              className={`w-full py-3.5 bg-[#8B5CF6] hover:bg-[#A78BFA] text-white text-sm font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:opacity-70 ${
+              className={`w-full py-3.5 bg-[#3D7FFF] hover:bg-[#5C96FF] text-white text-sm font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-[0.99] disabled:opacity-70 ${
                 isSubmitting ? 'btn-loading-glow' : ''
               }`}
             >
@@ -448,12 +461,12 @@ const toggleView = () => {
                 <p className="text-sm text-gray-500">Didn't receive the code?</p>
                 {timeLeft > 0 ? (
                   <p className="text-sm font-medium text-gray-400">
-                    Resend In {timeLeft}s
+                    Resend in {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
                   </p>
                 ) : (
                   <button
                     onClick={handleResendCode}
-                    className="text-sm font-semibold text-[#120E1A] hover:underline"
+                    className="text-sm font-semibold text-[#0A0A0A] hover:underline"
                   >
                     Resend Code
                   </button>

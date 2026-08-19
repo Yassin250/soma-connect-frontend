@@ -89,7 +89,7 @@ export const AdminCourseModulesPage = () => {
     {
       key: 'order', header: '#', width: '56px', sortable: true, sortValue: (m) => m.sortOrder,
       render: (m) => (
-        <span className="w-7 h-7 rounded-lg bg-[#120E1A] text-[#8B5CF6] text-[11px] font-bold flex items-center justify-center">
+        <span className="w-7 h-7 rounded-lg bg-[#0A0A0A] text-[#3D7FFF] text-[11px] font-bold flex items-center justify-center">
           {m.sortOrder + 1}
         </span>
       ),
@@ -98,11 +98,11 @@ export const AdminCourseModulesPage = () => {
       key: 'title', header: 'Module', sortable: true, sortValue: (m) => m.title || '',
       render: (m) => (
         <div className="flex items-center gap-3 min-w-0">
-          <span className="w-9 h-9 rounded-xl bg-[#8B5CF6]/25 text-[#120E1A] flex items-center justify-center shrink-0">
+          <span className="w-9 h-9 rounded-xl bg-[#3D7FFF]/25 text-[#0A0A0A] flex items-center justify-center shrink-0">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={MODULE_ICON[m.moduleType] || MODULE_ICON.READING} /></svg>
           </span>
           <div className="min-w-0">
-            <p className="font-medium text-[#120E1A] truncate max-w-[320px]">{m.title || 'Untitled module'}</p>
+            <p className="font-medium text-[#0A0A0A] truncate max-w-[320px]">{m.title || 'Untitled module'}</p>
             <p className="text-[11px] text-gray-400 truncate max-w-[320px]">{m.description || '—'}</p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export const AdminCourseModulesPage = () => {
     },
     {
       key: 'type', header: 'Type', sortable: true, sortValue: (m) => m.moduleType || '',
-      render: (m) => <span className="text-[13px] text-[#120E1A]/70">{humanize(m.moduleType)}</span>,
+      render: (m) => <span className="text-[13px] text-[#0A0A0A]/70">{humanize(m.moduleType)}</span>,
     },
     {
       key: 'items', header: 'Lessons', sortable: true, sortValue: (m) => (m.items?.length ?? 0),
@@ -118,7 +118,7 @@ export const AdminCourseModulesPage = () => {
         <button
           onClick={() => goToLessons(m)}
           title={`Open the ${m.items?.length ?? 0} lesson${(m.items?.length ?? 0) === 1 ? '' : 's'} in ${m.title}`}
-          className="inline-flex items-center gap-1.5 min-w-[1.75rem] h-7 pl-2.5 pr-2 rounded-full bg-[#8B5CF6] text-white text-[11px] font-bold shadow-sm hover:bg-[#C4B5FD] transition-all group"
+          className="inline-flex items-center gap-1.5 min-w-[1.75rem] h-7 pl-2.5 pr-2 rounded-full bg-[#3D7FFF] text-white text-[11px] font-bold shadow-sm hover:bg-[#63C7FF] transition-all group"
         >
           {m.items?.length ?? 0}
           <svg className="w-3 h-3 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -148,7 +148,7 @@ export const AdminCourseModulesPage = () => {
           <RowActionMenu
             primary={{ label: 'Lessons', icon: DockIcons.edit, onClick: () => goToLessons(m) }}
             items={[
-              { label: 'Edit module', icon: DockIcons.edit, iconTone: 'text-[#120E1A]/60', onClick: () => { setEditingModule(m); setModuleModalOpen(true); } },
+              { label: 'Edit module', icon: DockIcons.edit, iconTone: 'text-[#0A0A0A]/60', onClick: () => { setEditingModule(m); setModuleModalOpen(true); } },
               'divider',
               { label: 'Delete module', icon: DockIcons.trash, danger: true, onClick: () => setDeletingModule(m) },
             ]}
@@ -165,13 +165,13 @@ export const AdminCourseModulesPage = () => {
         <div>
           <button
             onClick={() => navigate('/admin/courses')}
-            className="flex w-fit items-center gap-1.5 text-[12px] font-medium text-[#120E1A]/50 hover:text-[#120E1A] transition-colors mb-3"
+            className="flex w-fit items-center gap-1.5 text-[12px] font-medium text-[#0A0A0A]/50 hover:text-[#0A0A0A] transition-colors mb-3"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Back to Courses
           </button>
           <span className="block text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">Course Curriculum</span>
-          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#120E1A]">
+          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#0A0A0A]">
             {course ? `${course.title} — Modules` : 'Modules'}
           </h1>
           <p className="text-[12px] text-gray-500 mt-0.5">
@@ -182,7 +182,7 @@ export const AdminCourseModulesPage = () => {
         </div>
         <button
           onClick={() => { setEditingModule(null); setModuleModalOpen(true); }}
-          className="bg-[#120E1A] text-white text-[13px] font-semibold px-4 py-2 rounded-lg hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98] shrink-0"
+          className="bg-[#0A0A0A] text-white text-[13px] font-semibold px-4 py-2 rounded-lg hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm active:scale-[0.98] shrink-0"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
           Add Module

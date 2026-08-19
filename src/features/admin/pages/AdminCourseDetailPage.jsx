@@ -36,7 +36,7 @@ export const AdminCourseDetailPage = () => {
       <div className="flex items-start gap-4 min-w-0">
         <button
           onClick={() => navigate('/admin/courses')}
-          className="w-10 h-10 rounded-xl border border-[#120E1A]/10 text-[#120E1A]/50 hover:text-[#120E1A] hover:bg-white flex items-center justify-center transition-colors shrink-0 mt-1"
+          className="w-10 h-10 rounded-xl border border-[#0A0A0A]/10 text-[#0A0A0A]/50 hover:text-[#0A0A0A] hover:bg-white flex items-center justify-center transition-colors shrink-0 mt-1"
           aria-label="Back to courses"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -45,7 +45,7 @@ export const AdminCourseDetailPage = () => {
         </button>
         <div className="min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide bg-[#120E1A] text-[#8B5CF6]">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide bg-[#0A0A0A] text-[#3D7FFF]">
               {course.entityName}
             </span>
             <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">
@@ -53,7 +53,7 @@ export const AdminCourseDetailPage = () => {
             </span>
             <CourseStatusPill status={course.status} />
           </div>
-          <h1 className="text-[19px] font-medium text-[#120E1A] tracking-tight leading-tight mt-1">{course.title}</h1>
+          <h1 className="text-[19px] font-medium text-[#0A0A0A] tracking-tight leading-tight mt-1">{course.title}</h1>
           {course.summary && <p className="text-[12px] text-gray-500 mt-1">{course.summary}</p>}
         </div>
       </div>

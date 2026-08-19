@@ -169,12 +169,12 @@ export const RolesPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-[19px] font-medium text-[#120E1A] tracking-tight">Roles &amp; Access</h1>
+          <h1 className="text-[19px] font-medium text-[#0A0A0A] tracking-tight">Roles &amp; Access</h1>
           <p className="text-[12px] text-gray-500 mt-1">Define roles and the permissions that govern platform access.</p>
         </div>
         <button
           onClick={() => { setEditingEntity(null); setIsRoleModalOpen(true); }}
-          className="bg-[#120E1A] text-white text-[13px] font-semibold px-5 py-2 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm"
+          className="bg-[#0A0A0A] text-white text-[13px] font-semibold px-5 py-2 rounded-xl hover:bg-black transition-colors inline-flex items-center gap-2 shadow-sm"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" />
@@ -185,12 +185,12 @@ export const RolesPage = () => {
       </div>
 
       {/* Filters — content-width card, platform field recipe, divider before actions */}
-      <div className="bg-white rounded-2xl border border-[#120E1A]/[0.06] shadow-sm p-4 w-fit max-w-full">
+      <div className="bg-white rounded-2xl border border-[#0A0A0A]/[0.06] shadow-sm p-4 w-fit max-w-full">
         <div className="flex flex-wrap items-end gap-3.5">
           <div className="w-[160px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Status</label>
+            <label className="text-[10px] font-semibold text-[#0A0A0A]/45 uppercase tracking-[0.12em]">Status</label>
             <select
-              className="w-full text-[13px] px-3.5 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all cursor-pointer"
+              className="w-full text-[13px] px-3.5 py-2.5 rounded-xl border border-[#0A0A0A]/10 bg-[#f7f8fa] text-[#0A0A0A] hover:border-[#0A0A0A]/20 focus:bg-white focus:ring-4 focus:ring-[#3D7FFF]/20 focus:border-[#3D7FFF] focus:outline-none transition-all cursor-pointer"
               value={filterRoleStatus}
               onChange={(e) => setFilterRoleStatus(e.target.value)}
             >
@@ -201,30 +201,30 @@ export const RolesPage = () => {
           </div>
           {/* Created date range — labeled From / To with leading calendar icons */}
           <div className="w-[180px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">From</label>
+            <label className="text-[10px] font-semibold text-[#0A0A0A]/45 uppercase tracking-[0.12em]">From</label>
             <div className="relative">
-              <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-4 h-4 text-[#0A0A0A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="17" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               <input
                 type="date"
                 aria-label="Created from"
-                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all"
+                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#0A0A0A]/10 bg-[#f7f8fa] text-[#0A0A0A] hover:border-[#0A0A0A]/20 focus:bg-white focus:ring-4 focus:ring-[#3D7FFF]/20 focus:border-[#3D7FFF] focus:outline-none transition-all"
                 value={filterRoleDateFrom}
                 onChange={(e) => setFilterRoleDateFrom(e.target.value)}
               />
             </div>
           </div>
           <div className="w-[180px] flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">To</label>
+            <label className="text-[10px] font-semibold text-[#0A0A0A]/45 uppercase tracking-[0.12em]">To</label>
             <div className="relative">
-              <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-4 h-4 text-[#0A0A0A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="17" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               <input
                 type="date"
                 aria-label="Created to"
-                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] hover:border-[#120E1A]/20 focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all"
+                className="w-full text-[13px] pl-9 pr-3 py-2.5 rounded-xl border border-[#0A0A0A]/10 bg-[#f7f8fa] text-[#0A0A0A] hover:border-[#0A0A0A]/20 focus:bg-white focus:ring-4 focus:ring-[#3D7FFF]/20 focus:border-[#3D7FFF] focus:outline-none transition-all"
                 value={filterRoleDateTo}
                 onChange={(e) => setFilterRoleDateTo(e.target.value)}
               />
@@ -232,11 +232,11 @@ export const RolesPage = () => {
           </div>
 
           {/* Divider between fields and actions */}
-          <span className="hidden sm:block w-px h-10 bg-[#120E1A]/[0.07] mx-0.5" />
+          <span className="hidden sm:block w-px h-10 bg-[#0A0A0A]/[0.07] mx-0.5" />
 
           <button
             onClick={fetchRoles}
-            className="shrink-0 h-10 px-5 rounded-full bg-[#8B5CF6] text-white text-[13px] font-semibold hover:bg-[#C4B5FD] shadow-sm transition-colors active:scale-[0.98]"
+            className="shrink-0 h-10 px-5 rounded-full bg-[#3D7FFF] text-white text-[13px] font-semibold hover:bg-[#63C7FF] shadow-sm transition-colors active:scale-[0.98]"
           >
             Apply
           </button>
@@ -253,11 +253,11 @@ export const RolesPage = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-[#120E1A]/[0.06] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#0A0A0A]/[0.06] shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#f4f6f8] border-b border-[#120E1A]/[0.06] text-[10px] font-bold text-[#120E1A]/45 uppercase tracking-[0.14em]">
+              <tr className="bg-[#f4f6f8] border-b border-[#0A0A0A]/[0.06] text-[10px] font-bold text-[#0A0A0A]/45 uppercase tracking-[0.14em]">
                 <th className="px-4 py-2.5 pl-6 text-left">Actions</th>
                 <th className="px-4 py-2.5">Name</th>
                 <th className="px-4 py-2.5">Description</th>
@@ -266,11 +266,11 @@ export const RolesPage = () => {
                 <th className="px-4 py-2.5 pr-6">Created At</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50 text-[13px] text-[#120E1A]/80">
+            <tbody className="divide-y divide-gray-50 text-[13px] text-[#0A0A0A]/80">
               {filteredRoles.map((role) => {
                 const status = resolveRoleStatus(role);
                 return (
-                  <tr key={role.id} className="hover:bg-[#8B5CF6]/[0.08] transition-colors">
+                  <tr key={role.id} className="hover:bg-[#3D7FFF]/[0.08] transition-colors">
                     <td className="px-4 py-2.5 pl-6">
                       <RowActionMenu
                         primary={{
@@ -279,7 +279,7 @@ export const RolesPage = () => {
                           onClick: () => { setEditingEntity(role); setIsRoleModalOpen(true); },
                         }}
                         items={[
-                          { label: 'Permissions', icon: DockIcons.shield, iconTone: 'text-[#120E1A]/60', onClick: () => openPermModal(role) },
+                          { label: 'Permissions', icon: DockIcons.shield, iconTone: 'text-[#0A0A0A]/60', onClick: () => openPermModal(role) },
                           role.active === false
                             ? { label: 'Activate role', icon: DockIcons.power, iconTone: 'text-emerald-500', onClick: () => handleToggleStatus(role) }
                             : { label: 'Deactivate role', icon: DockIcons.power, onClick: () => handleToggleStatus(role) },
@@ -288,13 +288,13 @@ export const RolesPage = () => {
                         ]}
                       />
                     </td>
-                    <td className="px-4 py-2.5 font-medium text-[#120E1A]">{role.name}</td>
+                    <td className="px-4 py-2.5 font-medium text-[#0A0A0A]">{role.name}</td>
                     <td className="px-4 py-2.5 text-gray-500 max-w-xs truncate">{role.description || '—'}</td>
                     <td className="px-4 py-2.5">
                       <button
                         onClick={() => openPermModal(role)}
                         title="Manage permissions"
-                        className="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full bg-[#8B5CF6] text-white text-[11px] font-bold shadow-sm hover:bg-[#C4B5FD] transition-all"
+                        className="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded-full bg-[#3D7FFF] text-white text-[11px] font-bold shadow-sm hover:bg-[#63C7FF] transition-all"
                       >
                         {role.permissions?.length ?? 0}
                       </button>
@@ -336,12 +336,12 @@ export const RolesPage = () => {
           fixed header + toolbar, a single scrolling body, fixed footer. */}
       {permModalRole && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#120E1A]/40 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A0A]/40 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setPermModalRole(null)}
           role="presentation"
         >
           <div
-            className="relative w-full max-w-[880px] h-[min(86vh,680px)] flex flex-col bg-white rounded-3xl border border-[#120E1A]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] overflow-hidden animate-in zoom-in-95 fade-in duration-200"
+            className="relative w-full max-w-[880px] h-[min(86vh,680px)] flex flex-col bg-white rounded-3xl border border-[#0A0A0A]/[0.06] shadow-[0_20px_60px_rgba(27,30,38,0.25)] overflow-hidden animate-in zoom-in-95 fade-in duration-200"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -352,35 +352,35 @@ export const RolesPage = () => {
                 type="button"
                 onClick={() => setPermModalRole(null)}
                 aria-label="Close"
-                className="absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center text-[#120E1A]/40 hover:text-[#120E1A] hover:bg-[#f3f4f6] transition-colors"
+                className="absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center text-[#0A0A0A]/40 hover:text-[#0A0A0A] hover:bg-[#f3f4f6] transition-colors"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" /></svg>
               </button>
 
               <div className="flex items-center gap-3.5 pr-10">
-                <span className="w-11 h-11 rounded-2xl bg-[#8B5CF6]/25 text-white flex items-center justify-center shrink-0">
+                <span className="w-11 h-11 rounded-2xl bg-[#3D7FFF]/25 text-white flex items-center justify-center shrink-0">
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M15.5 7.5 21 2M18 5l-3 3M11 11a4 4 0 1 1-5.66 5.66A4 4 0 0 1 11 11z" />
                   </svg>
                 </span>
                 <div className="min-w-0">
-                  <h3 className="text-[15px] font-semibold text-[#120E1A] tracking-tight">Manage permissions</h3>
+                  <h3 className="text-[15px] font-semibold text-[#0A0A0A] tracking-tight">Manage permissions</h3>
                   <p className="text-sm text-gray-500 mt-0.5 truncate">
-                    What the <span className="font-semibold text-[#120E1A]">{permModalRole.name}</span> role can do.
+                    What the <span className="font-semibold text-[#0A0A0A]">{permModalRole.name}</span> role can do.
                   </p>
                 </div>
               </div>
 
               {/* Search — filters the checklist below */}
               <div className="relative mt-5">
-                <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" /></svg>
+                <svg className="w-4 h-4 text-[#0A0A0A]/35 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" /></svg>
                 <input
                   type="text"
                   autoFocus
                   value={permSearch}
                   onChange={(e) => setPermSearch(e.target.value)}
                   placeholder="Search permissions…"
-                  className="w-full text-[13px] pl-10 pr-3 py-2.5 rounded-xl border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] focus:bg-white focus:ring-4 focus:ring-[#8B5CF6]/20 focus:border-[#8B5CF6] focus:outline-none transition-all"
+                  className="w-full text-[13px] pl-10 pr-3 py-2.5 rounded-xl border border-[#0A0A0A]/10 bg-[#f7f8fa] text-[#0A0A0A] focus:bg-white focus:ring-4 focus:ring-[#3D7FFF]/20 focus:border-[#3D7FFF] focus:outline-none transition-all"
                 />
               </div>
             </div>
@@ -407,11 +407,11 @@ export const RolesPage = () => {
                   return (
                     <div key={cat}>
                       <div className="flex items-center justify-between px-1 pb-2">
-                        <p className="text-[10px] font-bold text-[#120E1A]/40 uppercase tracking-[0.14em]">{cat}</p>
+                        <p className="text-[10px] font-bold text-[#0A0A0A]/40 uppercase tracking-[0.14em]">{cat}</p>
                         <button
                           type="button"
                           onClick={() => toggleCategory(perms, !allOn)}
-                          className="text-[11px] font-semibold text-[#8B5CF6] hover:text-[#120E1A] transition-colors"
+                          className="text-[11px] font-semibold text-[#3D7FFF] hover:text-[#0A0A0A] transition-colors"
                         >
                           {allOn ? 'Clear all' : 'Select all'}
                         </button>
@@ -420,7 +420,7 @@ export const RolesPage = () => {
                         {perms.map((perm) => (
                           <label
                             key={perm.id}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-[#f7f8fa] hover:border-[#120E1A]/[0.05] cursor-pointer transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-[#f7f8fa] hover:border-[#0A0A0A]/[0.05] cursor-pointer transition-colors"
                           >
                             <input
                               type="checkbox"
@@ -428,13 +428,13 @@ export const RolesPage = () => {
                               onChange={() => togglePerm(perm.id)}
                               className="peer sr-only"
                             />
-                            <span className="w-5 h-5 rounded-md border-2 border-[#120E1A]/15 bg-white text-transparent peer-checked:bg-[#8B5CF6] peer-checked:border-[#8B5CF6] peer-checked:text-white peer-focus-visible:ring-4 peer-focus-visible:ring-[#8B5CF6]/30 flex items-center justify-center shrink-0 transition-all duration-150">
+                            <span className="w-5 h-5 rounded-md border-2 border-[#0A0A0A]/15 bg-white text-transparent peer-checked:bg-[#3D7FFF] peer-checked:border-[#3D7FFF] peer-checked:text-white peer-focus-visible:ring-4 peer-focus-visible:ring-[#3D7FFF]/30 flex items-center justify-center shrink-0 transition-all duration-150">
                               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
                                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </span>
                             <div className="flex-1 min-w-0">
-                              <span className="text-[13px] font-medium text-[#120E1A] block truncate">{perm.name}</span>
+                              <span className="text-[13px] font-medium text-[#0A0A0A] block truncate">{perm.name}</span>
                               {perm.description && (
                                 <span className="text-xs text-gray-400 block truncate">{perm.description}</span>
                               )}
@@ -454,7 +454,7 @@ export const RolesPage = () => {
               <button
                 type="button"
                 onClick={() => setPermModalRole(null)}
-                className="px-5 py-2 rounded-xl text-[13px] font-semibold text-[#120E1A]/70 border border-[#120E1A]/10 hover:bg-[#f3f4f6] transition-colors"
+                className="px-5 py-2 rounded-xl text-[13px] font-semibold text-[#0A0A0A]/70 border border-[#0A0A0A]/10 hover:bg-[#f3f4f6] transition-colors"
               >
                 Cancel
               </button>
@@ -462,7 +462,7 @@ export const RolesPage = () => {
                 type="button"
                 onClick={savePermissions}
                 disabled={permSaving}
-                className="px-5 py-2 rounded-xl text-[13px] font-bold bg-[#8B5CF6] text-white hover:bg-[#C4B5FD] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
+                className="px-5 py-2 rounded-xl text-[13px] font-bold bg-[#3D7FFF] text-white hover:bg-[#63C7FF] transition-colors active:scale-[0.98] shadow-sm disabled:opacity-60"
               >
                 {permSaving ? 'Saving…' : 'Save permissions'}
               </button>

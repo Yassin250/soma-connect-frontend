@@ -6,12 +6,12 @@ import { DataTable } from '../../../components/shared/DataTable';
 import { createPortal } from 'react-dom';
 
 const filterFieldClass =
-  'w-full text-[12.5px] px-3 py-1.5 rounded-lg border border-[#120E1A]/10 bg-[#f7f8fa] text-[#120E1A] focus:bg-white focus:ring-2 focus:ring-[#8B5CF6]/25 focus:border-[#8B5CF6] focus:outline-none transition-all';
+  'w-full text-[12.5px] px-3 py-1.5 rounded-lg border border-[#0A0A0A]/10 bg-[#f7f8fa] text-[#0A0A0A] focus:bg-white focus:ring-2 focus:ring-[#3D7FFF]/25 focus:border-[#3D7FFF] focus:outline-none transition-all';
 
 const AVATAR_STYLES = [
-  'bg-[#8B5CF6]/20 text-[#FFFFFF]', 'bg-rose-100 text-rose-700',
+  'bg-[#3D7FFF]/20 text-[#FFFFFF]', 'bg-rose-100 text-rose-700',
   'bg-amber-100 text-amber-700', 'bg-emerald-100 text-emerald-700',
-  'bg-[#120E1A]/[0.06] text-[#120E1A]/70', 'bg-violet-100 text-violet-700',
+  'bg-[#0A0A0A]/[0.06] text-[#0A0A0A]/70', 'bg-violet-100 text-violet-700',
   'bg-fuchsia-100 text-fuchsia-700', 'bg-teal-100 text-teal-700',
 ];
 const initialsOf = (name) =>
@@ -128,7 +128,7 @@ export const UnassignedUsersPage = () => {
           type="checkbox"
           checked={selectedIds.has(u.id)}
           onChange={() => toggleSelect(u.id)}
-          className="w-4 h-4 rounded border-gray-300 text-[#8B5CF6] focus:ring-[#8B5CF6] cursor-pointer accent-[#8B5CF6]"
+          className="w-4 h-4 rounded border-gray-300 text-[#3D7FFF] focus:ring-[#3D7FFF] cursor-pointer accent-[#3D7FFF]"
         />
       ),
       headerRender: () => (
@@ -136,7 +136,7 @@ export const UnassignedUsersPage = () => {
           type="checkbox"
           checked={visible.length > 0 && selectedIds.size === visible.length}
           onChange={toggleSelectAll}
-          className="w-4 h-4 rounded border-gray-300 text-[#8B5CF6] focus:ring-[#8B5CF6] cursor-pointer accent-[#8B5CF6]"
+          className="w-4 h-4 rounded border-gray-300 text-[#3D7FFF] focus:ring-[#3D7FFF] cursor-pointer accent-[#3D7FFF]"
         />
       ),
     },
@@ -150,7 +150,7 @@ export const UnassignedUsersPage = () => {
               {initialsOf(label)}
             </span>
             <div className="min-w-0">
-              <p className="text-[13px] font-medium text-[#120E1A]/90 truncate max-w-[220px]">{label}</p>
+              <p className="text-[13px] font-medium text-[#0A0A0A]/90 truncate max-w-[220px]">{label}</p>
               <p className="text-[11px] text-gray-400 truncate">{u.username ? `@${u.username}` : '—'}</p>
             </div>
           </div>
@@ -159,17 +159,17 @@ export const UnassignedUsersPage = () => {
     },
     {
       key: 'email', header: 'Email', sortable: true, sortValue: (u) => u.email || '',
-      render: (u) => <span className="text-[13px] text-[#120E1A]/70 truncate max-w-[240px] inline-block align-middle">{u.email || '—'}</span>,
+      render: (u) => <span className="text-[13px] text-[#0A0A0A]/70 truncate max-w-[240px] inline-block align-middle">{u.email || '—'}</span>,
     },
     {
       key: 'roles', header: 'Roles', sortable: true, sortValue: (u) => roleNamesOf(u).join(', '),
       render: (u) => {
         const roles = roleNamesOf(u);
-        if (roles.length === 0) return <span className="text-[13px] text-[#120E1A]/30">—</span>;
+        if (roles.length === 0) return <span className="text-[13px] text-[#0A0A0A]/30">—</span>;
         return (
           <div className="flex flex-wrap gap-1">
             {roles.slice(0, 3).map((r) => (
-              <span key={r} className="px-2 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#FFFFFF] text-[10px] font-semibold">{r}</span>
+              <span key={r} className="px-2 py-0.5 rounded-full bg-[#3D7FFF]/20 text-[#FFFFFF] text-[10px] font-semibold">{r}</span>
             ))}
             {roles.length > 3 && <span className="text-[10px] text-gray-400">+{roles.length - 3}</span>}
           </div>
@@ -179,9 +179,9 @@ export const UnassignedUsersPage = () => {
     {
       key: 'createdAt', header: 'Registered', sortable: true, sortValue: (u) => u.createdAt || '',
       render: (u) => {
-        if (!u.createdAt) return <span className="text-[13px] text-[#120E1A]/30">—</span>;
+        if (!u.createdAt) return <span className="text-[13px] text-[#0A0A0A]/30">—</span>;
         const d = new Date(u.createdAt);
-        return <span className="text-[13px] text-[#120E1A]/70">{d.toLocaleDateString()}</span>;
+        return <span className="text-[13px] text-[#0A0A0A]/70">{d.toLocaleDateString()}</span>;
       },
     },
   ];
@@ -191,7 +191,7 @@ export const UnassignedUsersPage = () => {
       <div className="flex items-start justify-between">
         <div>
           <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-gray-400">User Management</span>
-          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#120E1A]">Unassigned Users</h1>
+          <h1 className="text-[19px] font-medium tracking-tight mt-1 text-[#0A0A0A]">Unassigned Users</h1>
           <p className="text-[12px] text-gray-500 mt-0.5">
             {users.length > 0
               ? `${users.length} user${users.length === 1 ? '' : 's'} registered individually with no entity.`
@@ -201,17 +201,17 @@ export const UnassignedUsersPage = () => {
         <button
           onClick={openAssignModal}
           disabled={selectedIds.size === 0}
-          className="shrink-0 px-4 py-2 rounded-xl bg-[#120E1A] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="shrink-0 px-4 py-2 rounded-xl bg-[#0A0A0A] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Assign to Entity ({selectedIds.size})
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#120E1A]/[0.06] shadow-sm px-3 py-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-2">
+      <div className="bg-white rounded-xl border border-[#0A0A0A]/[0.06] shadow-sm px-3 py-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-2">
         <div className="w-[260px] flex flex-col gap-1">
-          <label className="text-[10px] font-semibold text-[#120E1A]/45 uppercase tracking-[0.12em]">Search</label>
+          <label className="text-[10px] font-semibold text-[#0A0A0A]/45 uppercase tracking-[0.12em]">Search</label>
           <div className="relative">
-            <svg className="w-4 h-4 text-[#120E1A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="w-4 h-4 text-[#0A0A0A]/35 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" />
             </svg>
             <input
@@ -227,7 +227,7 @@ export const UnassignedUsersPage = () => {
         <button
           type="button"
           onClick={() => setSearch('')}
-          className="text-[#120E1A]/60 text-[12.5px] font-medium px-4 py-1.5 rounded-lg border border-[#120E1A]/10 hover:bg-[#f7f8fa] transition-colors"
+          className="text-[#0A0A0A]/60 text-[12.5px] font-medium px-4 py-1.5 rounded-lg border border-[#0A0A0A]/10 hover:bg-[#f7f8fa] transition-colors"
         >
           Reset
         </button>
@@ -256,8 +256,8 @@ export const UnassignedUsersPage = () => {
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => !assigning && setShowAssignModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-[#120E1A]">Assign Users to Entity</h2>
-              <button onClick={() => !assigning && setShowAssignModal(false)} className="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#120E1A] flex items-center justify-center transition-colors">
+              <h2 className="text-lg font-semibold text-[#0A0A0A]">Assign Users to Entity</h2>
+              <button onClick={() => !assigning && setShowAssignModal(false)} className="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#0A0A0A] flex items-center justify-center transition-colors">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             </div>
@@ -265,16 +265,16 @@ export const UnassignedUsersPage = () => {
               Assigning <strong>{selectedIds.size}</strong> user{selectedIds.size === 1 ? '' : 's'} to an institution.
             </p>
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-semibold text-[#120E1A]/60 uppercase tracking-[0.1em]">Target Institution</label>
+              <label className="text-[11px] font-semibold text-[#0A0A0A]/60 uppercase tracking-[0.1em]">Target Institution</label>
               <select
                 value={targetEntityId}
                 onChange={(e) => setTargetEntityId(e.target.value)}
-                className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#120E1A] focus:ring-2 focus:ring-[#8B5CF6]/25 focus:border-[#8B5CF6] outline-none transition-all"
+                className="w-full text-sm px-3 py-2 rounded-xl border border-gray-200 bg-white text-[#0A0A0A] focus:ring-2 focus:ring-[#3D7FFF]/25 focus:border-[#3D7FFF] outline-none transition-all"
                 required
               >
                 <option value="">Select an entity…</option>
                 {entities.map((e) => (
-                  <option key={e.id} value={e.id} className="text-[#120E1A]">{e.name} ({e.code})</option>
+                  <option key={e.id} value={e.id} className="text-[#0A0A0A]">{e.name} ({e.code})</option>
                 ))}
               </select>
             </div>
@@ -291,7 +291,7 @@ export const UnassignedUsersPage = () => {
                 type="button"
                 onClick={handleAssign}
                 disabled={!targetEntityId || assigning}
-                className="px-5 py-2 rounded-xl bg-[#120E1A] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-[#0A0A0A] text-white text-sm font-semibold hover:bg-black transition-colors disabled:opacity-50"
               >
                 {assigning ? 'Assigning…' : 'Assign'}
               </button>
